@@ -44,4 +44,22 @@ class ApiUserTest extends \PHPUnit_Framework_TestCase {
 		);
 	}
 
+	/**
+	 * @dataProvider provideTestEquals
+	 */
+	public function testEquals( ApiUser $user1, ApiUser $user2, $shouldEqual ) {
+		$this->assertEquals( $shouldEqual, $user1->equals( $user2 ) );
+		$this->assertEquals( $shouldEqual, $user2->equals( $user1 ) );
+	}
+
+	public function provideTestEquals() {
+		return array(
+			array( new ApiUser( 'usera', 'passa' ), new ApiUser( 'usera', 'passa' ), true ),
+			array( new ApiUser( 'DIFF', 'passa' ), new ApiUser( 'usera', 'passa' ), false ),
+			array( new ApiUser( 'usera', 'DIFF' ), new ApiUser( 'usera', 'passa' ), false ),
+			array( new ApiUser( 'usera', 'passa' ), new ApiUser( 'DIFF', 'passa' ), false ),
+			array( new ApiUser( 'usera', 'passa' ), new ApiUser( 'usera', 'DIFF' ), false ),
+		);
+	}
+
 } 
