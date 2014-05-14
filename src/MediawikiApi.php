@@ -108,9 +108,9 @@ class MediawikiApi {
 			'lgname' => $apiUser->getUsername(),
 			'lgpassword' => $apiUser->getPassword()
 		);
-		$result = $this->postAction( 'login', $credentials, $apiUser );
+		$result = $this->postAction( 'login', $credentials );
 		if ( $result['login']['result'] == "NeedToken" ) {
-			$result = $this->postAction( 'login', array_merge( array( 'lgtoken' => $result['login']['token'] ), $credentials), $apiUser );
+			$result = $this->postAction( 'login', array_merge( array( 'lgtoken' => $result['login']['token'] ), $credentials) );
 		}
 		if ( $result['login']['result'] == "Success" ) {
 			$this->isLoggedIn = $apiUser->getUsername();
