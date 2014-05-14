@@ -37,6 +37,7 @@ class ApiUser {
 	}
 
 	/**
+	 * @since 0.1
 	 * @return string
 	 */
 	public function getUsername() {
@@ -44,6 +45,7 @@ class ApiUser {
 	}
 
 	/**
+	 * @since 0.1
 	 * @return string
 	 */
 	public function getPassword() {
@@ -51,6 +53,7 @@ class ApiUser {
 	}
 
 	/**
+	 * @since 0.1
 	 * @param mixed $other
 	 *
 	 * @return bool

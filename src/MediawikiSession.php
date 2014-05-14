@@ -24,6 +24,8 @@ class MediawikiSession {
 	}
 
 	/**
+	 * @since 0.1
+	 *
 	 * @param string $type
 	 *
 	 * @return string
@@ -34,6 +36,15 @@ class MediawikiSession {
 			$this->tokens[$type] = array_pop( $result['tokens'] );
 		}
 		return $this->tokens[$type];
+	}
+
+	/**
+	 * Clears all tokens stored by the api
+	 *
+	 * @since 0.2
+	 */
+	public function clearTokens() {
+		$this->tokens = array();
 	}
 
 }

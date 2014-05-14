@@ -19,7 +19,7 @@ class MediawikiSessionTest extends \PHPUnit_Framework_TestCase {
 			'\Guzzle\Service\Mediawiki\MediawikiApiClient',
 			array( 'tokens' )
 		);
-		$mockClient->expects( $this->once() )
+		$mockClient->expects( $this->exactly( 2 ) )
 			->method( 'tokens' )
 			->with( $this->equalTo( array( 'type' => $tokenType ) ) )
 			->will( $this->returnValue( array(
@@ -32,6 +32,9 @@ class MediawikiSessionTest extends \PHPUnit_Framework_TestCase {
 
 		//Although we make 2 calls to the method we assert the tokens method about is only called once
 		$this->assertEquals( 'TKN-' . $tokenType, $session->getToken() );
+		$this->assertEquals( 'TKN-' . $tokenType, $session->getToken() );
+		//Then clearing the tokens and calling again should make a second call!
+		$session->clearTokens();
 		$this->assertEquals( 'TKN-' . $tokenType, $session->getToken() );
 	}
 

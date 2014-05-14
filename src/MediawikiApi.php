@@ -20,28 +20,37 @@ class MediawikiApi {
 	private $isLoggedIn;
 
 	/**
-	 * @var array
+	 * @var MediawikiSession
 	 */
-	private $tokens = array();
+	private $session;
 
 	/**
 	 * @param string|MediawikiApiClient $client either the url or the api or
+	 * @param MediawikiSession|null $session Inject a custom session here
 	 *
 	 * @throws InvalidArgumentException
 	 */
-	public function __construct( $client ) {
+	public function __construct( $client, $session = null ) {
 		if( is_string( $client ) ) {
 			$client = MediawikiApiClient::factory( array( 'base_url' => $client ) );
+		} elseif ( !$client instanceof MediawikiApiClient ) {
+			throw new InvalidArgumentException();
 		}
-		if( !$client instanceof MediawikiApiClient ) {
+
+		if( $session === null ) {
+			$session = new MediawikiSession( $client );
+		} elseif ( !$session instanceof MediawikiSession ){
 			throw new InvalidArgumentException();
 		}
 
 		$this->client = $client;
 		$this->client->addSubscriber( new CookiePlugin( new ArrayCookieJar() ) );
+		$this->session = $session;
 	}
 
 	/**
+	 * @since 0.1
+	 *
 	 * @param string $action
 	 * @param array $params
 	 *
@@ -54,6 +63,8 @@ class MediawikiApi {
 	}
 
 	/**
+	 * @since 0.1
+	 *
 	 * @param string $action
 	 * @param array $params
 	 *
@@ -77,6 +88,8 @@ class MediawikiApi {
 	}
 
 	/**
+	 * @since 0.1
+	 *
 	 * @return bool|string false or the name of the current user
 	 */
 	public function isLoggedin() {
@@ -84,6 +97,8 @@ class MediawikiApi {
 	}
 
 	/**
+	 * @since 0.1
+	 *
 	 * @param ApiUser $apiUser
 	 *
 	 * @return bool success
@@ -106,6 +121,7 @@ class MediawikiApi {
 	}
 
 	/**
+	 * @since 0.1
 	 * @return bool success
 	 */
 	public function logout() {
@@ -119,23 +135,22 @@ class MediawikiApi {
 	}
 
 	/**
+	 * @since 0.1
+	 *
 	 * @param string $type
 	 *
 	 * @return string
 	 */
 	public function getToken( $type = 'edit' ) {
-		if( !array_key_exists( $type , $this->tokens ) ) {
-			$result = $this->getAction( 'tokens', array( 'type' => $type ) );
-			$this->tokens[$type] = array_pop( $result['tokens'] );
-		}
-		return $this->tokens[$type];
+		$this->session->getToken( $type );
 	}
 
 	/**
+	 * @since 0.1
 	 * Clears all tokens stored by the api
 	 */
 	public function clearTokens() {
-		$this->tokens = array();
+		$this->session->clearTokens();
 	}
 
 }

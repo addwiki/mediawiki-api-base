@@ -15,6 +15,8 @@ class UsageException extends Exception {
 	private $apiCode;
 
 	/**
+	 * @since 0.1
+	 *
 	 * @param string $apiCode
 	 * @param string $message
 	 */
@@ -24,6 +26,8 @@ class UsageException extends Exception {
 	}
 
 	/**
+	 * @since 0.1
+	 *
 	 * @return string
 	 */
 	public function getApiCode() {
