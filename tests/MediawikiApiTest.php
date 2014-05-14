@@ -2,6 +2,7 @@
 
 namespace Mediawiki\Api\Test;
 
+use Mediawiki\Api\ApiUser;
 use Mediawiki\Api\MediawikiApi;
 use Mediawiki\Api\UsageException;
 use stdClass;
@@ -42,10 +43,6 @@ class MediawikiApiTest extends \PHPUnit_Framework_TestCase {
 	public function testInvalidConstruction( $apilocation ) {
 		$this->setExpectedException( 'InvalidArgumentException' );
 		new MediawikiApi( $apilocation );
-	}
-
-	public function getMediawikiApi( $client ) {
-		return new MediawikiApi( $client );
 	}
 
 	private function getMockClient() {
@@ -98,6 +95,120 @@ class MediawikiApiTest extends \PHPUnit_Framework_TestCase {
 			$this->assertEquals( 'imacode', $e->getApiCode() );
 			$this->assertEquals( 'imamsg', $e->getMessage() );
 		}
+	}
+
+	/**
+	 * @dataProvider provideActionsParamsResults
+	 */
+	public function testGetActionReturnsResult( $expectedResult, $action, $params = array() ) {
+		$client = $this->getMockClient();
+		$client->expects( $this->once() )
+			->method( 'getAction' )
+			->with( $this->equalTo( array_merge( array( 'action' => $action ), $params ) ) )
+			->will( $this->returnValue( $expectedResult ) );
+		$api = new MediawikiApi( $client );
+
+		$result = $api->getAction( $action, $params );
+
+		$this->assertEquals( $expectedResult, $result );
+
+	}
+
+	/**
+	 * @dataProvider provideActionsParamsResults
+	 */
+	public function testPostActionReturnsResult( $expectedResult, $action, $params = array() ) {
+		$client = $this->getMockClient();
+		$client->expects( $this->once() )
+			->method( 'postAction' )
+			->with( $this->equalTo( array_merge( array( 'action' => $action ), $params ) ) )
+			->will( $this->returnValue( $expectedResult ) );
+		$api = new MediawikiApi( $client );
+
+		$result = $api->postAction( $action, $params );
+
+		$this->assertEquals( $expectedResult, $result );
+
+	}
+
+	public function provideActionsParamsResults() {
+		return array(
+			array( array( 'key' => 'value' ), 'logout' ),
+			array( array( 'key' => 'value' ), 'logout', array( 'param1' => 'v1' ) ),
+			array( array( 'key' => 'value', 'key2' => 1212, array() ), 'logout' ),
+		);
+	}
+
+	public function testGoodLoginSequence() {
+		$client = $this->getMockClient();
+		$user = new ApiUser( 'U1', 'P1' );
+		$eq1 = array(
+			'action' => 'login',
+			'lgname' => 'U1',
+			'lgpassword' => 'P1',
+		);
+		$client->expects( $this->at( 0 ) )
+			->method( 'postAction' )
+			->with( $this->equalTo( $eq1 ) )
+			->will( $this->returnValue( array( 'login' => array(
+				'result' => 'NeedToken',
+				'token' => 'IamLoginTK',
+			) ) ) );
+		$client->expects( $this->at( 1 ) )
+			->method( 'postAction' )
+			->with( $this->equalTo( array_merge( $eq1, array( 'lgtoken' => 'IamLoginTK' ) ) ) )
+			->will( $this->returnValue( array( 'login' => array( 'result' => 'Success' ) ) ) );
+		$api = new MediawikiApi( $client );
+
+		$this->assertTrue( $api->login( $user ) );
+		$this->assertEquals( 'U1', $api->isLoggedin() );
+	}
+
+	public function testBadLoginSequence() {
+		$client = $this->getMockClient();
+		$user = new ApiUser( 'U1', 'P1' );
+		$eq1 = array(
+			'action' => 'login',
+			'lgname' => 'U1',
+			'lgpassword' => 'P1',
+		);
+		$client->expects( $this->at( 0 ) )
+			->method( 'postAction' )
+			->with( $this->equalTo( $eq1 ) )
+			->will( $this->returnValue( array( 'login' => array(
+				'result' => 'NeedToken',
+				'token' => 'IamLoginTK',
+			) ) ) );
+		$client->expects( $this->at( 1 ) )
+			->method( 'postAction' )
+			->with( $this->equalTo( array_merge( $eq1, array( 'lgtoken' => 'IamLoginTK' ) ) ) )
+			->will( $this->returnValue( array( 'login' => array( 'result' => 'BADTOKENorsmthin' ) ) ) );
+		$api = new MediawikiApi( $client );
+
+		$this->assertFalse( $api->login( $user ) );
+		$this->assertFalse( $api->isLoggedin() );
+	}
+
+	public function testLogout() {
+		$client = $this->getMockClient();
+		$client->expects( $this->at( 0 ) )
+			->method( 'postAction' )
+			->with( array( 'action' => 'logout' ) )
+			->will( $this->returnValue( array( ) ) );
+		$api = new MediawikiApi( $client );
+
+		$this->assertTrue( $api->logout( ) );
+	}
+
+	public function testLogoutOnFailure() {
+		$client = $this->getMockClient();
+		$client->expects( $this->at( 0 ) )
+			->method( 'postAction' )
+			->with( array( 'action' => 'logout' ) )
+			->will( $this->returnValue( null ) );
+		$api = new MediawikiApi( $client );
+
+		$this->assertFalse( $api->logout( ) );
 	}
 
 } 

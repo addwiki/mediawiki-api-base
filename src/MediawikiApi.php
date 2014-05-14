@@ -71,7 +71,7 @@ class MediawikiApi {
 	 * @throws UsageException
 	 */
 	private function throwUsageExceptions( $result ) {
-		if( array_key_exists( 'error', $result ) ) {
+		if( is_array( $result ) && array_key_exists( 'error', $result ) ) {
 			throw new UsageException( $result['error']['code'], $result['error']['info'] );
 		}
 	}
@@ -106,12 +106,10 @@ class MediawikiApi {
 	}
 
 	/**
-	 * @param ApiUser $user
-	 *
 	 * @return bool success
 	 */
-	public function logout( ApiUser $user ) {
-		$result = $this->postAction( 'logout', array(), $user );
+	public function logout() {
+		$result = $this->postAction( 'logout', array() );
 		if( $result === array() ) {
 			$this->isLoggedIn = false;
 			$this->clearTokens();
