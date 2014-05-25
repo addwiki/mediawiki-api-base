@@ -142,7 +142,7 @@ class MediawikiApi {
 	 * @return string
 	 */
 	public function getToken( $type = 'edit' ) {
-		$this->session->getToken( $type );
+		return $this->session->getToken( $type );
 	}
 
 	/**
