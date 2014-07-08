@@ -101,6 +101,7 @@ class MediawikiApi {
 	 *
 	 * @param ApiUser $apiUser
 	 *
+	 * @throws UsageException
 	 * @return bool success
 	 */
 	public function login( ApiUser $apiUser ) {
@@ -108,6 +109,7 @@ class MediawikiApi {
 			'lgname' => $apiUser->getUsername(),
 			'lgpassword' => $apiUser->getPassword()
 		);
+
 		$result = $this->postAction( 'login', $credentials );
 		if ( $result['login']['result'] == "NeedToken" ) {
 			$result = $this->postAction( 'login', array_merge( array( 'lgtoken' => $result['login']['token'] ), $credentials) );
@@ -116,8 +118,65 @@ class MediawikiApi {
 			$this->isLoggedIn = $apiUser->getUsername();
 			return true;
 		}
+
 		$this->isLoggedIn = false;
+		$this->throwLoginUsageException( $result['login']['result'] );
 		return false;
+	}
+
+	/**
+	 * @param string $loginResult
+	 *
+	 * @throws UsageException
+	 */
+	private function throwLoginUsageException( $loginResult ) {
+		switch( $loginResult ) {
+			case 'Illegal';
+				throw new UsageException(
+					'login-' . $loginResult,
+					'You provided an illegal username'
+				);
+			case 'NotExists';
+				throw new UsageException(
+					'login-' . $loginResult,
+					'The username you provided doesn\'t exist'
+				);
+			case 'WrongPass';
+				throw new UsageException(
+					'login-' . $loginResult,
+					'The password you provided is incorrect'
+				);
+			case 'WrongPluginPass';
+				throw new UsageException(
+					'login-' . $loginResult,
+					'An authentication plugin rather than MediaWiki itself rejected the password'
+				);
+			case 'CreateBlocked';
+				throw new UsageException(
+					'login-' . $loginResult,
+					'The wiki tried to automatically create a new account for you, but your IP address has been blocked from account creation'
+				);
+			case 'Throttled';
+				throw new UsageException(
+					'login-' . $loginResult,
+					'You\'ve logged in too many times in a short time.'
+				);
+			case 'Blocked';
+				throw new UsageException(
+					'login-' . $loginResult,
+					'User is blocked'
+				);
+			case 'NeedToken';
+				throw new UsageException(
+					'login-' . $loginResult,
+					'Either you did not provide the login token or the sessionid cookie.'
+				);
+			default:
+				throw new UsageException(
+					'login-' . $loginResult,
+					$loginResult
+				);
+		}
 	}
 
 	/**

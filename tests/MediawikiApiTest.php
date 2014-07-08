@@ -185,8 +185,8 @@ class MediawikiApiTest extends \PHPUnit_Framework_TestCase {
 			->will( $this->returnValue( array( 'login' => array( 'result' => 'BADTOKENorsmthin' ) ) ) );
 		$api = new MediawikiApi( $client );
 
-		$this->assertFalse( $api->login( $user ) );
-		$this->assertFalse( $api->isLoggedin() );
+		$this->setExpectedException( 'Mediawiki\Api\UsageException' );
+		$api->login( $user );
 	}
 
 	public function testLogout() {
