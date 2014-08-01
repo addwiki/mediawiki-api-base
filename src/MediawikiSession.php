@@ -4,6 +4,9 @@ namespace Mediawiki\Api;
 
 use Guzzle\Service\Mediawiki\MediawikiApiClient;
 
+/**
+ * @since 0.1
+ */
 class MediawikiSession {
 
 	/**

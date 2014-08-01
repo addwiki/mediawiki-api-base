@@ -6,6 +6,8 @@ use Exception;
 
 /**
  * Class representing a Mediawiki Api UsageException
+ *
+ * @since 0.1
  */
 class UsageException extends Exception {
 

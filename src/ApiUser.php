@@ -5,6 +5,7 @@ namespace Mediawiki\Api;
 use InvalidArgumentException;
 
 /**
+ * @since 0.1
  * Represents a user that can log in to the api
  */
 class ApiUser {

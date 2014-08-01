@@ -55,11 +55,11 @@ class MediawikiApi {
 	 * @param array $params
 	 *
 	 * @return mixed
+	 *
+	 * @deprecated since 0.2 Please use getRequest with a SimpleRequest object instead
 	 */
 	public function getAction( $action, $params = array() ) {
-		$resultArray = $this->client->getAction( array_merge( array( 'action' => $action ), $params ) );
-		$this->throwUsageExceptions( $resultArray );
-		return $resultArray;
+		return $this->getRequest( new SimpleRequest( $action, $params ) );
 	}
 
 	/**
@@ -69,9 +69,31 @@ class MediawikiApi {
 	 * @param array $params
 	 *
 	 * @return mixed
+	 *
+	 * @deprecated since 0.2 Please use postRequest with a SimpleRequest object instead
 	 */
 	public function postAction( $action, $params = array() ) {
-		$resultArray = $this->client->postAction( array_merge( array( 'action' => $action ), $params ) );
+		return $this->postRequest( new SimpleRequest( $action, $params ) );
+	}
+
+	/**
+	 * @since 0.2
+	 * @param Request $request
+	 * @return mixed
+	 */
+	public function getRequest( Request $request ) {
+		$resultArray = $this->client->getAction( $request->getParams() );
+		$this->throwUsageExceptions( $resultArray );
+		return $resultArray;
+	}
+
+	/**
+	 * @since 0.2
+	 * @param Request $request
+	 * @return mixed
+	 */
+	public function postRequest( Request $request ) {
+		$resultArray = $this->client->postAction( $request->getParams() );
 		$this->throwUsageExceptions( $resultArray );
 		return $resultArray;
 	}
