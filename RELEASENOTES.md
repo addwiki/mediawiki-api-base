@@ -2,6 +2,7 @@ These are the release notes for the [mediawiki-api-base](README.md).
 
 ## Version 0.2 (under development)
 
+* If warnings are present in API results E_USER_WARNING errors are triggered
 * Unsuccessful logins now throw a UsageException with extra details
 * The Request interface and SimpleRequest class have been added
 * MediawikiApi now have a getRequest and postRequest object

@@ -83,6 +83,7 @@ class MediawikiApi {
 	 */
 	public function getRequest( Request $request ) {
 		$resultArray = $this->client->getAction( $request->getParams() );
+		$this->triggerErrors( $resultArray );
 		$this->throwUsageExceptions( $resultArray );
 		return $resultArray;
 	}
@@ -94,8 +95,20 @@ class MediawikiApi {
 	 */
 	public function postRequest( Request $request ) {
 		$resultArray = $this->client->postAction( $request->getParams() );
+		$this->triggerErrors( $resultArray );
 		$this->throwUsageExceptions( $resultArray );
 		return $resultArray;
+	}
+
+	/**
+	 * @param $result
+	 */
+	private function triggerErrors( $result ) {
+		if( is_array( $result ) && array_key_exists( 'warnings', $result ) ) {
+			foreach( $result['warnings'] as $module => $warningData ) {
+				trigger_error( $module . ': ' . $warningData['*'], E_USER_WARNING );
+			}
+		}
 	}
 
 	/**

@@ -5,6 +5,7 @@ namespace Mediawiki\Api\Test;
 use Mediawiki\Api\ApiUser;
 use Mediawiki\Api\MediawikiApi;
 use Mediawiki\Api\UsageException;
+use PHPUnit_Framework_Error_Warning;
 use stdClass;
 
 /**
@@ -94,6 +95,48 @@ class MediawikiApiTest extends \PHPUnit_Framework_TestCase {
 		catch( UsageException $e ) {
 			$this->assertEquals( 'imacode', $e->getApiCode() );
 			$this->assertEquals( 'imamsg', $e->getMessage() );
+		}
+	}
+
+	public function testGetActionTriggersErrorOnWarning() {
+		$client = $this->getMockClient();
+		$client->expects( $this->once() )
+			->method( 'getAction' )
+			->will( $this->returnValue(
+				array( 'warnings' => array(
+					'foo' => array( '*' => 'bar' ),
+				) )
+			) );
+		$api = new MediawikiApi( $client );
+
+		try{
+			$api->getAction( 'foo' );
+			$this->fail( 'No Error Triggered' );
+		}
+		catch( PHPUnit_Framework_Error_Warning $w ) {
+			$this->assertEquals( 'foo: bar', $w->getMessage() );
+			$this->assertEquals( E_USER_WARNING, $w->getCode() );
+		}
+	}
+
+	public function testPostActionTriggersErrorOnWarning() {
+		$client = $this->getMockClient();
+		$client->expects( $this->once() )
+			->method( 'postAction' )
+			->will( $this->returnValue(
+				array( 'warnings' => array(
+					'foo' => array( '*' => 'bar' ),
+				) )
+			) );
+		$api = new MediawikiApi( $client );
+
+		try{
+			$api->postAction( 'foo' );
+			$this->fail( 'No Error Triggered' );
+		}
+		catch( PHPUnit_Framework_Error_Warning $w ) {
+			$this->assertEquals( 'foo: bar', $w->getMessage() );
+			$this->assertEquals( E_USER_WARNING, $w->getCode() );
 		}
 	}
 
