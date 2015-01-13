@@ -42,13 +42,11 @@ class MediawikiSession {
 		// If we don't already have the token that we want
 		if( !array_key_exists( $type, $this->tokens ) ) {
 
-			// If the new module cant handle the token we want OR we don't have the new module mw<1.25
-			if( !in_array( $type, array( 'csrf', 'watch', 'patrol', 'rollback', 'userrights' ) ) || $this->usePre125TokensModule ) {
-				// Switch edit token type...
-				$oldType = ($type === 'csrf' ? 'edit' : $type);
+			// If we know that we don't have the new module mw<1.25
+			if( $this->usePre125TokensModule ) {
 				// Suppress deprecation warning
 				$result = @$this->api->postRequest(
-					new SimpleRequest( 'tokens', array( 'type' => $oldType ) )
+					new SimpleRequest( 'tokens', array( 'type' => $this->getOldTokenType( $type ) ) )
 				);
 				$this->tokens[$type] = array_pop( $result['tokens'] );
 			} else {
@@ -56,7 +54,7 @@ class MediawikiSession {
 				$result = @$this->api->postRequest(
 					new SimpleRequest( 'query', array(
 						'meta' => 'tokens',
-						'type' => $type,
+						'type' => $this->getNewTokenType( $type ),
 						'continue' => '',
 					) )
 				);
@@ -72,6 +70,46 @@ class MediawikiSession {
 
 		}
 		return $this->tokens[$type];
+	}
+
+	/**
+	 * Tries to guess a new token type from an old token type
+	 *
+	 * @param string $type
+	 *
+	 * @return string
+	 */
+	private function getNewTokenType( $type ) {
+		switch ( $type ) {
+			case 'edit':
+			case 'delete':
+			case 'protect':
+			case 'move':
+			case 'block':
+			case 'unblock':
+			case 'email':
+			case 'import':
+			case 'options':
+				return 'csrf';
+		}
+		// Return the same type, don't know what to do with this..
+		return $type;
+	}
+
+	/**
+	 * Tries to guess an old token type from a new token type
+	 *
+	 * @param $type
+	 *
+	 * @return string
+	 */
+	private function getOldTokenType( $type ) {
+		switch ( $type ) {
+			// Guess that we want an edit token, this may not always work as we might be trying to use it for something else...
+			case 'csrf':
+				return 'edit';
+		}
+		return $type;
 	}
 
 	/**
