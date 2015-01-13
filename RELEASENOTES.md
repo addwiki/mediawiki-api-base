@@ -4,9 +4,8 @@ These are the release notes for the [mediawiki-api-base](README.md).
 
 ### Compatibility changes
 
-* Changed minimum MediaWiki version to 1.24
- * Session objects now use action=query&meta=tokens to get tokens.
- * The default token type is now 'csrf', 'edit' is no longer recognised here.
+* Session objects now use action=query&meta=tokens to get tokens when possible.
+NOTE: [Token names have changed between versions](//www.mediawiki.org/wiki/API:Tokens)
 
 ### Deprecations
 

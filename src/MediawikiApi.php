@@ -235,7 +235,7 @@ class MediawikiApi {
 	 *
 	 * @return string
 	 */
-	public function getToken( $type = 'edit' ) {
+	public function getToken( $type = 'csrf' ) {
 		return $this->session->getToken( $type );
 	}
 
