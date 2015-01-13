@@ -16,6 +16,7 @@ NOTE: [Token names have changed between versions](//www.mediawiki.org/wiki/API:T
 * If warnings are present in API results E_USER_WARNING errors are triggered
 * The Request interface and SimpleRequest class have been added
 * MediawikiApi now has a getRequest and postRequest method
+* MediawikiApi now has a getVersion method
 * Unsuccessful logins now throw a UsageException with extra details
 
 ## Version 0.1.2 (25 May 2014)

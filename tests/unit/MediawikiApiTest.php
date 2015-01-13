@@ -255,4 +255,31 @@ class MediawikiApiTest extends \PHPUnit_Framework_TestCase {
 		$this->assertFalse( $api->logout( ) );
 	}
 
+	/**
+	 * @dataProvider provideVersions
+	 */
+	public function testGetVersion( $apiValue, $expectedVersion ) {
+		$client = $this->getMockClient();
+		$client->expects( $this->exactly( 1 ) )
+			->method( 'getAction' )
+			->with( array( 'action' => 'query', 'meta' => 'siteinfo', 'continue' => '' ) )
+			->will( $this->returnValue( array(
+				'query' => array(
+					'general' => array(
+						'generator' => $apiValue,
+					),
+				),
+			) ) );
+		$api = new MediawikiApi( $client );
+		$this->assertEquals( $expectedVersion, $api->getVersion() );
+	}
+
+	public function provideVersions() {
+		return array(
+			array( 'MediaWiki 1.25wmf13', '1.25' ),
+			array( 'MediaWiki 1.24.1', '1.24.1' ),
+			array( 'MediaWiki 1.19', '1.19' ),
+			array( 'MediaWiki 1.0.0', '1.0.0' ),
+		);
+	}
 } 

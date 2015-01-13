@@ -25,6 +25,11 @@ class MediawikiApi {
 	private $session;
 
 	/**
+	 * @var string
+	 */
+	private $version;
+
+	/**
 	 * @param string|MediawikiApiClient $client either the url or the api or
 	 * @param MediawikiSession|null $session Inject a custom session here
 	 *
@@ -245,6 +250,25 @@ class MediawikiApi {
 	 */
 	public function clearTokens() {
 		$this->session->clearTokens();
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getVersion(){
+		if( !isset( $this->version ) ) {
+			$result = $this->getRequest( new SimpleRequest( 'query', array(
+				'meta' => 'siteinfo',
+				'continue' => '',
+			) ) );
+			preg_match(
+				'/\d+(?:\.\d+)+/',
+				$result['query']['general']['generator'],
+				$versionParts
+			);
+			$this->version = $versionParts[0];
+		}
+		return $this->version;
 	}
 
 }
