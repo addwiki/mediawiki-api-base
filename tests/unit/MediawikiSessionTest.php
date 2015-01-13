@@ -2,8 +2,6 @@
 
 namespace Mediawiki\Api\Test;
 
-use Mediawiki\Api\SimpleRequest;
-
 /**
  * @covers Mediawiki\Api\MediawikiSession
  */

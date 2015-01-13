@@ -1,6 +1,6 @@
 These are the release notes for the [mediawiki-api-base](README.md).
 
-## Version 0.2 (under development)
+## Version 0.2 (13 January 2015)
 
 ### Compatibility changes
 
