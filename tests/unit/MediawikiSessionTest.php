@@ -28,8 +28,10 @@ class MediawikiSessionTest extends \PHPUnit_Framework_TestCase {
 			->method( 'postRequest' )
 			->with( $this->isInstanceOf( '\Mediawiki\Api\SimpleRequest' ) )
 			->will( $this->returnValue( array(
-				'tokens' => array(
+				'query' => array(
+					'tokens' => array(
 					$tokenType => 'TKN-' . $tokenType,
+					)
 				)
 			) ) );
 
@@ -45,7 +47,7 @@ class MediawikiSessionTest extends \PHPUnit_Framework_TestCase {
 
 	public function provideTokenTypes() {
 		return array(
-			array( 'edit' ),
+			array( 'csrf' ),
 		);
 	}
 

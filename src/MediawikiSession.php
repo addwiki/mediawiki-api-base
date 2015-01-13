@@ -31,10 +31,16 @@ class MediawikiSession {
 	 *
 	 * @return string
 	 */
-	public function getToken( $type = 'edit' ) {
+	public function getToken( $type = 'csrf' ) {
 		if( !array_key_exists( $type , $this->tokens ) ) {
-			$result = $this->api->postRequest( new SimpleRequest( 'tokens', array( 'type' => $type ) ) );
-			$this->tokens[$type] = array_pop( $result['tokens'] );
+			$result = $this->api->postRequest(
+				new SimpleRequest( 'query', array(
+					'meta' => 'tokens',
+					'type' => $type,
+					'continue' => ''
+				) )
+			);
+			$this->tokens[$type] = array_pop( $result['query']['tokens'] );
 		}
 		return $this->tokens[$type];
 	}

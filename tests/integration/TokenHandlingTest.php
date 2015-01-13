@@ -6,7 +6,7 @@ class TokenHandlingTest extends \PHPUnit_Framework_TestCase {
 
 	public function testGetAnonUserToken() {
 		$api = new \Mediawiki\Api\MediawikiApi( 'http://localhost/w/api.php' );
-		$this->assertEquals( '+\\', $api->getToken( 'edit' ) );
+		$this->assertEquals( '+\\', $api->getToken( 'csrf' ) );
 	}
 
 } 
