@@ -2,8 +2,6 @@
 
 namespace Mediawiki\Api;
 
-use Guzzle\Service\Mediawiki\MediawikiApiClient;
-
 /**
  * @since 0.1
  */
@@ -15,15 +13,15 @@ class MediawikiSession {
 	private $tokens = array();
 
 	/**
-	 * @var MediawikiApiClient
+	 * @var MediawikiApi
 	 */
-	private $client;
+	private $api;
 
 	/**
-	 * @param MediawikiApiClient $client
+	 * @param MediawikiApi $api
 	 */
-	public function __construct( MediawikiApiClient $client ) {
-		$this->client = $client;
+	public function __construct( MediawikiApi $api ) {
+		$this->api = $api;
 	}
 
 	/**
@@ -35,7 +33,7 @@ class MediawikiSession {
 	 */
 	public function getToken( $type = 'edit' ) {
 		if( !array_key_exists( $type , $this->tokens ) ) {
-			$result = $this->client->tokens( array( 'type' => $type ) );
+			$result = $this->api->postRequest( new SimpleRequest( 'tokens', array( 'type' => $type ) ) );
 			$this->tokens[$type] = array_pop( $result['tokens'] );
 		}
 		return $this->tokens[$type];

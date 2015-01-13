@@ -38,7 +38,7 @@ class MediawikiApi {
 		}
 
 		if( $session === null ) {
-			$session = new MediawikiSession( $client );
+			$session = new MediawikiSession( $this );
 		} elseif ( !$session instanceof MediawikiSession ){
 			throw new InvalidArgumentException();
 		}
