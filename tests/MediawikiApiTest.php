@@ -4,6 +4,7 @@ namespace Mediawiki\Api\Test;
 
 use Mediawiki\Api\ApiUser;
 use Mediawiki\Api\MediawikiApi;
+use Mediawiki\Api\SimpleRequest;
 use Mediawiki\Api\UsageException;
 use PHPUnit_Framework_Error_Warning;
 use stdClass;
@@ -54,7 +55,7 @@ class MediawikiApiTest extends \PHPUnit_Framework_TestCase {
 		return $mock;
 	}
 
-	public function testGetActionThrowsUsageExceptionOnError() {
+	public function testGetRequestThrowsUsageExceptionOnError() {
 		$client = $this->getMockClient();
 		$client->expects( $this->once() )
 			->method( 'getAction' )
@@ -67,7 +68,7 @@ class MediawikiApiTest extends \PHPUnit_Framework_TestCase {
 		$api = new MediawikiApi( $client );
 
 		try{
-			$api->getAction( 'foo' );
+			$api->getRequest( new SimpleRequest( 'foo' ) );
 			$this->fail( 'No Usage Exception Thrown' );
 		}
 		catch( UsageException $e ) {
@@ -76,7 +77,7 @@ class MediawikiApiTest extends \PHPUnit_Framework_TestCase {
 		}
 	}
 
-	public function testPostActionThrowsUsageExceptionOnError() {
+	public function testPostRequestThrowsUsageExceptionOnError() {
 		$client = $this->getMockClient();
 		$client->expects( $this->once() )
 			->method( 'postAction' )
@@ -89,7 +90,7 @@ class MediawikiApiTest extends \PHPUnit_Framework_TestCase {
 		$api = new MediawikiApi( $client );
 
 		try{
-			$api->postAction( 'foo' );
+			$api->postRequest( new SimpleRequest( 'foo' ) );
 			$this->fail( 'No Usage Exception Thrown' );
 		}
 		catch( UsageException $e ) {
@@ -98,7 +99,7 @@ class MediawikiApiTest extends \PHPUnit_Framework_TestCase {
 		}
 	}
 
-	public function testGetActionTriggersErrorOnWarning() {
+	public function testGetRequestTriggersErrorOnWarning() {
 		$client = $this->getMockClient();
 		$client->expects( $this->once() )
 			->method( 'getAction' )
@@ -110,7 +111,7 @@ class MediawikiApiTest extends \PHPUnit_Framework_TestCase {
 		$api = new MediawikiApi( $client );
 
 		try{
-			$api->getAction( 'foo' );
+			$api->getRequest( new SimpleRequest( 'foo' ) );
 			$this->fail( 'No Error Triggered' );
 		}
 		catch( PHPUnit_Framework_Error_Warning $w ) {
@@ -119,7 +120,7 @@ class MediawikiApiTest extends \PHPUnit_Framework_TestCase {
 		}
 	}
 
-	public function testPostActionTriggersErrorOnWarning() {
+	public function testPostRequestTriggersErrorOnWarning() {
 		$client = $this->getMockClient();
 		$client->expects( $this->once() )
 			->method( 'postAction' )
@@ -131,7 +132,7 @@ class MediawikiApiTest extends \PHPUnit_Framework_TestCase {
 		$api = new MediawikiApi( $client );
 
 		try{
-			$api->postAction( 'foo' );
+			$api->postRequest( new SimpleRequest( 'foo' ) );
 			$this->fail( 'No Error Triggered' );
 		}
 		catch( PHPUnit_Framework_Error_Warning $w ) {
@@ -151,7 +152,7 @@ class MediawikiApiTest extends \PHPUnit_Framework_TestCase {
 			->will( $this->returnValue( $expectedResult ) );
 		$api = new MediawikiApi( $client );
 
-		$result = $api->getAction( $action, $params );
+		$result = $api->getRequest( new SimpleRequest( $action, $params ) );
 
 		$this->assertEquals( $expectedResult, $result );
 
@@ -168,7 +169,7 @@ class MediawikiApiTest extends \PHPUnit_Framework_TestCase {
 			->will( $this->returnValue( $expectedResult ) );
 		$api = new MediawikiApi( $client );
 
-		$result = $api->postAction( $action, $params );
+		$result = $api->postRequest( new SimpleRequest( $action, $params ) );
 
 		$this->assertEquals( $expectedResult, $result );
 

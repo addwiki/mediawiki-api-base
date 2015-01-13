@@ -145,9 +145,9 @@ class MediawikiApi {
 			'lgpassword' => $apiUser->getPassword()
 		);
 
-		$result = $this->postAction( 'login', $credentials );
+		$result = $this->postRequest( new SimpleRequest( 'login', $credentials ) );
 		if ( $result['login']['result'] == "NeedToken" ) {
-			$result = $this->postAction( 'login', array_merge( array( 'lgtoken' => $result['login']['token'] ), $credentials) );
+			$result = $this->postRequest( new SimpleRequest( 'login', array_merge( array( 'lgtoken' => $result['login']['token'] ), $credentials) ) );
 		}
 		if ( $result['login']['result'] == "Success" ) {
 			$this->isLoggedIn = $apiUser->getUsername();
@@ -219,7 +219,7 @@ class MediawikiApi {
 	 * @return bool success
 	 */
 	public function logout() {
-		$result = $this->postAction( 'logout', array() );
+		$result = $this->postRequest( new SimpleRequest( 'logout' ) );
 		if( $result === array() ) {
 			$this->isLoggedIn = false;
 			$this->clearTokens();
