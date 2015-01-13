@@ -1,5 +1,7 @@
 <?php
 
+namespace Mediawiki\Api\Test;
+
 /**
  * @covers Mediawiki\Api\MediawikiSession
  */
