@@ -21,18 +21,18 @@ Use composer to install the library and all its dependencies:
 require_once( __DIR__ . '/vendor/autoload.php' );
 
 // Log in to a wiki
-$api = new \Mediawiki\Api\MediawikiApi( 'http://localhost/w/api.php' );
-$api->login( new \Mediawiki\Api\ApiUser( 'username', 'password' ) );
+$api = new MediawikiApi( 'http://localhost/w/api.php' );
+$api->login( new ApiUser( 'username', 'password' ) );
 
 // Make a POST request
-$api->postAction( 'purge', array( 'titles' => 'FooBar' ) );
+$api->postRequest( new SimpleRequest( 'purge', array( 'titles' => 'FooBar' ) ) );
 
 // Make a GET request
-$queryResponse = $api->getAction( 'query', array( 'meta' => 'siteinfo' ) );
+$queryResponse = $api->getRequest( new SimpleRequest( 'query', array( 'meta' => 'siteinfo' ) ) );
 
 // Make a bad request and catch the error
 try{
-	$api->postAction( 'FooBarBaz' );
+	$api->postRequest( new SimpleRequest( 'FooBarBaz' ) );
 }
 catch ( UsageException $e ) {
 	echo "Oh no the api returned an error!";

@@ -2,15 +2,16 @@
 
 namespace Mediawiki\Api;
 
-use Guzzle\Plugin\Cookie\CookieJar\ArrayCookieJar;
-use Guzzle\Plugin\Cookie\CookiePlugin;
-use Guzzle\Service\Mediawiki\MediawikiApiClient;
+use GuzzleHttp\Client;
+use GuzzleHttp\ClientInterface;
+use GuzzleHttp\Cookie\CookieJar;
+use GuzzleHttp\Subscriber\Cookie;
 use InvalidArgumentException;
 
 class MediawikiApi {
 
 	/**
-	 * @var MediawikiApiClient
+	 * @var ClientInterface
 	 */
 	private $client;
 
@@ -30,26 +31,31 @@ class MediawikiApi {
 	private $version;
 
 	/**
-	 * @param string|MediawikiApiClient $client either the url or the api or
+	 * @param string|ClientInterface $client Guzzle Client or api base url
 	 * @param MediawikiSession|null $session Inject a custom session here
 	 *
 	 * @throws InvalidArgumentException
 	 */
 	public function __construct( $client, $session = null ) {
 		if( is_string( $client ) ) {
-			$client = MediawikiApiClient::factory( array( 'base_url' => $client ) );
-		} elseif ( !$client instanceof MediawikiApiClient ) {
-			throw new InvalidArgumentException();
+			$client = new Client( array(
+				'base_url' => $client,
+				'defaults' => array(
+					'headers' =>  array( 'User-Agent' => 'addwiki-guzzle-mediawiki-client' ),
+				)
+			) );
+		} elseif ( !$client instanceof Client ) {
+			throw new InvalidArgumentException( '$client must either be a string or ClientInterface instance' );
 		}
 
 		if( $session === null ) {
 			$session = new MediawikiSession( $this );
 		} elseif ( !$session instanceof MediawikiSession ){
-			throw new InvalidArgumentException();
+			throw new InvalidArgumentException( '$session must either me null or MediawikiSession instance' );
 		}
 
 		$this->client = $client;
-		$this->client->addSubscriber( new CookiePlugin( new ArrayCookieJar() ) );
+		$this->client->getEmitter()->attach( new Cookie( new CookieJar() ) );
 		$this->session = $session;
 	}
 
@@ -87,7 +93,12 @@ class MediawikiApi {
 	 * @return mixed
 	 */
 	public function getRequest( Request $request ) {
-		$resultArray = $this->client->getAction( $request->getParams() );
+		$resultArray = $this->client->get(
+			null,// Default to the base_url already set in the client
+			array(
+				'query' => array_merge( $request->getParams(), array( 'format' => 'json' ) ),
+			)
+		)->json();
 		$this->triggerErrors( $resultArray );
 		$this->throwUsageExceptions( $resultArray );
 		return $resultArray;
@@ -99,7 +110,12 @@ class MediawikiApi {
 	 * @return mixed
 	 */
 	public function postRequest( Request $request ) {
-		$resultArray = $this->client->postAction( $request->getParams() );
+		$resultArray = $this->client->post(
+			null,// Default to the base_url already set in the client
+			array(
+				'body' => array_merge( $request->getParams(), array( 'format' => 'json' ) ),
+			)
+		)->json();
 		$this->triggerErrors( $resultArray );
 		$this->throwUsageExceptions( $resultArray );
 		return $resultArray;
