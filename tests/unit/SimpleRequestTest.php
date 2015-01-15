@@ -25,7 +25,7 @@ class SimpleRequestTest extends \PHPUnit_Framework_TestCase {
 			array( 'a', array( 'b' => 'c' ), array( 'action' => 'a', 'b' => 'c' ) ),
 			array( 'a', array( 'b' => 'c', 'd' => 'e' ), array( 'action' => 'a', 'b' => 'c', 'd' => 'e' ) ),
 			array( 'a', array( 'b' => 'c|d|e|f' ), array( 'action' => 'a', 'b' => 'c|d|e|f' ) ),
-			array( 'foo', array(), array( 'foo' => 'bar' ) ),
+			array( 'foo', array(), array( 'action' => 'foo' ) ,array( 'foo' => 'bar' ) ),
 		);
 	}
 

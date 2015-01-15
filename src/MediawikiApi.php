@@ -41,10 +41,10 @@ class MediawikiApi {
 			$client = new Client( array(
 				'base_url' => $client,
 				'defaults' => array(
-					'headers' =>  array( 'User-Agent' => 'addwiki-guzzle-mediawiki-client' ),
+					'headers' => array( 'User-Agent' => 'addwiki-guzzle-mediawiki-client' ),
 				)
 			) );
-		} elseif ( !$client instanceof Client ) {
+		} elseif ( !$client instanceof ClientInterface ) {
 			throw new InvalidArgumentException( '$client must either be a string or ClientInterface instance' );
 		}
 
