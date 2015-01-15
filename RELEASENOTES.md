@@ -1,5 +1,10 @@
 These are the release notes for the [mediawiki-api-base](README.md).
 
+## Version 0.3 (development)
+
+* UsageExceptions can now contain the full api result array
+
+
 ## Version 0.2 (13 January 2015)
 
 ### Compatibility changes

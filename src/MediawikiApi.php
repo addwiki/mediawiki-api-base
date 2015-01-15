@@ -123,7 +123,11 @@ class MediawikiApi {
 	 */
 	private function throwUsageExceptions( $result ) {
 		if( is_array( $result ) && array_key_exists( 'error', $result ) ) {
-			throw new UsageException( $result['error']['code'], $result['error']['info'] );
+			throw new UsageException(
+				$result['error']['code'],
+				$result['error']['info'],
+				$result
+			);
 		}
 	}
 
@@ -160,61 +164,71 @@ class MediawikiApi {
 		}
 
 		$this->isLoggedIn = false;
-		$this->throwLoginUsageException( $result['login']['result'] );
+		$this->throwLoginUsageException( $result );
 		return false;
 	}
 
 	/**
-	 * @param string $loginResult
+	 * @param array $result
 	 *
 	 * @throws UsageException
 	 */
-	private function throwLoginUsageException( $loginResult ) {
+	private function throwLoginUsageException( $result ) {
+		$loginResult = $result['login']['result'];
 		switch( $loginResult ) {
 			case 'Illegal';
 				throw new UsageException(
 					'login-' . $loginResult,
-					'You provided an illegal username'
+					'You provided an illegal username',
+					$result
 				);
 			case 'NotExists';
 				throw new UsageException(
 					'login-' . $loginResult,
-					'The username you provided doesn\'t exist'
+					'The username you provided doesn\'t exist',
+					$result
 				);
 			case 'WrongPass';
 				throw new UsageException(
 					'login-' . $loginResult,
-					'The password you provided is incorrect'
+					'The password you provided is incorrect',
+					$result
 				);
 			case 'WrongPluginPass';
 				throw new UsageException(
 					'login-' . $loginResult,
-					'An authentication plugin rather than MediaWiki itself rejected the password'
+					'An authentication plugin rather than MediaWiki itself rejected the password',
+					$result
 				);
 			case 'CreateBlocked';
 				throw new UsageException(
 					'login-' . $loginResult,
-					'The wiki tried to automatically create a new account for you, but your IP address has been blocked from account creation'
+					'The wiki tried to automatically create a new account for you, but your IP address has been blocked from account creation',
+					$result
 				);
 			case 'Throttled';
 				throw new UsageException(
 					'login-' . $loginResult,
-					'You\'ve logged in too many times in a short time.'
+					'You\'ve logged in too many times in a short time.',
+					$result
 				);
 			case 'Blocked';
 				throw new UsageException(
 					'login-' . $loginResult,
-					'User is blocked'
+					'User is blocked',
+					$result
 				);
 			case 'NeedToken';
 				throw new UsageException(
 					'login-' . $loginResult,
-					'Either you did not provide the login token or the sessionid cookie.'
+					'Either you did not provide the login token or the sessionid cookie.',
+					$result
 				);
 			default:
 				throw new UsageException(
 					'login-' . $loginResult,
-					$loginResult
+					$loginResult,
+					$result
 				);
 		}
 	}

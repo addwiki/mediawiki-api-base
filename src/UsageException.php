@@ -17,13 +17,20 @@ class UsageException extends Exception {
 	private $apiCode;
 
 	/**
+	 * @var array
+	 */
+	private $result;
+
+	/**
 	 * @since 0.1
 	 *
 	 * @param string $apiCode
 	 * @param string $message
+	 * @param array $result the result the exception was generated from
 	 */
-	public function __construct( $apiCode = '', $message = '' ) {
+	public function __construct( $apiCode = '', $message = '', $result = array() ) {
 		$this->apiCode = $apiCode;
+		$this->result = $result;
 		parent::__construct( $message, 0, null );
 	}
 
@@ -34,6 +41,14 @@ class UsageException extends Exception {
 	 */
 	public function getApiCode() {
 		return $this->apiCode;
+	}
+
+	/**
+	 * @since 0.3
+	 * @return array
+	 */
+	public function getApiResult() {
+		return $this->result;
 	}
 
 } 
