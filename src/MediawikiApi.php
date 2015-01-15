@@ -97,6 +97,7 @@ class MediawikiApi {
 			null,// Default to the base_url already set in the client
 			array(
 				'query' => array_merge( $request->getParams(), array( 'format' => 'json' ) ),
+				'headers' => $request->getHeaders(),
 			)
 		)->json();
 		$this->triggerErrors( $resultArray );
@@ -114,6 +115,7 @@ class MediawikiApi {
 			null,// Default to the base_url already set in the client
 			array(
 				'body' => array_merge( $request->getParams(), array( 'format' => 'json' ) ),
+				'headers' => $request->getHeaders(),
 			)
 		)->json();
 		$this->triggerErrors( $resultArray );

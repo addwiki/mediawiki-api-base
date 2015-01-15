@@ -12,9 +12,10 @@ class SimpleRequestTest extends \PHPUnit_Framework_TestCase {
 	/**
 	 * @dataProvider provideValidConstruction
 	 */
-	public function testValidConstruction( $action, $params, $expected ) {
-		$request = new SimpleRequest( $action, $params );
+	public function testValidConstruction( $action, $params, $expected, $headers = array() ) {
+		$request = new SimpleRequest( $action, $params, $headers );
 		$this->assertEquals( $expected, $request->getParams() );
+		$this->assertEquals( $headers, $request->getHeaders() );
 	}
 
 	public function provideValidConstruction() {
@@ -24,6 +25,7 @@ class SimpleRequestTest extends \PHPUnit_Framework_TestCase {
 			array( 'a', array( 'b' => 'c' ), array( 'action' => 'a', 'b' => 'c' ) ),
 			array( 'a', array( 'b' => 'c', 'd' => 'e' ), array( 'action' => 'a', 'b' => 'c', 'd' => 'e' ) ),
 			array( 'a', array( 'b' => 'c|d|e|f' ), array( 'action' => 'a', 'b' => 'c|d|e|f' ) ),
+			array( 'foo', array(), array( 'foo' => 'bar' ) ),
 		);
 	}
 
