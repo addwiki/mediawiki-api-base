@@ -169,7 +169,8 @@ class MediawikiApi {
 	public function login( ApiUser $apiUser ) {
 		$credentials = array(
 			'lgname' => $apiUser->getUsername(),
-			'lgpassword' => $apiUser->getPassword()
+			'lgpassword' => $apiUser->getPassword(),
+			'lgdomain' => $apiUser->getDomain()
 		);
 
 		$result = $this->postRequest( new SimpleRequest( 'login', $credentials ) );
