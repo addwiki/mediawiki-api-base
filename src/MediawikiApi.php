@@ -170,8 +170,11 @@ class MediawikiApi {
 		$credentials = array(
 			'lgname' => $apiUser->getUsername(),
 			'lgpassword' => $apiUser->getPassword(),
-			'lgdomain' => $apiUser->getDomain()
 		);
+
+		if( !is_null( $apiUser->getDomain() ) ) {
+			$credentials['lgdomain'] = $apiUser->getDomain();
+		}
 
 		$result = $this->postRequest( new SimpleRequest( 'login', $credentials ) );
 		if ( $result['login']['result'] == "NeedToken" ) {
