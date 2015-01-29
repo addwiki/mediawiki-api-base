@@ -21,20 +21,27 @@ class ApiUser {
 	private $username;
 
 	/**
+	 * @var string
+	 */
+	private $domain;
+
+	/**
 	 * @param string $username
 	 * @param string $password
+	 * @param string|null $domain
 	 *
 	 * @throws \InvalidArgumentException
 	 */
-	public function __construct( $username, $password ) {
-		if( !is_string( $username ) || !is_string( $password ) ) {
-			throw new InvalidArgumentException( 'Username and Password must both be strings' );
+	public function __construct( $username, $password, $domain = null ) {
+		if( !is_string( $username ) || !is_string( $password ) || !( is_null( $domain ) || is_string( $domain ) ) ) {
+			throw new InvalidArgumentException( 'Username, Password and Domain must all be strings' );
 		}
 		if( empty( $username ) || empty( $password ) ) {
 			throw new InvalidArgumentException( 'Username and Password are not allowed to be empty' );
 		}
 		$this->username = $username;
 		$this->password = $password;
+		$this->domain   = $domain;
 	}
 
 	/**
@@ -55,12 +62,20 @@ class ApiUser {
 
 	/**
 	 * @since 0.1
+	 * @return string
+	 */
+	public function getDomain() {
+		return $this->domain;
+	}
+
+	/**
+	 * @since 0.1
 	 * @param mixed $other
 	 *
 	 * @return bool
 	 */
 	public function equals( $other ) {
-		if( $other instanceof ApiUser && $this->username == $other->getUsername() && $this->password == $other->getPassword() ) {
+		if( $other instanceof ApiUser && $this->username == $other->getUsername() && $this->password == $other->getPassword() && $this->domain == $other->getDomain() ) {
 			return true;
 		}
 		return false;
