@@ -6,6 +6,7 @@ These are the release notes for the [mediawiki-api-base](README.md).
 * No longer uses addwiki/guzzle-mediawiki-client
 * Now using "guzzlehttp/guzzle": "~5.0" ( From "guzzle/guzzle": "~3.2" )
 * Added getHeaders method to Request interface
+* ApiUser now accepts a domain
 
 ## Version 0.2 (13 January 2015)
 
