@@ -1,6 +1,10 @@
 These are the release notes for the [mediawiki-api-base](README.md).
 
-## Version 0.3 (development)
+## Version 0.4 (In development)
+
+* 
+
+## Version 0.3 (1 June 2015)
 
 * UsageExceptions can now contain the full api result array
 * No longer uses addwiki/guzzle-mediawiki-client
