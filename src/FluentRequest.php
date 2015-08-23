@@ -26,6 +26,13 @@ class FluentRequest implements Request {
 	}
 
 	/**
+	 * @return self
+	 */
+	public static function factory() {
+		return new self();
+	}
+
+	/**
 	 * @param string $action
 	 *
 	 * @return $this

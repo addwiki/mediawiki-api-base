@@ -13,7 +13,7 @@ On Packagist:
 
 Use composer to install the library and all its dependencies:
 
-	composer require "addwiki/mediawiki-api-base:~0.3.0"
+	composer require "addwiki/mediawiki-api-base:~1.0"
 
 ## Example Usage
 
@@ -26,10 +26,10 @@ $api = new MediawikiApi( 'http://localhost/w/api.php' );
 $api->login( new ApiUser( 'username', 'password' ) );
 
 // Make a POST request
-$api->postRequest( new SimpleRequest( 'purge', array( 'titles' => 'FooBar' ) ) );
+$api->postRequest( FluentRequest::factory->setAction( 'purge' )->setParam( 'titles', 'FooBar' ) );
 
 // Make a GET request
-$queryResponse = $api->getRequest( new SimpleRequest( 'query', array( 'meta' => 'siteinfo' ) ) );
+$queryResponse = $api->getRequest( FluentRequest::factory->setAction( 'query' )->setParam( 'meta', 'siteinfo' ) );
 
 // Make a bad request and catch the error
 try{
