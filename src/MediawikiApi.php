@@ -8,6 +8,7 @@ use GuzzleHttp\Cookie\CookieJar;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Message\ResponseInterface;
 use GuzzleHttp\Subscriber\Cookie;
+use GuzzleHttp\Subscriber\Retry\RetrySubscriber;
 use InvalidArgumentException;
 
 class MediawikiApi {
@@ -56,8 +57,10 @@ class MediawikiApi {
 			throw new InvalidArgumentException( '$session must either me null or MediawikiSession instance' );
 		}
 
+		$client->getEmitter()->attach( new Cookie( new CookieJar() ) );
+		$client->getEmitter()->attach( new RetrySubscriber([ 'filter' => RetrySubscriber::createStatusFilter() ]) );
+
 		$this->client = $client;
-		$this->client->getEmitter()->attach( new Cookie( new CookieJar() ) );
 		$this->session = $session;
 	}
 
@@ -95,21 +98,7 @@ class MediawikiApi {
 	 * @return mixed
 	 */
 	public function getRequest( Request $request ) {
-		$attempts = $request->getOptions()->getAttempts();
-
-		while ( $attempts >= 1 ) {
-			try{
-				$response = $this->getGuzzleGetResponse( $request );
-				break;
-			} catch( RequestException $ex ) {
-				$attempts = $attempts - 1;
-				if ( $attempts === 0 ) {
-					throw $ex;
-				}
-			}
-		}
-
-		/** @var ResponseInterface $response */
+		$response = $this->getGuzzleGetResponse( $request );
 		$resultArray = $response->json();
 
 		$this->triggerErrors( $resultArray );
@@ -124,21 +113,7 @@ class MediawikiApi {
 	 * @return mixed
 	 */
 	public function postRequest( Request $request ) {
-		$attempts = $request->getOptions()->getAttempts();
-
-		while ( $attempts >= 1 ) {
-			try{
-				$response = $this->getGuzzlePostResponse( $request );
-				break;
-			} catch( RequestException $ex ) {
-				$attempts = $attempts - 1;
-				if ( $attempts === 0 ) {
-					throw $ex;
-				}
-			}
-		}
-
-		/** @var ResponseInterface $response */
+		$response = $this->getGuzzlePostResponse( $request );
 		$resultArray = $response->json();
 
 		$this->triggerErrors( $resultArray );

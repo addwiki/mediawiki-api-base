@@ -27,34 +27,23 @@ class SimpleRequest implements Request {
 	private $headers;
 
 	/**
-	 * @var RequestOptions
-	 */
-	private $options;
-
-	/**
 	 * @param string $action
 	 * @param array $params
 	 * @param array $headers
-	 * @param RequestOptions $options
 	 *
 	 * @throws InvalidArgumentException
 	 */
 	public function __construct(
 		$action,
 		array $params = array(),
-		array $headers = array(),
-		RequestOptions $options = null
+		array $headers = array()
 	) {
 		if( !is_string( $action ) ) {
 			throw new InvalidArgumentException( '$action must be string' );
 		}
-		if( is_null( $options ) ) {
-			$options = new RequestOptions();
-		}
 		$this->action = $action;
 		$this->params = $params;
 		$this->headers = $headers;
-		$this->options = $options;
 	}
 
 	public function getParams() {
@@ -63,10 +52,6 @@ class SimpleRequest implements Request {
 
 	public function getHeaders() {
 		return $this->headers;
-	}
-
-	public function getOptions() {
-		return $this->options;
 	}
 
 }

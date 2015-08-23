@@ -17,25 +17,12 @@ class FluentRequest implements Request {
 	 */
 	private $headers = array();
 
-	/**
-	 * @var RequestOptions
-	 */
-	private $options;
-
-	public function __construct() {
-		$this->options = new RequestOptions();
-	}
-
 	public function getParams() {
 		return $this->params;
 	}
 
 	public function getHeaders() {
 		return $this->headers;
-	}
-
-	public function getOptions() {
-		return $this->options;
 	}
 
 	/**
@@ -73,30 +60,6 @@ class FluentRequest implements Request {
 	 */
 	public function setHeaders( $headers ) {
 		$this->headers = $headers;
-		return $this;
-	}
-
-	/**
-	 * @since 0.4
-	 *
-	 * @param RequestOptions $options
-	 *
-	 * @return $this
-	 */
-	public function setOptions( RequestOptions $options ) {
-		$this->options = $options;
-		return $this;
-	}
-
-	/**
-	 * @since 0.4
-	 *
-	 * @param integer $attempts
-	 *
-	 * @return $this
-	 */
-	public function setAttempts( $attempts ) {
-		$this->options->setAttempts( $attempts );
 		return $this;
 	}
 

@@ -2,10 +2,8 @@ These are the release notes for the [mediawiki-api-base](README.md).
 
 ## Version 0.4 (In development)
 
-* Added `RequestOptions` object
 * Added `FluentRequest` object
-* Added `getOptions` method to Request interface
-* Added the ability for `MediawikiApi::getRequest` and `MediawikiApi::postRequest` to retry on HTTP errors
+* Requires "guzzlehttp/retry-subscriber": "~2.0"
 
 ## Version 0.3 (1 June 2015)
 
