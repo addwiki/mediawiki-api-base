@@ -5,6 +5,8 @@ namespace Mediawiki\Api;
 use GuzzleHttp\Client;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Cookie\CookieJar;
+use GuzzleHttp\Exception\RequestException;
+use GuzzleHttp\Message\ResponseInterface;
 use GuzzleHttp\Subscriber\Cookie;
 use InvalidArgumentException;
 
@@ -67,7 +69,7 @@ class MediawikiApi {
 	 *
 	 * @return mixed
 	 *
-	 * @deprecated since 0.2 Please use getRequest with a SimpleRequest object instead
+	 * @deprecated since 0.2 Please use getRequest
 	 */
 	public function getAction( $action, $params = array() ) {
 		return $this->getRequest( new SimpleRequest( $action, $params ) );
@@ -81,7 +83,7 @@ class MediawikiApi {
 	 *
 	 * @return mixed
 	 *
-	 * @deprecated since 0.2 Please use postRequest with a SimpleRequest object instead
+	 * @deprecated since 0.2 Please use postRequest
 	 */
 	public function postAction( $action, $params = array() ) {
 		return $this->postRequest( new SimpleRequest( $action, $params ) );
@@ -93,15 +95,26 @@ class MediawikiApi {
 	 * @return mixed
 	 */
 	public function getRequest( Request $request ) {
-		$resultArray = $this->client->get(
-			null,// Default to the base_url already set in the client
-			array(
-				'query' => array_merge( $request->getParams(), array( 'format' => 'json' ) ),
-				'headers' => $request->getHeaders(),
-			)
-		)->json();
+		$attempts = $request->getOptions()->getAttempts();
+
+		while ( $attempts >= 1 ) {
+			try{
+				$response = $this->getGuzzleGetResponse( $request );
+				break;
+			} catch( RequestException $ex ) {
+				$attempts = $attempts - 1;
+				if ( $attempts === 0 ) {
+					throw $ex;
+				}
+			}
+		}
+
+		/** @var ResponseInterface $response */
+		$resultArray = $response->json();
+
 		$this->triggerErrors( $resultArray );
 		$this->throwUsageExceptions( $resultArray );
+
 		return $resultArray;
 	}
 
@@ -111,16 +124,68 @@ class MediawikiApi {
 	 * @return mixed
 	 */
 	public function postRequest( Request $request ) {
-		$resultArray = $this->client->post(
-			null,// Default to the base_url already set in the client
-			array(
-				'body' => array_merge( $request->getParams(), array( 'format' => 'json' ) ),
-				'headers' => $request->getHeaders(),
-			)
-		)->json();
+		$attempts = $request->getOptions()->getAttempts();
+
+		while ( $attempts >= 1 ) {
+			try{
+				$response = $this->getGuzzlePostResponse( $request );
+				break;
+			} catch( RequestException $ex ) {
+				$attempts = $attempts - 1;
+				if ( $attempts === 0 ) {
+					throw $ex;
+				}
+			}
+		}
+
+		/** @var ResponseInterface $response */
+		$resultArray = $response->json();
+
 		$this->triggerErrors( $resultArray );
 		$this->throwUsageExceptions( $resultArray );
+
 		return $resultArray;
+	}
+
+	/**
+	 * @param Request $request
+	 *
+	 * @return ResponseInterface
+	 */
+	private function getGuzzleGetResponse( Request $request ) {
+		return $this->client->get(
+			null,// Default to the base_url already set in the client
+			$this->getGuzzleClientRequestOptions( $request, 'query' )
+		);
+	}
+
+	/**
+	 * @param Request $request
+	 *
+	 * @throws RequestException
+	 *
+	 * @return ResponseInterface
+	 */
+	private function getGuzzlePostResponse( Request $request ) {
+		return $this->client->post(
+			null,// Default to the base_url already set in the client
+			$this->getGuzzleClientRequestOptions( $request, 'body' )
+		);
+	}
+
+	/**
+	 * @param Request $request
+	 * @param string $bodyOrQuery
+	 *
+	 * @throws RequestException
+	 *
+	 * @return array as needed by ClientInterface::get and ClientInterface::post
+	 */
+	private function getGuzzleClientRequestOptions( Request $request, $bodyOrQuery ) {
+		return array(
+			$bodyOrQuery => array_merge( $request->getParams(), array( 'format' => 'json' ) ),
+			'headers' => $request->getHeaders(),
+		);
 	}
 
 	/**

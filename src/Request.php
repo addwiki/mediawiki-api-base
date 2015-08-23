@@ -22,4 +22,10 @@ interface Request {
 	 */
 	public function getHeaders();
 
-} 
+	/**
+	 * @since 0.4
+	 * @return RequestOptions
+	 */
+	public function getOptions();
+
+}
