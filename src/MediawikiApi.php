@@ -41,12 +41,7 @@ class MediawikiApi {
 	 */
 	public function __construct( $client, $session = null ) {
 		if( is_string( $client ) ) {
-			$client = new Client( array(
-				'base_url' => $client,
-				'defaults' => array(
-					'headers' => array( 'User-Agent' => 'addwiki-guzzle-mediawiki-client' ),
-				)
-			) );
+			$client = new Client( array( 'base_url' => $client ) );
 		} elseif ( !$client instanceof ClientInterface ) {
 			throw new InvalidArgumentException( '$client must either be a string or ClientInterface instance' );
 		}
@@ -159,8 +154,25 @@ class MediawikiApi {
 	private function getGuzzleClientRequestOptions( Request $request, $bodyOrQuery ) {
 		return array(
 			$bodyOrQuery => array_merge( $request->getParams(), array( 'format' => 'json' ) ),
-			'headers' => $request->getHeaders(),
+			'headers' => array_merge( $this->getDefaultHeaders(), $request->getHeaders() ),
 		);
+	}
+
+	/**
+	 * @return array
+	 */
+	private function getDefaultHeaders() {
+		return array(
+			'User-Agent' => $this->getUserAgent(),
+		);
+	}
+
+	private function getUserAgent() {
+		$loggedIn = $this->isLoggedin();
+		if( $loggedIn ) {
+			return 'addwiki-mediawiki-client/' . $loggedIn;
+		}
+		return 'addwiki-mediawiki-client';
 	}
 
 	/**

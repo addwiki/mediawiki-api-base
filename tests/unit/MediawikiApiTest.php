@@ -69,14 +69,14 @@ class MediawikiApiTest extends \PHPUnit_Framework_TestCase {
 	private function getExpectedOptsForPostParams( $params ) {
 		return array(
 			'body' => array_merge( $params, array( 'format' => 'json' ) ),
-			'headers' => array(),
+			'headers' => array( 'User-Agent' => 'addwiki-mediawiki-client' ),
 		);
 	}
 
 	private function getExpectedOptsForGetParams( $params ) {
 		return array(
 			'query' => array_merge( $params, array( 'format' => 'json' ) ),
-			'headers' => array(),
+			'headers' => array( 'User-Agent' => 'addwiki-mediawiki-client' ),
 		);
 	}
 
@@ -180,7 +180,6 @@ class MediawikiApiTest extends \PHPUnit_Framework_TestCase {
 		$result = $api->getRequest( new SimpleRequest( $action, $params ) );
 
 		$this->assertEquals( $expectedResult, $result );
-
 	}
 
 	/**
