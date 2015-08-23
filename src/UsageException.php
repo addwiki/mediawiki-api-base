@@ -51,4 +51,4 @@ class UsageException extends Exception {
 		return $this->result;
 	}
 
-} 
+}

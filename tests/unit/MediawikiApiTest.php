@@ -307,4 +307,4 @@ class MediawikiApiTest extends \PHPUnit_Framework_TestCase {
 			array( 'MediaWiki 1.0.0', '1.0.0' ),
 		);
 	}
-} 
+}

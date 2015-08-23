@@ -83,4 +83,4 @@ class MediawikiSessionTest extends \PHPUnit_Framework_TestCase {
 		);
 	}
 
-} 
+}

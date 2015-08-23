@@ -29,4 +29,4 @@ class SimpleRequestTest extends \PHPUnit_Framework_TestCase {
 		);
 	}
 
-} 
+}

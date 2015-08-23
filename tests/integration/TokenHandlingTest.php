@@ -19,4 +19,4 @@ class TokenHandlingTest extends \PHPUnit_Framework_TestCase {
 		);
 	}
 
-} 
+}

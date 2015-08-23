@@ -23,4 +23,4 @@ class UsageExceptionTest extends \PHPUnit_Framework_TestCase {
 		$this->assertEquals( array( 'foo' => 'bar' ), $e->getApiResult() );
 	}
 
-} 
+}
