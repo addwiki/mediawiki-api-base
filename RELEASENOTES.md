@@ -1,6 +1,6 @@
 These are the release notes for the [mediawiki-api-base](README.md).
 
-## Version 0.4 (In development)
+## Version 1.0.0 (23 August 2015)
 
 * Added `FluentRequest` object
 * Requires "guzzlehttp/retry-subscriber": "~2.0"

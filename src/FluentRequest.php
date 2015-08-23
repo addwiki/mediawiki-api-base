@@ -3,7 +3,7 @@
 namespace Mediawiki\Api;
 
 /**
- * @since 0.4
+ * @since 1.0
  */
 class FluentRequest implements Request {
 
@@ -38,7 +38,7 @@ class FluentRequest implements Request {
 	/**
 	 * Totally overwrite any previously set params
 	 *
-	 * @since 0.4
+	 * @since 1.0
 	 *
 	 * @param array $params
 	 *
@@ -52,7 +52,7 @@ class FluentRequest implements Request {
 	/**
 	 * Totally overwrite any previously set params
 	 *
-	 * @since 0.4
+	 * @since 1.0
 	 *
 	 * @param array $headers
 	 *
