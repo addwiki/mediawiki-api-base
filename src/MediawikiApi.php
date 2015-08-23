@@ -60,34 +60,6 @@ class MediawikiApi {
 	}
 
 	/**
-	 * @since 0.1
-	 *
-	 * @param string $action
-	 * @param array $params
-	 *
-	 * @return mixed
-	 *
-	 * @deprecated since 0.2 Please use getRequest
-	 */
-	public function getAction( $action, $params = array() ) {
-		return $this->getRequest( new SimpleRequest( $action, $params ) );
-	}
-
-	/**
-	 * @since 0.1
-	 *
-	 * @param string $action
-	 * @param array $params
-	 *
-	 * @return mixed
-	 *
-	 * @deprecated since 0.2 Please use postRequest
-	 */
-	public function postAction( $action, $params = array() ) {
-		return $this->postRequest( new SimpleRequest( $action, $params ) );
-	}
-
-	/**
 	 * @since 0.2
 	 * @param Request $request
 	 * @return mixed
