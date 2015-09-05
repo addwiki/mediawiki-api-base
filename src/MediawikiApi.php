@@ -11,6 +11,7 @@ use GuzzleHttp\Message\ResponseInterface;
 use GuzzleHttp\Subscriber\Cookie;
 use GuzzleHttp\Subscriber\Retry\RetrySubscriber;
 use InvalidArgumentException;
+use Psr\Log\LoggerInterface;
 
 class MediawikiApi {
 
@@ -35,12 +36,23 @@ class MediawikiApi {
 	private $version;
 
 	/**
+	 * @var LoggerInterface
+	 */
+	private $logger;
+
+	/**
+	 * @var bool should this class log messages
+	 */
+	private $loggingEnabled;
+
+	/**
 	 * @param string|ClientInterface $client Guzzle Client or api base url
 	 * @param MediawikiSession|null $session Inject a custom session here
+	 * @param LoggerInterface $logger
 	 *
 	 * @throws InvalidArgumentException
 	 */
-	public function __construct( $client, $session = null ) {
+	public function __construct( $client, $session = null, LoggerInterface $logger = null ) {
 		if( is_string( $client ) ) {
 			$client = new Client( array( 'base_url' => $client ) );
 		} elseif ( !$client instanceof ClientInterface ) {
@@ -53,13 +65,51 @@ class MediawikiApi {
 			throw new InvalidArgumentException( '$session must either me null or MediawikiSession instance' );
 		}
 
-		$client->getEmitter()->attach( new Cookie( new CookieJar() ) );
-		$client->getEmitter()->attach( new RetrySubscriber([ 'filter' => RetrySubscriber::createStatusFilter() ]) );
-		$client->getEmitter()->attach( new RetrySubscriber([ 'filter' => RetrySubscriber::createConnectFilter() ]) );
-		$client->getEmitter()->attach( new RetrySubscriber([ 'filter' => $this->getMediawikiApiErrorRetrySubscriber() ]) );
-
 		$this->client = $client;
 		$this->session = $session;
+
+		if( $logger !== null ) {
+			$this->logger = $logger;
+			$this->loggingEnabled = true;
+			$this->attachLoggingRetrySubscribersToClient();
+		} else {
+			$this->attachRetrySubscribersToClient();
+		}
+
+		$client->getEmitter()->attach( new Cookie( new CookieJar() ) );
+
+	}
+
+	private function attachRetrySubscribersToClient() {
+		foreach( $this->getRetryFilters() as $filter ) {
+			$this->client->getEmitter()->attach( new RetrySubscriber( array( 'filter' => $filter ) ) );
+		}
+	}
+
+	private function attachLoggingRetrySubscribersToClient() {
+		foreach( $this->getRetryFilters() as $filter ) {
+			$this->client->getEmitter()->attach(
+				new RetrySubscriber(
+					array(
+						'filter' => RetrySubscriber::createLoggingDelay(
+							$filter,
+							$this->logger
+						),
+					)
+				)
+			);
+		}
+	}
+
+	/**
+	 * @return callable[]
+	 */
+	private function getRetryFilters() {
+		return array(
+			RetrySubscriber::createStatusFilter(),
+			RetrySubscriber::createConnectFilter(),
+			$this->getMediawikiApiErrorRetrySubscriber(),
+		);
 	}
 
 	/**
@@ -88,6 +138,19 @@ class MediawikiApi {
 
 			return false;
 		};
+	}
+
+	/**
+	 * Wraps $this->logger->log but only logs when a logger exists
+	 *
+	 * @param mixed $level
+	 * @param string $message
+	 * @param array $context
+	 */
+	private function log( $level, $message, array $context = array() ) {
+		if( $this->loggingEnabled ) {
+			$this->logger->log( $level, $message, $context );
+		}
 	}
 
 	/**
