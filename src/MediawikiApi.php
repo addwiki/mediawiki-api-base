@@ -6,14 +6,16 @@ use GuzzleHttp\Client;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Cookie\CookieJar;
 use GuzzleHttp\Event\AbstractTransferEvent;
+use GuzzleHttp\Event\SubscriberInterface;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Message\ResponseInterface;
 use GuzzleHttp\Subscriber\Cookie;
 use GuzzleHttp\Subscriber\Retry\RetrySubscriber;
 use InvalidArgumentException;
+use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
 
-class MediawikiApi {
+class MediawikiApi implements LoggerAwareInterface {
 
 	/**
 	 * @var ClientInterface
@@ -38,20 +40,18 @@ class MediawikiApi {
 	/**
 	 * @var LoggerInterface
 	 */
-	private $logger;
+	private $logger = null;
 
 	/**
-	 * @var bool should this class log messages
+	 * @var SubscriberInterface[] references to the subscribers we have added to the client
 	 */
-	private $loggingEnabled;
+	private $clientSubscribers = array();
 
 	/**
 	 * @param string|ClientInterface $client Guzzle Client or api base url
-	 * @param LoggerInterface|MediawikiSession $logger You can still pass a MediawikiSession here, but that is deprecated!
-	 *
-	 * @throws InvalidArgumentException
+	 * @param MediawikiSession|null $session Inject a custom session here
 	 */
-	public function __construct( $client, $logger = null ) {
+	public function __construct( $client, MediawikiSession $session = null ) {
 		if( is_string( $client ) ) {
 			$client = new Client( array( 'base_url' => $client ) );
 		} elseif ( !$client instanceof ClientInterface ) {
@@ -60,59 +60,56 @@ class MediawikiApi {
 
 		$this->client = $client;
 
-		/**
-		 * Hack to avoid breaking change
-		 * @since 1.1
-		 * TODO remove for 2.0 release
-		 */
-		if( $logger instanceof MediawikiSession ) {
-			$this->session = $logger;
-			$logger = null;
-			trigger_error(
-				"Using a MediawikiSession as the 2nd paramater for a MediawikiApi object is deprecated",
-				E_USER_NOTICE
-			);
-		} else {
+		if( $session === null ) {
 			$this->session = new MediawikiSession( $this );
 		}
 
-		//TODO remove for 2.0 release in favour of typehint!
-		if( $logger !== null && !($logger instanceof LoggerInterface) ) {
-			throw new InvalidArgumentException(
-				"2nd parameter of MediawikiApi must be a LoggerInterface or deprecated MediawikiSession"
-			);
-		}
-
-		if( $logger !== null ) {
-			$this->logger = $logger;
-			$this->loggingEnabled = true;
-			$this->attachLoggingRetrySubscribersToClient();
-		} else {
-			$this->attachRetrySubscribersToClient();
-		}
-
+		$this->attachRetrySubscribersToClient();
 		$client->getEmitter()->attach( new Cookie( new CookieJar() ) );
+	}
 
+	/**
+	 * Sets a logger instance on the object
+	 *
+	 * @since 1.1
+	 *
+	 * @param LoggerInterface $logger
+	 *
+	 * @return null
+	 */
+	public function setLogger( LoggerInterface $logger ) {
+		$this->detatchRetrySubscribersFromClient();
+		$this->logger = $logger;
+		$this->attachLoggingRetrySubscribersToClient();
+	}
+
+	private function detatchRetrySubscribersFromClient() {
+		foreach( $this->clientSubscribers as $key => $subscriber ) {
+			$this->client->getEmitter()->detach( $subscriber );
+			unset( $this->clientSubscribers[$key] );
+		}
 	}
 
 	private function attachRetrySubscribersToClient() {
 		foreach( $this->getRetryFilters() as $filter ) {
-			$this->client->getEmitter()->attach( new RetrySubscriber( array( 'filter' => $filter ) ) );
+			$subscriber = new RetrySubscriber( array( 'filter' => $filter ) );
+			$this->clientSubscribers[] = $subscriber;
+			$this->client->getEmitter()->attach( $subscriber );
 		}
 	}
 
 	private function attachLoggingRetrySubscribersToClient() {
 		foreach( $this->getRetryFilters() as $filter ) {
-			$this->client->getEmitter()->attach(
-				new RetrySubscriber(
-					array(
-						'filter' => RetrySubscriber::createLoggingDelay(
-							$filter,
-							$this->logger
-						),
-					)
+			$subscriber = new RetrySubscriber(
+				array(
+					'filter' => RetrySubscriber::createLoggingDelay(
+						$filter,
+						$this->logger
+					),
 				)
 			);
+			$this->clientSubscribers[] = $subscriber;
+			$this->client->getEmitter()->attach( $subscriber );
 		}
 	}
 
@@ -163,7 +160,7 @@ class MediawikiApi {
 	 * @param array $context
 	 */
 	private function log( $level, $message, array $context = array() ) {
-		if( $this->loggingEnabled ) {
+		if( $this->logger !== null ) {
 			$this->logger->log( $level, $message, $context );
 		}
 	}
