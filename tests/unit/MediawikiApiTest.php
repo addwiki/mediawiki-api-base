@@ -124,48 +124,6 @@ class MediawikiApiTest extends \PHPUnit_Framework_TestCase {
 		}
 	}
 
-	public function testGetRequestTriggersErrorOnWarning() {
-		$client = $this->getMockClient();
-		$client->expects( $this->once() )
-			->method( 'get' )
-			->will( $this->returnValue(
-				$this->getMockResponse( array( 'warnings' => array(
-					'foo' => array( '*' => 'bar' ),
-				) ) )
-			) );
-		$api = new MediawikiApi( $client );
-
-		try{
-			$api->getRequest( new SimpleRequest( 'foo' ) );
-			$this->fail( 'No Error Triggered' );
-		}
-		catch( PHPUnit_Framework_Error_Warning $w ) {
-			$this->assertEquals( 'foo: bar', $w->getMessage() );
-			$this->assertEquals( E_USER_WARNING, $w->getCode() );
-		}
-	}
-
-	public function testPostRequestTriggersErrorOnWarning() {
-		$client = $this->getMockClient();
-		$client->expects( $this->once() )
-			->method( 'post' )
-			->will( $this->returnValue(
-				$this->getMockResponse( array( 'warnings' => array(
-					'foo' => array( '*' => 'bar' ),
-				) ) )
-			) );
-		$api = new MediawikiApi( $client );
-
-		try{
-			$api->postRequest( new SimpleRequest( 'foo' ) );
-			$this->fail( 'No Error Triggered' );
-		}
-		catch( PHPUnit_Framework_Error_Warning $w ) {
-			$this->assertEquals( 'foo: bar', $w->getMessage() );
-			$this->assertEquals( E_USER_WARNING, $w->getCode() );
-		}
-	}
-
 	/**
 	 * @dataProvider provideActionsParamsResults
 	 */
