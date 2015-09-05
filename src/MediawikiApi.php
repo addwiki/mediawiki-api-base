@@ -47,26 +47,41 @@ class MediawikiApi {
 
 	/**
 	 * @param string|ClientInterface $client Guzzle Client or api base url
-	 * @param MediawikiSession|null $session Inject a custom session here
-	 * @param LoggerInterface $logger
+	 * @param LoggerInterface|MediawikiSession $logger You can still pass a MediawikiSession here, but that is deprecated!
 	 *
 	 * @throws InvalidArgumentException
 	 */
-	public function __construct( $client, $session = null, LoggerInterface $logger = null ) {
+	public function __construct( $client, $logger = null ) {
 		if( is_string( $client ) ) {
 			$client = new Client( array( 'base_url' => $client ) );
 		} elseif ( !$client instanceof ClientInterface ) {
 			throw new InvalidArgumentException( '$client must either be a string or ClientInterface instance' );
 		}
 
-		if( $session === null ) {
-			$session = new MediawikiSession( $this );
-		} elseif ( !$session instanceof MediawikiSession ){
-			throw new InvalidArgumentException( '$session must either me null or MediawikiSession instance' );
+		$this->client = $client;
+
+		/**
+		 * Hack to avoid breaking change
+		 * @since 1.1
+		 * TODO remove for 2.0 release
+		 */
+		if( $logger instanceof MediawikiSession ) {
+			$this->session = $logger;
+			$logger = null;
+			trigger_error(
+				"Using a MediawikiSession as the 2nd paramater for a MediawikiApi object is deprecated",
+				E_USER_NOTICE
+			);
+		} else {
+			$this->session = new MediawikiSession( $this );
 		}
 
-		$this->client = $client;
-		$this->session = $session;
+		//TODO remove for 2.0 release in favour of typehint!
+		if( $logger !== null && !($logger instanceof LoggerInterface) ) {
+			throw new InvalidArgumentException(
+				"2nd parameter of MediawikiApi must be a LoggerInterface or deprecated MediawikiSession"
+			);
+		}
 
 		if( $logger !== null ) {
 			$this->logger = $logger;
