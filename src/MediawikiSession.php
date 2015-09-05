@@ -78,31 +78,44 @@ class MediawikiSession implements LoggerAwareInterface {
 
 			// If we know that we don't have the new module mw<1.25
 			if( $this->usePre125TokensModule ) {
-				// Suppress deprecation warning
-				$result = @$this->api->postRequest(
-					new SimpleRequest( 'tokens', array( 'type' => $this->getOldTokenType( $type ) ) )
-				);
-				$this->tokens[$type] = array_pop( $result['tokens'] );
+				return $this->reallyGetPre125Token( $type );
 			} else {
-				// We suppress errors on this call so the user doesn't get get a warning that isn't their fault.
-				$result = @$this->api->postRequest(
-					new SimpleRequest( 'query', array(
-						'meta' => 'tokens',
-						'type' => $this->getNewTokenType( $type ),
-						'continue' => '',
-					) )
-				);
-				// If mw<1.25 (no new module)
-				if( array_key_exists( 'warnings', $result ) && array_key_exists( 'query', $result['warnings'] ) &&
-					strstr( $result['warnings']['query']['*'], "Unrecognized value for parameter 'meta': tokens" ) ) {
-					$this->usePre125TokensModule = true;
-					$this->tokens[$type] = $this->getToken( $type );
-				} else {
-					$this->tokens[$type] = array_pop( $result['query']['tokens'] );
-				}
+				return $this->reallyGetToken( $type );
 			}
 
 		}
+
+		return $this->tokens[$type];
+	}
+
+	private function reallyGetPre125Token( $type ) {
+		// Suppress deprecation warning
+		$result = @$this->api->postRequest(
+			new SimpleRequest( 'tokens', array( 'type' => $this->getOldTokenType( $type ) ) )
+		);
+		$this->tokens[$type] = array_pop( $result['tokens'] );
+
+		return $this->tokens[$type];
+	}
+
+	private function reallyGetToken( $type ) {
+		// We suppress errors on this call so the user doesn't get get a warning that isn't their fault.
+		$result = @$this->api->postRequest(
+			new SimpleRequest( 'query', array(
+				'meta' => 'tokens',
+				'type' => $this->getNewTokenType( $type ),
+				'continue' => '',
+			) )
+		);
+		// If mw<1.25 (no new module)
+		if( array_key_exists( 'warnings', $result ) && array_key_exists( 'query', $result['warnings'] ) &&
+			strstr( $result['warnings']['query']['*'], "Unrecognized value for parameter 'meta': tokens" ) ) {
+			$this->usePre125TokensModule = true;
+			$this->tokens[$type] = $this->reallyGetPre125Token( $type );
+		} else {
+			$this->tokens[$type] = array_pop( $result['query']['tokens'] );
+		}
+
 		return $this->tokens[$type];
 	}
 
