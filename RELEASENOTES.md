@@ -1,6 +1,6 @@
 These are the release notes for the [mediawiki-api-base](README.md).
 
-## Version 1.1.0 (in development)
+## Version 1.1.0 (5 september 2015)
 * Requests that encounter a connection exception are now retried
 * Requests that result in non blocking mediawiki api error codes are now retried (ratelimited, readonly, internal_api_error_DBQueryError)
 * MediawikiApi now implements PSR-3 LoggerAwareInterface
