@@ -2,10 +2,13 @@
 
 namespace Mediawiki\Api;
 
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerInterface;
+
 /**
  * @since 0.1
  */
-class MediawikiSession {
+class MediawikiSession implements LoggerAwareInterface {
 
 	/**
 	 * @var array
@@ -23,10 +26,41 @@ class MediawikiSession {
 	private $usePre125TokensModule = false;
 
 	/**
+	 * @var LoggerInterface|null
+	 */
+	private $logger = null;
+
+	/**
 	 * @param MediawikiApi $api
 	 */
 	public function __construct( MediawikiApi $api ) {
 		$this->api = $api;
+	}
+
+	/**
+	 * Sets a logger instance on the object
+	 *
+	 * @since 1.1
+	 *
+	 * @param LoggerInterface $logger
+	 *
+	 * @return null
+	 */
+	public function setLogger( LoggerInterface $logger ) {
+		$this->logger = $logger;
+	}
+
+	/**
+	 * Wraps $this->logger->log but only logs when a logger exists
+	 *
+	 * @param mixed $level
+	 * @param string $message
+	 * @param array $context
+	 */
+	private function log( $level, $message, array $context = array() ) {
+		if( $this->logger !== null ) {
+			$this->logger->log( $level, $message, $context );
+		}
 	}
 
 	/**

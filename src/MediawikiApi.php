@@ -80,6 +80,7 @@ class MediawikiApi implements LoggerAwareInterface {
 	public function setLogger( LoggerInterface $logger ) {
 		$this->detatchRetrySubscribersFromClient();
 		$this->logger = $logger;
+		$this->session->setLogger( $logger );
 		$this->attachLoggingRetrySubscribersToClient();
 	}
 
