@@ -3,8 +3,9 @@ These are the release notes for the [mediawiki-api-base](README.md).
 ## Version 1.1.0 (in development)
 * Requests that encounter a connection exception are now retried
 * Requests that result in non blocking mediawiki api error codes are now retried (ratelimited, readonly, internal_api_error_DBQueryError)
-* Deprecated passing a MediawikiSession as the 2nd parameter of MediawikiApi::__construct
-* Added optional Logger to MediawikiApi constructor
+* MediawikiApi now implements PSR-3 LoggerAwareInterface
+* MediawikiSession now implements PSR-3 LoggerAwareInterface
+* MediawikiApi no longer raises PHP warnings, instead it logs warnings
 
 ## Version 1.0.0 (23 August 2015)
 

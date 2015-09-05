@@ -14,6 +14,7 @@ use GuzzleHttp\Subscriber\Retry\RetrySubscriber;
 use InvalidArgumentException;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
+use Psr\Log\LogLevel;
 
 class MediawikiApi implements LoggerAwareInterface {
 
@@ -175,7 +176,7 @@ class MediawikiApi implements LoggerAwareInterface {
 		$response = $this->getGuzzleGetResponse( $request );
 		$resultArray = $response->json();
 
-		$this->triggerErrors( $resultArray );
+		$this->logWarnings( $resultArray );
 		$this->throwUsageExceptions( $resultArray );
 
 		return $resultArray;
@@ -190,7 +191,7 @@ class MediawikiApi implements LoggerAwareInterface {
 		$response = $this->getGuzzlePostResponse( $request );
 		$resultArray = $response->json();
 
-		$this->triggerErrors( $resultArray );
+		$this->logWarnings( $resultArray );
 		$this->throwUsageExceptions( $resultArray );
 
 		return $resultArray;
@@ -257,10 +258,10 @@ class MediawikiApi implements LoggerAwareInterface {
 	/**
 	 * @param $result
 	 */
-	private function triggerErrors( $result ) {
+	private function logWarnings( $result ) {
 		if( is_array( $result ) && array_key_exists( 'warnings', $result ) ) {
 			foreach( $result['warnings'] as $module => $warningData ) {
-				trigger_error( $module . ': ' . $warningData['*'], E_USER_WARNING );
+				$this->log( LogLevel::WARNING, $module . ': ' . $warningData['*'], array( 'data' => $warningData ) );
 			}
 		}
 	}
@@ -298,6 +299,8 @@ class MediawikiApi implements LoggerAwareInterface {
 	 * @return bool success
 	 */
 	public function login( ApiUser $apiUser ) {
+		$this->log( LogLevel::DEBUG, 'Logging in' );
+
 		$credentials = array(
 			'lgname' => $apiUser->getUsername(),
 			'lgpassword' => $apiUser->getPassword(),
@@ -391,6 +394,7 @@ class MediawikiApi implements LoggerAwareInterface {
 	 * @return bool success
 	 */
 	public function logout() {
+		$this->log( LogLevel::DEBUG, 'Logging out' );
 		$result = $this->postRequest( new SimpleRequest( 'logout' ) );
 		if( $result === array() ) {
 			$this->isLoggedIn = false;
