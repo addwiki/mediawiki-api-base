@@ -5,6 +5,7 @@ namespace Mediawiki\Api;
 use GuzzleHttp\Client;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Cookie\CookieJar;
+use GuzzleHttp\Event\AbstractTransferEvent;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Message\ResponseInterface;
 use GuzzleHttp\Subscriber\Cookie;
@@ -54,9 +55,39 @@ class MediawikiApi {
 
 		$client->getEmitter()->attach( new Cookie( new CookieJar() ) );
 		$client->getEmitter()->attach( new RetrySubscriber([ 'filter' => RetrySubscriber::createStatusFilter() ]) );
+		$client->getEmitter()->attach( new RetrySubscriber([ 'filter' => RetrySubscriber::createConnectFilter() ]) );
+		$client->getEmitter()->attach( new RetrySubscriber([ 'filter' => $this->getMediawikiApiErrorRetrySubscriber() ]) );
 
 		$this->client = $client;
 		$this->session = $session;
+	}
+
+	/**
+	 * @return callable
+	 */
+	private function getMediawikiApiErrorRetrySubscriber() {
+		return function ( $retries, AbstractTransferEvent $event ) {
+			$response = $event->getResponse();
+
+			// A response is not always received (e.g., for timeouts)
+			if ( !$response ) {
+				return false;
+			}
+
+			$headers = $response->getHeaders();
+			if ( array_key_exists( 'mediawiki-api-error', $headers ) ) {
+				return in_array(
+					$headers['mediawiki-api-error'],
+					array(
+						'ratelimited',
+						'readonly',
+						'internal_api_error_DBQueryError',
+					)
+				);
+			}
+
+			return false;
+		};
 	}
 
 	/**

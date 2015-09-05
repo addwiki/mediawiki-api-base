@@ -1,5 +1,9 @@
 These are the release notes for the [mediawiki-api-base](README.md).
 
+## Version 1.1.0 (in development)
+* Requests that encounter a connection exception are now retried
+* Requests that result in non blocking mediawiki api error codes are now retried (ratelimited, readonly, internal_api_error_DBQueryError)
+
 ## Version 1.0.0 (23 August 2015)
 
 * Added `FluentRequest` object
