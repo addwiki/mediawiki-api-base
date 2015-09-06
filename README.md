@@ -30,7 +30,7 @@ $api = new MediawikiApi( 'http://localhost/w/api.php' );
 Or you can pass a guzzle ClientInterface, allowing more flexability:
 
 ```php
-$api = new MediawikiApi( new Client( array( 'base_url' => ''http://localhost/w/api.php'' ) ) );
+$api = new MediawikiApi( new Client( array( 'base_url' => 'http://localhost/w/api.php' ) ) );
 ```
 
 You can easily log in and out:
