@@ -75,10 +75,10 @@ class ApiUser {
 	 * @return bool
 	 */
 	public function equals( $other ) {
-		if( $other instanceof ApiUser && $this->username == $other->getUsername() && $this->password == $other->getPassword() && $this->domain == $other->getDomain() ) {
-			return true;
-		}
-		return false;
+		return $other instanceof self
+			&& $this->username == $other->getUsername()
+			&& $this->password == $other->getPassword()
+			&& $this->domain == $other->getDomain();
 	}
 
 } 
