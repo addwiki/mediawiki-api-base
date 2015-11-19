@@ -45,9 +45,9 @@ $api->logout();
 And make various requests:
 
 ```php
-$api->postRequest( FluentRequest::factory->setAction( 'purge' )->setParam( 'titles', 'FooBar' ) );
+$api->postRequest( FluentRequest::factory()->setAction( 'purge' )->setParam( 'titles', 'FooBar' ) );
 
-$queryResponse = $api->getRequest( FluentRequest::factory->setAction( 'query' )->setParam( 'meta', 'siteinfo' ) );
+$queryResponse = $api->getRequest( FluentRequest::factory()->setAction( 'query' )->setParam( 'meta', 'siteinfo' ) );
 
 try{
 	$api->postRequest( new SimpleRequest( 'FooBarBaz' ) );
