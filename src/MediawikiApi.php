@@ -4,7 +4,6 @@ namespace Mediawiki\Api;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\ClientInterface;
-use GuzzleHttp\Cookie\CookieJar;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Promise\PromiseInterface;
 use InvalidArgumentException;
@@ -13,7 +12,6 @@ use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 use Psr\Log\NullLogger;
-use RuntimeException;
 
 /**
  * @author Addshore
@@ -55,7 +53,9 @@ class MediawikiApi implements LoggerAwareInterface {
 			throw new InvalidArgumentException( '$apiUrl must be a string' );
 		}
 		if( $client === null ) {
-			$client = new Client();
+			$client = new Client( array( 'cookies' => true ) );
+		} elseif( $client->getConfig( 'cookies' ) === false ) {
+			// TODO Somehow flag that things will not work?
 		}
 		if( $session === null ) {
 			$session = new MediawikiSession( $this );
