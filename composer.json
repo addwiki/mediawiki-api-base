@@ -18,5 +18,10 @@
 		"psr-4": {
 			"Mediawiki\\Api\\": "src/"
 		}
+	},
+	"extra": {
+		"branch-alias": {
+			"dev-master": "2.0.x-dev"
+		}
 	}
 }
