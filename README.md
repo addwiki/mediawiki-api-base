@@ -23,16 +23,17 @@ Use composer to install the library and all its dependencies:
 
 ## Example Usage
 
-You can either construct an api object by simply passing the api enbpoint:
+You can construct an api object by simply passing the api endpoint:
 
 ```php
 $api = new MediawikiApi( 'http://localhost/w/api.php' );
 ```
 
-Or you can pass a guzzle ClientInterface, allowing more flexability:
+You can also pass a custom Guzzle ClientInterface:
 
 ```php
-$api = new MediawikiApi( new Client( array( 'base_url' => 'http://localhost/w/api.php' ) ) );
+$client = new Client();
+$api = new MediawikiApi( 'http://localhost/w/api.php', $client );
 ```
 
 You can easily log in and out:
