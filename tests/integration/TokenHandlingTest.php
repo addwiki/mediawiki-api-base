@@ -2,13 +2,15 @@
 
 namespace Mediawiki\Api\Test;
 
+use Mediawiki\Api\MediawikiApi;
+
 class TokenHandlingTest extends \PHPUnit_Framework_TestCase {
 
 	/**
 	 * @dataProvider provideTokenTypes
 	 */
 	public function testGetAnonUserToken() {
-		$api = new \Mediawiki\Api\MediawikiApi( 'http://localhost/w/api.php' );
+		$api = new MediawikiApi( 'http://localhost/w/api.php' );
 		$this->assertEquals( '+\\', $api->getToken() );
 	}
 

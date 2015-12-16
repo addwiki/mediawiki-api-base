@@ -5,6 +5,7 @@ namespace Mediawiki\Api;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
+use Psr\Log\NullLogger;
 
 /**
  * @since 0.1
@@ -27,15 +28,16 @@ class MediawikiSession implements LoggerAwareInterface {
 	private $usePre125TokensModule = false;
 
 	/**
-	 * @var LoggerInterface|null
+	 * @var LoggerInterface
 	 */
-	private $logger = null;
+	private $logger;
 
 	/**
 	 * @param MediawikiApi $api
 	 */
 	public function __construct( MediawikiApi $api ) {
 		$this->api = $api;
+		$this->logger = new NullLogger();
 	}
 
 	/**
@@ -52,19 +54,6 @@ class MediawikiSession implements LoggerAwareInterface {
 	}
 
 	/**
-	 * Wraps $this->logger->log but only logs when a logger exists
-	 *
-	 * @param mixed $level
-	 * @param string $message
-	 * @param array $context
-	 */
-	private function log( $level, $message, array $context = array() ) {
-		if( $this->logger !== null ) {
-			$this->logger->log( $level, $message, $context );
-		}
-	}
-
-	/**
 	 * Tries to get the specified token from the API
 	 *
 	 * @since 0.1
@@ -77,7 +66,7 @@ class MediawikiSession implements LoggerAwareInterface {
 		// If we don't already have the token that we want
 		if( !array_key_exists( $type, $this->tokens ) ) {
 
-			$this->log( LogLevel::DEBUG, 'Getting fresh token', array( 'type' => $type ) );
+			$this->logger->log( LogLevel::DEBUG, 'Getting fresh token', array( 'type' => $type ) );
 
 			// If we know that we don't have the new module mw<1.25
 			if( $this->usePre125TokensModule ) {
@@ -114,7 +103,7 @@ class MediawikiSession implements LoggerAwareInterface {
 		if( array_key_exists( 'warnings', $result ) && array_key_exists( 'query', $result['warnings'] ) &&
 			strstr( $result['warnings']['query']['*'], "Unrecognized value for parameter 'meta': tokens" ) ) {
 			$this->usePre125TokensModule = true;
-			$this->log( LogLevel::DEBUG, 'Falling back to pre 1.25 token system' );
+			$this->logger->log( LogLevel::DEBUG, 'Falling back to pre 1.25 token system' );
 			$this->tokens[$type] = $this->reallyGetPre125Token( $type );
 		} else {
 			$this->tokens[$type] = array_pop( $result['query']['tokens'] );
@@ -169,7 +158,7 @@ class MediawikiSession implements LoggerAwareInterface {
 	 * @since 0.2
 	 */
 	public function clearTokens() {
-		$this->log( LogLevel::DEBUG, 'Clearing session tokens', array( 'tokens' => $this->tokens ) );
+		$this->logger->log( LogLevel::DEBUG, 'Clearing session tokens', array( 'tokens' => $this->tokens ) );
 		$this->tokens = array();
 	}
 

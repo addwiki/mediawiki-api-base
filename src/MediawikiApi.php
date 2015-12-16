@@ -5,17 +5,17 @@ namespace Mediawiki\Api;
 use GuzzleHttp\Client;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Cookie\CookieJar;
-use GuzzleHttp\Event\AbstractTransferEvent;
-use GuzzleHttp\Event\SubscriberInterface;
 use GuzzleHttp\Exception\RequestException;
-use GuzzleHttp\Message\ResponseInterface;
-use GuzzleHttp\Subscriber\Cookie;
-use GuzzleHttp\Subscriber\Retry\RetrySubscriber;
 use InvalidArgumentException;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
+use Psr\Log\NullLogger;
 
+/**
+ * @author Addshore
+ */
 class MediawikiApi implements LoggerAwareInterface {
 
 	/**
@@ -41,32 +41,29 @@ class MediawikiApi implements LoggerAwareInterface {
 	/**
 	 * @var LoggerInterface
 	 */
-	private $logger = null;
+	private $logger;
 
 	/**
-	 * @var SubscriberInterface[] references to the subscribers we have added to the client
-	 */
-	private $clientSubscribers = array();
-
-	/**
-	 * @param string|ClientInterface $client Guzzle Client or api base url
+	 * @param string $apiUrl The API Url
+	 * @param ClientInterface|null $client Guzzle Client
 	 * @param MediawikiSession|null $session Inject a custom session here
 	 */
-	public function __construct( $client, MediawikiSession $session = null ) {
-		if( is_string( $client ) ) {
-			$client = new Client( array( 'base_url' => $client ) );
-		} elseif ( !$client instanceof ClientInterface ) {
-			throw new InvalidArgumentException( '$client must either be a string or ClientInterface instance' );
+	public function __construct( $apiUrl, ClientInterface $client = null, MediawikiSession $session = null ) {
+		if( !is_string( $apiUrl ) ) {
+			throw new InvalidArgumentException( '$apiUrl must be a string' );
 		}
-
-		$this->client = $client;
-
+		if( $client === null ) {
+			$client = new Client();
+		}
 		if( $session === null ) {
-			$this->session = new MediawikiSession( $this );
+			$session = new MediawikiSession( $this );
 		}
 
-		$this->attachRetrySubscribersToClient();
-		$client->getEmitter()->attach( new Cookie( new CookieJar() ) );
+		$this->apiUrl = $apiUrl;
+		$this->client = $client;
+		$this->session = $session;
+
+		$this->logger = new NullLogger();
 	}
 
 	/**
@@ -79,92 +76,8 @@ class MediawikiApi implements LoggerAwareInterface {
 	 * @return null
 	 */
 	public function setLogger( LoggerInterface $logger ) {
-		$this->detatchRetrySubscribersFromClient();
 		$this->logger = $logger;
 		$this->session->setLogger( $logger );
-		$this->attachLoggingRetrySubscribersToClient();
-	}
-
-	private function detatchRetrySubscribersFromClient() {
-		foreach( $this->clientSubscribers as $key => $subscriber ) {
-			$this->client->getEmitter()->detach( $subscriber );
-			unset( $this->clientSubscribers[$key] );
-		}
-	}
-
-	private function attachRetrySubscribersToClient() {
-		foreach( $this->getRetryFilters() as $filter ) {
-			$subscriber = new RetrySubscriber( array( 'filter' => $filter ) );
-			$this->clientSubscribers[] = $subscriber;
-			$this->client->getEmitter()->attach( $subscriber );
-		}
-	}
-
-	private function attachLoggingRetrySubscribersToClient() {
-		foreach( $this->getRetryFilters() as $filter ) {
-			$subscriber = new RetrySubscriber(
-				array(
-					'filter' => RetrySubscriber::createLoggingDelay(
-						$filter,
-						$this->logger
-					),
-				)
-			);
-			$this->clientSubscribers[] = $subscriber;
-			$this->client->getEmitter()->attach( $subscriber );
-		}
-	}
-
-	/**
-	 * @return callable[]
-	 */
-	private function getRetryFilters() {
-		return array(
-			RetrySubscriber::createStatusFilter(),
-			RetrySubscriber::createConnectFilter(),
-			$this->getMediawikiApiErrorRetrySubscriber(),
-		);
-	}
-
-	/**
-	 * @return callable
-	 */
-	private function getMediawikiApiErrorRetrySubscriber() {
-		return function ( $retries, AbstractTransferEvent $event ) {
-			$response = $event->getResponse();
-
-			// A response is not always received (e.g., for timeouts)
-			if ( !$response ) {
-				return false;
-			}
-
-			$headers = $response->getHeaders();
-			if ( array_key_exists( 'mediawiki-api-error', $headers ) ) {
-				return in_array(
-					$headers['mediawiki-api-error'],
-					array(
-						'ratelimited',
-						'readonly',
-						'internal_api_error_DBQueryError',
-					)
-				);
-			}
-
-			return false;
-		};
-	}
-
-	/**
-	 * Wraps $this->logger->log but only logs when a logger exists
-	 *
-	 * @param mixed $level
-	 * @param string $message
-	 * @param array $context
-	 */
-	private function log( $level, $message, array $context = array() ) {
-		if( $this->logger !== null ) {
-			$this->logger->log( $level, $message, $context );
-		}
 	}
 
 	/**
@@ -174,7 +87,7 @@ class MediawikiApi implements LoggerAwareInterface {
 	 */
 	public function getRequest( Request $request ) {
 		$response = $this->getGuzzleGetResponse( $request );
-		$resultArray = $response->json();
+		$resultArray = json_decode( $response->getBody(), true );
 
 		$this->logWarnings( $resultArray );
 		$this->throwUsageExceptions( $resultArray );
@@ -189,7 +102,7 @@ class MediawikiApi implements LoggerAwareInterface {
 	 */
 	public function postRequest( Request $request ) {
 		$response = $this->getGuzzlePostResponse( $request );
-		$resultArray = $response->json();
+		$resultArray = json_decode( $response->getBody(), true );
 
 		$this->logWarnings( $resultArray );
 		$this->throwUsageExceptions( $resultArray );
@@ -204,8 +117,8 @@ class MediawikiApi implements LoggerAwareInterface {
 	 */
 	private function getGuzzleGetResponse( Request $request ) {
 		return $this->client->get(
-			null,// Default to the base_url already set in the client
-			$this->getGuzzleClientRequestOptions( $request, 'query' )
+			$this->apiUrl,
+			$this->getClientRequestOptions( $request )
 		);
 	}
 
@@ -218,22 +131,21 @@ class MediawikiApi implements LoggerAwareInterface {
 	 */
 	private function getGuzzlePostResponse( Request $request ) {
 		return $this->client->post(
-			null,// Default to the base_url already set in the client
-			$this->getGuzzleClientRequestOptions( $request, 'body' )
+			$this->apiUrl,
+			$this->getClientRequestOptions( $request)
 		);
 	}
 
 	/**
 	 * @param Request $request
-	 * @param string $bodyOrQuery
 	 *
 	 * @throws RequestException
 	 *
 	 * @return array as needed by ClientInterface::get and ClientInterface::post
 	 */
-	private function getGuzzleClientRequestOptions( Request $request, $bodyOrQuery ) {
+	private function getClientRequestOptions( Request $request ) {
 		return array(
-			$bodyOrQuery => array_merge( $request->getParams(), array( 'format' => 'json' ) ),
+			'form_params' => array_merge( $request->getParams(), array( 'format' => 'json' ) ),
 			'headers' => array_merge( $this->getDefaultHeaders(), $request->getHeaders() ),
 		);
 	}
@@ -261,7 +173,7 @@ class MediawikiApi implements LoggerAwareInterface {
 	private function logWarnings( $result ) {
 		if( is_array( $result ) && array_key_exists( 'warnings', $result ) ) {
 			foreach( $result['warnings'] as $module => $warningData ) {
-				$this->log( LogLevel::WARNING, $module . ': ' . $warningData['*'], array( 'data' => $warningData ) );
+				$this->logger->log( LogLevel::WARNING, $module . ': ' . $warningData['*'], array( 'data' => $warningData ) );
 			}
 		}
 	}
@@ -299,7 +211,7 @@ class MediawikiApi implements LoggerAwareInterface {
 	 * @return bool success
 	 */
 	public function login( ApiUser $apiUser ) {
-		$this->log( LogLevel::DEBUG, 'Logging in' );
+		$this->logger->log( LogLevel::DEBUG, 'Logging in' );
 
 		$credentials = array(
 			'lgname' => $apiUser->getUsername(),
@@ -394,7 +306,7 @@ class MediawikiApi implements LoggerAwareInterface {
 	 * @return bool success
 	 */
 	public function logout() {
-		$this->log( LogLevel::DEBUG, 'Logging out' );
+		$this->logger->log( LogLevel::DEBUG, 'Logging out' );
 		$result = $this->postRequest( new SimpleRequest( 'logout' ) );
 		if( $result === array() ) {
 			$this->isLoggedIn = false;
