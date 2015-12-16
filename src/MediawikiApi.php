@@ -6,12 +6,14 @@ use GuzzleHttp\Client;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Cookie\CookieJar;
 use GuzzleHttp\Exception\RequestException;
+use GuzzleHttp\Promise\PromiseInterface;
 use InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 use Psr\Log\NullLogger;
+use RuntimeException;
 
 /**
  * @author Addshore
@@ -81,27 +83,84 @@ class MediawikiApi implements LoggerAwareInterface {
 	}
 
 	/**
-	 * @since 0.2
+	 * @since 2.0
+	 *
 	 * @param Request $request
-	 * @return mixed
+	 *
+	 * @return PromiseInterface
+	 *         Normally promising an array, though can be mixed (json_decode result)
+	 *         Can throw UsageExceptions or RejectionExceptions
+	 */
+	public function getRequestAsync( Request $request ) {
+		$promise = $this->client->getAsync(
+			$this->apiUrl,
+			$this->getClientRequestOptions( $request, 'query' )
+		);
+
+		return $promise->then( function( ResponseInterface $response ) {
+			return call_user_func( array( $this, 'decodeResponse' ), $response );
+		} );
+	}
+
+	/**
+	 * @since 2.0
+	 *
+	 * @param Request $request
+	 *
+	 * @return PromiseInterface
+	 *         Normally promising an array, though can be mixed (json_decode result)
+	 *         Can throw UsageExceptions or RejectionExceptions
+	 */
+	public function postRequestAsync( Request $request ) {
+		$promise = $this->client->postAsync(
+			$this->apiUrl,
+			$this->getClientRequestOptions( $request, 'form_params' )
+		);
+
+		return $promise->then( function( ResponseInterface $response ) {
+			return call_user_func( array( $this, 'decodeResponse' ), $response );
+		} );
+	}
+
+	/**
+	 * @since 0.2
+	 *
+	 * @param Request $request
+	 *
+	 * @return mixed Normally an array
 	 */
 	public function getRequest( Request $request ) {
-		$response = $this->getGuzzleGetResponse( $request );
-		$resultArray = json_decode( $response->getBody(), true );
+		$response = $this->client->get(
+			$this->apiUrl,
+			$this->getClientRequestOptions( $request, 'query' )
+		);
 
-		$this->logWarnings( $resultArray );
-		$this->throwUsageExceptions( $resultArray );
-
-		return $resultArray;
+		return $this->decodeResponse( $response );
 	}
 
 	/**
 	 * @since 0.2
+	 *
 	 * @param Request $request
-	 * @return mixed
+	 *
+	 * @return mixed Normally an array
 	 */
 	public function postRequest( Request $request ) {
-		$response = $this->getGuzzlePostResponse( $request );
+		$response = $this->client->post(
+			$this->apiUrl,
+			$this->getClientRequestOptions( $request, 'form_params' )
+		);
+
+		return $this->decodeResponse( $response );
+	}
+
+	/**
+	 * @param ResponseInterface $response
+	 *
+	 * @return mixed
+	 * @throws UsageException
+	 */
+	private function decodeResponse( ResponseInterface $response ) {
 		$resultArray = json_decode( $response->getBody(), true );
 
 		$this->logWarnings( $resultArray );
@@ -112,40 +171,15 @@ class MediawikiApi implements LoggerAwareInterface {
 
 	/**
 	 * @param Request $request
-	 *
-	 * @return ResponseInterface
-	 */
-	private function getGuzzleGetResponse( Request $request ) {
-		return $this->client->get(
-			$this->apiUrl,
-			$this->getClientRequestOptions( $request )
-		);
-	}
-
-	/**
-	 * @param Request $request
-	 *
-	 * @throws RequestException
-	 *
-	 * @return ResponseInterface
-	 */
-	private function getGuzzlePostResponse( Request $request ) {
-		return $this->client->post(
-			$this->apiUrl,
-			$this->getClientRequestOptions( $request)
-		);
-	}
-
-	/**
-	 * @param Request $request
+	 * @param string $paramsKey either 'query' or 'form_params'
 	 *
 	 * @throws RequestException
 	 *
 	 * @return array as needed by ClientInterface::get and ClientInterface::post
 	 */
-	private function getClientRequestOptions( Request $request ) {
+	private function getClientRequestOptions( Request $request, $paramsKey ) {
 		return array(
-			'form_params' => array_merge( $request->getParams(), array( 'format' => 'json' ) ),
+			$paramsKey => array_merge( $request->getParams(), array( 'format' => 'json' ) ),
 			'headers' => array_merge( $this->getDefaultHeaders(), $request->getHeaders() ),
 		);
 	}

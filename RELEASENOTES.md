@@ -2,8 +2,10 @@ These are the release notes for the [mediawiki-api-base](README.md).
 
 ## Version 2.0.0
 * MediawikiApi constructor signature has changed. Change is BackCompat for usages that simply passed an apiUrl!
-* No longer automatically retries failed requests
-* Now using "guzzlehttp/guzzle": "~6.0" ( From "guzzle/guzzle": "~5.2" )
+* Added async methods to MediawikiApi `getRequestAsync` & `postRequestAsync`
+* No longer automatically retries failed requests (no longer requires guzzlehttp/retry-subscriber)
+* Requires "guzzlehttp/guzzle": "~6.0" ( From "guzzle/guzzle": "~5.2" )
+* Requires "guzzlehttp/promises": "~1.0"
 
 ## Version 1.1.0 (5 september 2015)
 * Requests that encounter a connection exception are now retried

@@ -55,10 +55,7 @@ class MediawikiApiTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	private function getMockResponse( $responseValue ) {
-		$mock = $this->getMockBuilder( 'GuzzleHttp\Message\Response' )
-			->disableOriginalConstructor()
-			->setMethods( array( 'getBody' ) )
-			->getMock();
+		$mock = $this->getMock( 'Psr\Http\Message\ResponseInterface' );
 		$mock->expects( $this->any() )
 			->method( 'getBody' )
 			->will( $this->returnValue( json_encode( $responseValue ) ) );
