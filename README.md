@@ -57,3 +57,19 @@ catch ( UsageException $e ) {
 	echo "Oh no the api returned an error!";
 }
 ```
+
+Including sync requests:
+```php
+// Initiate each request but do not block
+$requestPromises = array(
+	'Page1' => $api->postRequest( FluentRequest::factory()->setAction( 'purge' )->setParam( 'titles', 'Page1' ) ),
+	'Page2' => $api->postRequest( FluentRequest::factory()->setAction( 'purge' )->setParam( 'titles', 'Page2' ) ),
+	'Page3' => $api->postRequest( FluentRequest::factory()->setAction( 'purge' )->setParam( 'titles', 'Page3' ) ),
+);
+
+// Wait on all of the requests to complete.
+$results = Promise\unwrap( $requestPromises );
+
+// You can access each result using the key provided to the unwrap function.
+print_r( $results['Page1'], $results['Page2'], $results['Page3'] )
+```
