@@ -3,14 +3,10 @@
 namespace Mediawiki\Api;
 
 use GuzzleHttp\Client;
-use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Handler\CurlHandler;
 use GuzzleHttp\HandlerStack;
-use GuzzleHttp\Middleware;
 use GuzzleHttp\Promise\PromiseInterface;
-use GuzzleHttp\Psr7\Request as Psr7Request;
-use GuzzleHttp\Psr7\Response as Psr7Response;
 use InvalidArgumentException;
 use Mediawiki\Api\Guzzle\MiddlewareFactory;
 use Psr\Http\Message\ResponseInterface;
@@ -20,6 +16,10 @@ use Psr\Log\LogLevel;
 use Psr\Log\NullLogger;
 
 /**
+ * Main class for this library
+ *
+ * @since 0.1
+ *
  * @author Addshore
  */
 class MediawikiApi implements LoggerAwareInterface {
@@ -363,6 +363,7 @@ class MediawikiApi implements LoggerAwareInterface {
 
 	/**
 	 * @since 0.1
+	 *
 	 * @return bool success
 	 */
 	public function logout() {
@@ -389,6 +390,7 @@ class MediawikiApi implements LoggerAwareInterface {
 
 	/**
 	 * @since 0.1
+	 *
 	 * Clears all tokens stored by the api
 	 */
 	public function clearTokens() {

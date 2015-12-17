@@ -4,6 +4,8 @@ namespace Mediawiki\Api;
 
 /**
  * @since 1.0
+ *
+ * @author Addshore
  */
 class FluentRequest implements Request {
 
@@ -17,15 +19,27 @@ class FluentRequest implements Request {
 	 */
 	private $headers = array();
 
+	/**
+	 * @since 1.0
+	 *
+	 * @return array
+	 */
 	public function getParams() {
 		return $this->params;
 	}
 
+	/**
+	 * @since 1.0
+	 *
+	 * @return array
+	 */
 	public function getHeaders() {
 		return $this->headers;
 	}
 
 	/**
+	 * @since 1.0
+	 *
 	 * @return self
 	 */
 	public static function factory() {
@@ -33,6 +47,8 @@ class FluentRequest implements Request {
 	}
 
 	/**
+	 * @since 1.0
+	 *
 	 * @param string $action
 	 *
 	 * @return $this

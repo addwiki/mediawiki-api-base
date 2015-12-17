@@ -6,6 +6,11 @@ use InvalidArgumentException;
 
 /**
  * @since 0.1
+ *
+ * @author Addshore
+ * @author RobinR1
+ * @author Bene
+ *
  * Represents a user that can log in to the api
  */
 class ApiUser {

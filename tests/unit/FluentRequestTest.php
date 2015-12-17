@@ -1,11 +1,16 @@
 <?php
+
+namespace Mediawiki\Api\Test;
+
 use Mediawiki\Api\FluentRequest;
-use Mediawiki\Api\RequestOptions;
+use PHPUnit_Framework_TestCase;
 
 /**
+ * @author Addshore
+ *
  * @covers Mediawiki\Api\FluentRequest
  */
-class FluentRequestTest extends \PHPUnit_Framework_TestCase {
+class FluentRequestTest extends PHPUnit_Framework_TestCase {
 
 	public function testConstructionDefaults() {
 		$request = new FluentRequest();

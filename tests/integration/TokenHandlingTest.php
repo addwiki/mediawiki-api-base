@@ -4,6 +4,9 @@ namespace Mediawiki\Api\Test;
 
 use Mediawiki\Api\MediawikiApi;
 
+/**
+ * @author Addshore
+ */
 class TokenHandlingTest extends \PHPUnit_Framework_TestCase {
 
 	/**

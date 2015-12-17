@@ -3,11 +3,14 @@
 namespace Mediawiki\Api\Test;
 
 use Mediawiki\Api\SimpleRequest;
+use PHPUnit_Framework_TestCase;
 
 /**
+ * @author Addshore
+ *
  * @covers Mediawiki\Api\SimpleRequest
  */
-class SimpleRequestTest extends \PHPUnit_Framework_TestCase {
+class SimpleRequestTest extends PHPUnit_Framework_TestCase {
 
 	/**
 	 * @dataProvider provideValidConstruction

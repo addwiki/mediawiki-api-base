@@ -8,6 +8,8 @@ use InvalidArgumentException;
  * Please consider using a FluentRequest object
  *
  * @since 0.2
+ *
+ * @author Addshore
  */
 class SimpleRequest implements Request {
 

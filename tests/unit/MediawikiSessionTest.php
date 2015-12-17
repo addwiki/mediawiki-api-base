@@ -2,16 +2,29 @@
 
 namespace Mediawiki\Api\Test;
 
+use Mediawiki\Api\MediawikiApi;
+use Mediawiki\Api\MediawikiSession;
+use PHPUnit_Framework_MockObject_MockObject;
+use PHPUnit_Framework_TestCase;
+
 /**
+ * @author Addshore
+ *
  * @covers Mediawiki\Api\MediawikiSession
  */
-class MediawikiSessionTest extends \PHPUnit_Framework_TestCase {
+class MediawikiSessionTest extends PHPUnit_Framework_TestCase {
 
-	public function testConstruction() {
-		$mockApi = $this->getMockBuilder( '\Mediawiki\Api\MediawikiApi' )
+	/**
+	 * @return PHPUnit_Framework_MockObject_MockObject|MediawikiApi
+	 */
+	private function getMockApi() {
+		return $this->getMockBuilder( '\Mediawiki\Api\MediawikiApi' )
 			->disableOriginalConstructor()
 			->getMock();
-		$session = new \Mediawiki\Api\MediawikiSession( $mockApi );
+	}
+
+	public function testConstruction() {
+		$session = new MediawikiSession( $this->getMockApi() );
 		$this->assertInstanceOf( '\Mediawiki\Api\MediawikiSession', $session );
 	}
 
@@ -19,9 +32,7 @@ class MediawikiSessionTest extends \PHPUnit_Framework_TestCase {
 	 * @dataProvider provideTokenTypes
 	 */
 	public function testGetToken( $tokenType ) {
-		$mockApi = $this->getMockBuilder( '\Mediawiki\Api\MediawikiApi' )
-			->disableOriginalConstructor()
-			->getMock();
+		$mockApi = $this->getMockApi();
 		$mockApi->expects( $this->exactly( 2 ) )
 			->method( 'postRequest' )
 			->with( $this->isInstanceOf( '\Mediawiki\Api\SimpleRequest' ) )
@@ -33,7 +44,7 @@ class MediawikiSessionTest extends \PHPUnit_Framework_TestCase {
 				)
 			) ) );
 
-		$session = new \Mediawiki\Api\MediawikiSession( $mockApi );
+		$session = new MediawikiSession( $mockApi );
 
 		//Although we make 2 calls to the method we assert the tokens method about is only called once
 		$this->assertEquals( 'TKN-' . $tokenType, $session->getToken() );
@@ -47,9 +58,7 @@ class MediawikiSessionTest extends \PHPUnit_Framework_TestCase {
 	 * @dataProvider provideTokenTypes
 	 */
 	public function testGetToken_pre125( $tokenType ) {
-		$mockApi = $this->getMockBuilder( '\Mediawiki\Api\MediawikiApi' )
-			->disableOriginalConstructor()
-			->getMock();
+		$mockApi = $this->getMockApi();
 		$mockApi->expects( $this->at( 0 ) )
 			->method( 'postRequest' )
 			->with( $this->isInstanceOf( '\Mediawiki\Api\SimpleRequest' ) )
@@ -69,7 +78,7 @@ class MediawikiSessionTest extends \PHPUnit_Framework_TestCase {
 				)
 			) ) );
 
-		$session = new \Mediawiki\Api\MediawikiSession( $mockApi );
+		$session = new MediawikiSession( $mockApi );
 
 		//Although we make 2 calls to the method we assert the tokens method about is only called once
 		$this->assertEquals( 'TKN-' . $tokenType, $session->getToken() );

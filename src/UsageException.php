@@ -8,6 +8,8 @@ use Exception;
  * Class representing a Mediawiki Api UsageException
  *
  * @since 0.1
+ *
+ * @author Addshore
  */
 class UsageException extends Exception {
 
@@ -45,6 +47,7 @@ class UsageException extends Exception {
 
 	/**
 	 * @since 0.3
+	 *
 	 * @return array
 	 */
 	public function getApiResult() {

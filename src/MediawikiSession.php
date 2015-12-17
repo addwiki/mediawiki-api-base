@@ -9,6 +9,8 @@ use Psr\Log\NullLogger;
 
 /**
  * @since 0.1
+ *
+ * @author Addshore
  */
 class MediawikiSession implements LoggerAwareInterface {
 

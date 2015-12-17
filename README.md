@@ -14,6 +14,7 @@ addwiki/mediawiki-api-base is a PHP HTTP client wrapped around guzzle that makes
  - Handles Mediawiki login, sessions, cookies and tokens
  - Handles response errors by throwing catchable UsageExceptions
  - Retries failed requests where possible
+ - Allows Async requests
 
 ## Installation
 
@@ -58,7 +59,7 @@ catch ( UsageException $e ) {
 }
 ```
 
-Including sync requests:
+Including async requests:
 ```php
 // Initiate each request but do not block
 $requestPromises = array(

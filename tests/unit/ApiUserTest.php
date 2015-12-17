@@ -5,6 +5,8 @@ namespace Mediawiki\Api\Test;
 use Mediawiki\Api\ApiUser;
 
 /**
+ * @author Addshore
+ *
  * @covers Mediawiki\Api\ApiUser
  */
 class ApiUserTest extends \PHPUnit_Framework_TestCase {

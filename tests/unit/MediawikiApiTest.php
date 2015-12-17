@@ -6,12 +6,15 @@ use Mediawiki\Api\ApiUser;
 use Mediawiki\Api\MediawikiApi;
 use Mediawiki\Api\SimpleRequest;
 use Mediawiki\Api\UsageException;
+use PHPUnit_Framework_TestCase;
 use stdClass;
 
 /**
+ * @author Addshore
+ *
  * @covers Mediawiki\Api\MediawikiApi
  */
-class MediawikiApiTest extends \PHPUnit_Framework_TestCase {
+class MediawikiApiTest extends PHPUnit_Framework_TestCase {
 
 	public function provideValidConstruction() {
 		return array(
