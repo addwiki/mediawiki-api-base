@@ -3,9 +3,14 @@
 namespace Mediawiki\Api;
 
 use GuzzleHttp\Client;
-use GuzzleHttp\ClientInterface;
+use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\RequestException;
+use GuzzleHttp\Handler\CurlHandler;
+use GuzzleHttp\HandlerStack;
+use GuzzleHttp\Middleware;
 use GuzzleHttp\Promise\PromiseInterface;
+use GuzzleHttp\Psr7\Request as Psr7Request;
+use GuzzleHttp\Psr7\Response as Psr7Response;
 use InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerAwareInterface;
@@ -19,9 +24,9 @@ use Psr\Log\NullLogger;
 class MediawikiApi implements LoggerAwareInterface {
 
 	/**
-	 * @var ClientInterface
+	 * @var Client|null Should be accessed through getClient
 	 */
-	private $client;
+	private $client = null;
 
 	/**
 	 * @var bool|string
@@ -45,20 +50,21 @@ class MediawikiApi implements LoggerAwareInterface {
 
 	/**
 	 * @param string $apiUrl The API Url
-	 * @param ClientInterface|null $client Guzzle Client
+	 * @param Client|null $client Guzzle Client
 	 * @param MediawikiSession|null $session Inject a custom session here
 	 */
-	public function __construct( $apiUrl, ClientInterface $client = null, MediawikiSession $session = null ) {
+	public function __construct( $apiUrl, Client $client = null, MediawikiSession $session = null ) {
 		if( !is_string( $apiUrl ) ) {
 			throw new InvalidArgumentException( '$apiUrl must be a string' );
 		}
-		if( $client === null ) {
-			$client = new Client( array( 'cookies' => true ) );
-		} elseif( $client->getConfig( 'cookies' ) === false ) {
-			// TODO Somehow flag that things will not work?
-		}
 		if( $session === null ) {
 			$session = new MediawikiSession( $this );
+		}
+		// Warn people about a badly configured Client
+		if( $client !== null ) {
+			if( $client->getConfig( 'cookies' ) === false ) {
+				// TODO Somehow flag that things will not work?
+			}
 		}
 
 		$this->apiUrl = $apiUrl;
@@ -66,6 +72,82 @@ class MediawikiApi implements LoggerAwareInterface {
 		$this->session = $session;
 
 		$this->logger = new NullLogger();
+	}
+
+	/**
+	 * @return Client
+	 */
+	private function getClient() {
+		if( $this->client === null ) {
+			$handlerStack = HandlerStack::create( new CurlHandler() );
+			$handlerStack->push( Middleware::retry( $this->createRetryHandler() ) );
+			$this->client = new Client( array(
+				'cookies' => true,
+				'handler' => $handlerStack,
+			) );
+		}
+		return $this->client;
+	}
+
+	private function createRetryHandler() {
+		return function (
+			$retries,
+			Psr7Request $request,
+			Psr7Response $response = null,
+			RequestException $exception = null
+		) {
+			// Don't retry if we have run out of retries
+			if ( $retries >= 5 ) {
+				return false;
+			}
+
+			$shouldRetry = false;
+
+			// Retry connection exceptions
+			if( $exception instanceof ConnectException ) {
+				$shouldRetry = true;
+			}
+
+			if( $response ) {
+				$headers = $response->getHeaders();
+
+				// Retry on server errors
+				if( $response->getStatusCode() >= 500 ) {
+					$shouldRetry = true;
+				}
+
+				// Retry if we have a response with an API error worth retrying
+				if ( array_key_exists( 'mediawiki-api-error', $headers ) ) {
+					if ( in_array(
+						$headers['mediawiki-api-error'],
+						array(
+							'ratelimited',
+							'readonly',
+							'internal_api_error_DBQueryError',
+						)
+					) ) {
+						$shouldRetry = true;
+					}
+				}
+			}
+
+			// Log if we are retrying
+			if( $shouldRetry ) {
+				$this->logger->warning(
+					sprintf(
+						'Retrying %s %s %s/5, %s',
+						$request->getMethod(),
+						$request->getUri(),
+						$retries + 1,
+						$response ? 'status code: ' . $response->getStatusCode() :
+							$exception->getMessage()
+					),
+					[ $request->getHeader( 'Host' )[0] ]
+				);
+			}
+
+			return $shouldRetry;
+		};
 	}
 
 	/**
@@ -92,7 +174,7 @@ class MediawikiApi implements LoggerAwareInterface {
 	 *         Can throw UsageExceptions or RejectionExceptions
 	 */
 	public function getRequestAsync( Request $request ) {
-		$promise = $this->client->getAsync(
+		$promise = $this->getClient()->getAsync(
 			$this->apiUrl,
 			$this->getClientRequestOptions( $request, 'query' )
 		);
@@ -112,7 +194,7 @@ class MediawikiApi implements LoggerAwareInterface {
 	 *         Can throw UsageExceptions or RejectionExceptions
 	 */
 	public function postRequestAsync( Request $request ) {
-		$promise = $this->client->postAsync(
+		$promise = $this->getClient()->postAsync(
 			$this->apiUrl,
 			$this->getClientRequestOptions( $request, 'form_params' )
 		);
@@ -130,7 +212,7 @@ class MediawikiApi implements LoggerAwareInterface {
 	 * @return mixed Normally an array
 	 */
 	public function getRequest( Request $request ) {
-		$response = $this->client->get(
+		$response = $this->getClient()->get(
 			$this->apiUrl,
 			$this->getClientRequestOptions( $request, 'query' )
 		);
@@ -146,7 +228,7 @@ class MediawikiApi implements LoggerAwareInterface {
 	 * @return mixed Normally an array
 	 */
 	public function postRequest( Request $request ) {
-		$response = $this->client->post(
+		$response = $this->getClient()->post(
 			$this->apiUrl,
 			$this->getClientRequestOptions( $request, 'form_params' )
 		);
