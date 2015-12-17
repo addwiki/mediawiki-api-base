@@ -12,6 +12,7 @@ use GuzzleHttp\Promise\PromiseInterface;
 use GuzzleHttp\Psr7\Request as Psr7Request;
 use GuzzleHttp\Psr7\Response as Psr7Response;
 use InvalidArgumentException;
+use Mediawiki\Api\Guzzle\MiddlewareFactory;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
@@ -79,75 +80,18 @@ class MediawikiApi implements LoggerAwareInterface {
 	 */
 	private function getClient() {
 		if( $this->client === null ) {
+			$middlewareFactory = new MiddlewareFactory();
+			$middlewareFactory->setLogger( $this->logger );
+
 			$handlerStack = HandlerStack::create( new CurlHandler() );
-			$handlerStack->push( Middleware::retry( $this->createRetryHandler() ) );
+			$handlerStack->push( $middlewareFactory->retry() );
+
 			$this->client = new Client( array(
 				'cookies' => true,
 				'handler' => $handlerStack,
 			) );
 		}
 		return $this->client;
-	}
-
-	private function createRetryHandler() {
-		return function (
-			$retries,
-			Psr7Request $request,
-			Psr7Response $response = null,
-			RequestException $exception = null
-		) {
-			// Don't retry if we have run out of retries
-			if ( $retries >= 5 ) {
-				return false;
-			}
-
-			$shouldRetry = false;
-
-			// Retry connection exceptions
-			if( $exception instanceof ConnectException ) {
-				$shouldRetry = true;
-			}
-
-			if( $response ) {
-				$headers = $response->getHeaders();
-
-				// Retry on server errors
-				if( $response->getStatusCode() >= 500 ) {
-					$shouldRetry = true;
-				}
-
-				// Retry if we have a response with an API error worth retrying
-				if ( array_key_exists( 'mediawiki-api-error', $headers ) ) {
-					if ( in_array(
-						$headers['mediawiki-api-error'],
-						array(
-							'ratelimited',
-							'readonly',
-							'internal_api_error_DBQueryError',
-						)
-					) ) {
-						$shouldRetry = true;
-					}
-				}
-			}
-
-			// Log if we are retrying
-			if( $shouldRetry ) {
-				$this->logger->warning(
-					sprintf(
-						'Retrying %s %s %s/5, %s',
-						$request->getMethod(),
-						$request->getUri(),
-						$retries + 1,
-						$response ? 'status code: ' . $response->getStatusCode() :
-							$exception->getMessage()
-					),
-					[ $request->getHeader( 'Host' )[0] ]
-				);
-			}
-
-			return $shouldRetry;
-		};
 	}
 
 	/**
