@@ -50,6 +50,33 @@ class MediawikiApi implements LoggerAwareInterface {
 	private $logger;
 
 	/**
+	 * @since 2.0.0
+	 *
+	 * @param string $apiEndpoint e.g. https://en.wikipedia.org/w/api.php
+	 *
+	 * @return self returns a MediawikiApi instance using $apiEndpoint
+	 */
+	public static function newFromApiEndpoint( $apiEndpoint ) {
+		return new self( $apiEndpoint );
+	}
+
+	/**
+	 * @since 2.0.0
+	 *
+	 * @param string $url e.g. https://en.wikipedia.org OR https://de.wikipedia.org/wiki/Berlin
+	 *
+	 * @return self returns a MediawikiApi instance using the apiEndpoint provided by the RSD
+	 *              file accessible on all Mediawiki pages
+	 *
+	 * @see https://en.wikipedia.org/wiki/Really_Simple_Discovery
+	 */
+	public static function newFromPage( $url ) {
+		//TODO implement me
+	}
+
+	/**
+	 * @access private
+	 *
 	 * @param string $apiUrl The API Url
 	 * @param Client|null $client Guzzle Client
 	 * @param MediawikiSession|null $session Inject a custom session here
@@ -60,12 +87,6 @@ class MediawikiApi implements LoggerAwareInterface {
 		}
 		if( $session === null ) {
 			$session = new MediawikiSession( $this );
-		}
-		// Warn people about a badly configured Client
-		if( $client !== null ) {
-			if( $client->getConfig( 'cookies' ) === false ) {
-				// TODO Somehow flag that things will not work?
-			}
 		}
 
 		$this->apiUrl = $apiUrl;
