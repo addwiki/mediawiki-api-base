@@ -11,6 +11,7 @@ before_script:
 
 script:
   - cd tests/unit && phpunit --coverage-clover=coverage.clover && cd ../../
+  - cd tests/integration && phpunit --coverage-clover=coverage.clover && cd ../../
 
 after_script:
   - wget https://scrutinizer-ci.com/ocular.phar
