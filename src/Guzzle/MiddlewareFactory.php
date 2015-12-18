@@ -62,25 +62,36 @@ class MiddlewareFactory implements LoggerAwareInterface {
 
 			if( $response ) {
 				$headers = $response->getHeaders();
+				$data = json_decode( $response->getBody(), true );
 
 				// Retry on server errors
 				if( $response->getStatusCode() >= 500 ) {
 					$shouldRetry = true;
 				}
 
-				// Retry if we have a response with an API error worth retrying
 				if ( array_key_exists( 'mediawiki-api-error', $headers ) ) {
 					foreach( $headers['mediawiki-api-error'] as $mediawikiApiErrorHeader ) {
-						if ( in_array(
-							$mediawikiApiErrorHeader,
-							array(
-								'ratelimited',
-								'readonly',
-								'internal_api_error_DBQueryError',
+						if (
+							// Retry if we have a response with an API error worth retrying
+							in_array(
+								$mediawikiApiErrorHeader,
+								array(
+									'ratelimited',
+									'readonly',
+									'internal_api_error_DBQueryError',
+								)
 							)
-						) ) {
+							||
+							// Or if we have been stopped from saving as an 'anti-abuse measure'
+							// Note: this tries to match "actionthrottledtext" i18n messagae for mediawiki
+							(
+								$mediawikiApiErrorHeader == 'failed-save' &&
+								strstr( $data['error']['info'], 'anti-abuse measure' )
+							)
+						) {
 							$shouldRetry = true;
 						}
+
 					}
 				}
 			}

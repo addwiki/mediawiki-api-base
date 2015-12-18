@@ -77,6 +77,36 @@ class MiddlewareFactoryTest extends \PHPUnit_Framework_TestCase {
 		);
 	}
 
+	public function testRetryAntiAbuseMeasure() {
+		$middlewareFactory = new MiddlewareFactory();
+
+		$antiAbusejson = json_encode(
+			array(
+				'error' => array(
+					'info' => 'anti-abuse measure'
+				)
+			)
+		);
+
+		$mock = new MockHandler(
+			array(
+				new Response( 200, array( 'mediawiki-api-error' => 'failed-save' ), $antiAbusejson ),
+				new Response( 200, array( 'mediawiki-api-error' => 'DoNotRetryThisHeader' ) ),
+			)
+		);
+
+		$handler = HandlerStack::create( $mock );
+		$handler->push( $middlewareFactory->retry() );
+		$client = new Client( [ 'handler' => $handler ] );
+
+		$response = $client->request( 'GET', '/' );
+		$this->assertEquals( 200, $response->getStatusCode() );
+		$this->assertEquals(
+			array( 'DoNotRetryThisHeader' ),
+			$response->getHeader( 'mediawiki-api-error' )
+		);
+	}
+
 	public function testRetryLimit() {
 		$middlewareFactory = new MiddlewareFactory();
 
