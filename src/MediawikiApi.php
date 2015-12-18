@@ -51,6 +51,11 @@ class MediawikiApi implements LoggerAwareInterface {
 	private $logger;
 
 	/**
+	 * @var string
+	 */
+	private $apiUrl;
+
+	/**
 	 * @since 2.0.0
 	 *
 	 * @param string $apiEndpoint e.g. https://en.wikipedia.org/w/api.php
