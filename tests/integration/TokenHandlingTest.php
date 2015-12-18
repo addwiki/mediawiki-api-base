@@ -13,7 +13,7 @@ class TokenHandlingTest extends \PHPUnit_Framework_TestCase {
 	 * @dataProvider provideTokenTypes
 	 */
 	public function testGetAnonUserToken() {
-		$api = new MediawikiApi( 'http://localhost/w/api.php' );
+		$api = MediawikiApi::newFromApiEndpoint( 'http://deployment.wikimedia.beta.wmflabs.org/w/api.php' );
 		$this->assertEquals( '+\\', $api->getToken() );
 	}
 
