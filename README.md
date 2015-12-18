@@ -20,21 +20,20 @@ addwiki/mediawiki-api-base is a PHP HTTP client wrapped around guzzle that makes
 
 Use composer to install the library and all its dependencies:
 
-	composer require "addwiki/mediawiki-api-base:~1.0"
+	composer require "addwiki/mediawiki-api-base:~2.0"
 
 ## Example Usage
 
-You can construct an api object by simply passing the api endpoint:
+You can get an api object by simply passing the api endpoint:
 
 ```php
-$api = new MediawikiApi( 'http://localhost/w/api.php' );
+$api = MediawikiApi::newFromApiEndpoint( 'http://localhost/w/api.php' );
 ```
 
-You can also pass a custom Guzzle ClientInterface:
+You can event just pass a page:
 
 ```php
-$client = new Client();
-$api = new MediawikiApi( 'http://localhost/w/api.php', $client );
+$api = MediawikiApi::newFromPage( 'https://en.wikipedia.org/wiki/Berlin' );
 ```
 
 You can easily log in and out:
