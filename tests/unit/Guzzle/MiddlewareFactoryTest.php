@@ -30,7 +30,7 @@ class MiddlewareFactoryTest extends \PHPUnit_Framework_TestCase {
 		);
 
 		$handler = HandlerStack::create( $mock );
-		$handler->push( $middlewareFactory->retry() );
+		$handler->push( $middlewareFactory->retry( false ) );
 		$client = new Client( [ 'handler' => $handler ] );
 
 		$this->assertEquals( 200, $client->request( 'GET', '/' )->getStatusCode() );
@@ -47,7 +47,7 @@ class MiddlewareFactoryTest extends \PHPUnit_Framework_TestCase {
 		);
 
 		$handler = HandlerStack::create( $mock );
-		$handler->push( $middlewareFactory->retry() );
+		$handler->push( $middlewareFactory->retry( false ) );
 		$client = new Client( [ 'handler' => $handler ] );
 
 		$this->assertEquals( 200, $client->request( 'GET', '/' )->getStatusCode() );
@@ -66,7 +66,7 @@ class MiddlewareFactoryTest extends \PHPUnit_Framework_TestCase {
 		);
 
 		$handler = HandlerStack::create( $mock );
-		$handler->push( $middlewareFactory->retry() );
+		$handler->push( $middlewareFactory->retry( false ) );
 		$client = new Client( [ 'handler' => $handler ] );
 
 		$response = $client->request( 'GET', '/' );
@@ -96,7 +96,7 @@ class MiddlewareFactoryTest extends \PHPUnit_Framework_TestCase {
 		);
 
 		$handler = HandlerStack::create( $mock );
-		$handler->push( $middlewareFactory->retry() );
+		$handler->push( $middlewareFactory->retry( false ) );
 		$client = new Client( [ 'handler' => $handler ] );
 
 		$response = $client->request( 'GET', '/' );
@@ -122,7 +122,7 @@ class MiddlewareFactoryTest extends \PHPUnit_Framework_TestCase {
 		);
 
 		$handler = HandlerStack::create( $mock );
-		$handler->push( $middlewareFactory->retry() );
+		$handler->push( $middlewareFactory->retry( false ) );
 		$client = new Client( [ 'handler' => $handler ] );
 
 		$this->setExpectedException(
@@ -132,4 +132,27 @@ class MiddlewareFactoryTest extends \PHPUnit_Framework_TestCase {
 
 		$client->request( 'GET', '/' )->getStatusCode();
 	}
+
+	public function testRetryDelay() {
+		$middlewareFactory = new MiddlewareFactory();
+
+		$mock = new MockHandler(
+			array(
+				new ConnectException( "+1 second delay", new Request( 'GET', 'test' ) ),
+				new ConnectException( "+2 second delay", new Request( 'GET', 'test' ) ),
+				new Response( 200 ),
+			)
+		);
+
+		$handler = HandlerStack::create( $mock );
+		$handler->push( $middlewareFactory->retry( true ) );
+		$client = new Client( [ 'handler' => $handler ] );
+
+		$startTime = time();
+		$client->request( 'GET', '/' )->getStatusCode();
+		$endTime = time();
+
+		$this->assertGreaterThan( $startTime + 2, $endTime );
+	}
+
 }

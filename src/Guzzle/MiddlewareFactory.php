@@ -32,10 +32,30 @@ class MiddlewareFactory implements LoggerAwareInterface {
 	}
 
 	/**
+	 * @access private
+	 *
+	 * @param bool $delay default to true, can be false to speed up tests
+	 *
 	 * @return callable
 	 */
-	public function retry() {
-		return Middleware::retry( $this->newRetryDecider() );
+	public function retry( $delay = true ) {
+		if( $delay ) {
+			return Middleware::retry( $this->newRetryDecider(), $this->getRetryDelay() );
+		} else {
+			return Middleware::retry( $this->newRetryDecider() );
+		}
+	}
+
+	/**
+	 * Returns a method that takes the number of retries and returns the number of miliseconds
+	 * to wait
+	 *
+	 * @return callable
+	 */
+	private function getRetryDelay() {
+		return function( $numberOfRetries ) {
+			return 1000 * $numberOfRetries;
+		};
 	}
 
 	/**
