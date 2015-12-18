@@ -1,6 +1,6 @@
 These are the release notes for the [mediawiki-api-base](README.md).
 
-## Version 2.0.1
+## Version 2.1.0
 * Retry throttled actions that return a failed-save code and anti-abuse message
 * Added delay between retried requests
 
