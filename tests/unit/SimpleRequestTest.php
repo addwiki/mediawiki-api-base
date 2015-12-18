@@ -1,6 +1,6 @@
 <?php
 
-namespace Mediawiki\Api\Test;
+namespace Mediawiki\Api\Test\Unit;
 
 use Mediawiki\Api\SimpleRequest;
 use PHPUnit_Framework_TestCase;

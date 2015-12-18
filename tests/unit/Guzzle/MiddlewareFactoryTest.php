@@ -1,6 +1,6 @@
 <?php
 
-namespace Mediawiki\Api\Guzzle\Test;
+namespace Mediawiki\Api\Test\Unit\Guzzle;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ConnectException;

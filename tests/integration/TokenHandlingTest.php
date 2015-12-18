@@ -1,6 +1,6 @@
 <?php
 
-namespace Mediawiki\Api\Test;
+namespace Mediawiki\Api\Test\Integration;
 
 use Mediawiki\Api\MediawikiApi;
 
