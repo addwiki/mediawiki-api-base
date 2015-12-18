@@ -303,16 +303,7 @@ class MediawikiApi implements LoggerAwareInterface {
 	 */
 	public function login( ApiUser $apiUser ) {
 		$this->logger->log( LogLevel::DEBUG, 'Logging in' );
-
-		$credentials = array(
-			'lgname' => $apiUser->getUsername(),
-			'lgpassword' => $apiUser->getPassword(),
-		);
-
-		if( !is_null( $apiUser->getDomain() ) ) {
-			$credentials['lgdomain'] = $apiUser->getDomain();
-		}
-
+		$credentials = $this->getLoginParams( $apiUser );
 		$result = $this->postRequest( new SimpleRequest( 'login', $credentials ) );
 		if ( $result['login']['result'] == "NeedToken" ) {
 			$result = $this->postRequest( new SimpleRequest( 'login', array_merge( array( 'lgtoken' => $result['login']['token'] ), $credentials) ) );
@@ -328,67 +319,62 @@ class MediawikiApi implements LoggerAwareInterface {
 	}
 
 	/**
+	 * @param ApiUser $apiUser
+	 *
+	 * @return string[]
+	 */
+	private function getLoginParams( ApiUser $apiUser ) {
+		$params = array(
+			'lgname' => $apiUser->getUsername(),
+			'lgpassword' => $apiUser->getPassword(),
+		);
+
+		if( !is_null( $apiUser->getDomain() ) ) {
+			$params['lgdomain'] = $apiUser->getDomain();
+		}
+		return $params;
+	}
+
+	/**
 	 * @param array $result
 	 *
 	 * @throws UsageException
 	 */
 	private function throwLoginUsageException( $result ) {
 		$loginResult = $result['login']['result'];
+
+		throw new UsageException(
+			'login-' . $loginResult,
+			$this->getLoginExceptionMessage( $loginResult ),
+			$result
+		);
+	}
+
+	/**
+	 * @param string $loginResult
+	 *
+	 * @return string
+	 */
+	private function getLoginExceptionMessage( $loginResult ) {
 		switch( $loginResult ) {
 			case 'Illegal';
-				throw new UsageException(
-					'login-' . $loginResult,
-					'You provided an illegal username',
-					$result
-				);
+				return 'You provided an illegal username';
 			case 'NotExists';
-				throw new UsageException(
-					'login-' . $loginResult,
-					'The username you provided doesn\'t exist',
-					$result
-				);
+				return 'The username you provided doesn\'t exist';
 			case 'WrongPass';
-				throw new UsageException(
-					'login-' . $loginResult,
-					'The password you provided is incorrect',
-					$result
-				);
+				return 'The password you provided is incorrect';
 			case 'WrongPluginPass';
-				throw new UsageException(
-					'login-' . $loginResult,
-					'An authentication plugin rather than MediaWiki itself rejected the password',
-					$result
-				);
+				return 'An authentication plugin rather than MediaWiki itself rejected the password';
 			case 'CreateBlocked';
-				throw new UsageException(
-					'login-' . $loginResult,
-					'The wiki tried to automatically create a new account for you, but your IP address has been blocked from account creation',
-					$result
-				);
+				return 'The wiki tried to automatically create a new account for you, but your IP address has been blocked from account creation';
 			case 'Throttled';
-				throw new UsageException(
-					'login-' . $loginResult,
-					'You\'ve logged in too many times in a short time.',
-					$result
-				);
+				return 'You\'ve logged in too many times in a short time.';
 			case 'Blocked';
-				throw new UsageException(
-					'login-' . $loginResult,
-					'User is blocked',
-					$result
-				);
+				return 'User is blocked';
 			case 'NeedToken';
-				throw new UsageException(
-					'login-' . $loginResult,
-					'Either you did not provide the login token or the sessionid cookie.',
-					$result
-				);
+				return 'Either you did not provide the login token or the sessionid cookie.';
 			default:
-				throw new UsageException(
-					'login-' . $loginResult,
-					$loginResult,
-					$result
-				);
+				return $loginResult;
 		}
 	}
 
