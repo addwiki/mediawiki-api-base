@@ -32,4 +32,18 @@ class SimpleRequestTest extends PHPUnit_Framework_TestCase {
 		);
 	}
 
+	/**
+	 * @dataProvider provideInvalidConstruction
+	 */
+	public function testInvalidConstruction( $action, $params ) {
+		$this->setExpectedException( 'InvalidArgumentException' );
+		new SimpleRequest( $action, $params );
+	}
+
+	public function provideInvalidConstruction() {
+		return array(
+			array( array(), array() ),
+		);
+	}
+
 }
