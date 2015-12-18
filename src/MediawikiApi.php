@@ -14,6 +14,7 @@ use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 use Psr\Log\NullLogger;
+use SimpleXMLElement;
 
 /**
  * Main class for this library
@@ -71,7 +72,11 @@ class MediawikiApi implements LoggerAwareInterface {
 	 * @see https://en.wikipedia.org/wiki/Really_Simple_Discovery
 	 */
 	public static function newFromPage( $url ) {
-		//TODO implement me
+		$tempClient = new Client( array( 'headers' => array( 'User-Agent' => 'addwiki-mediawiki-client' ) ) );
+		$pageXml = new SimpleXMLElement( $tempClient->get( $url )->getBody() );
+		$rsdElement = $pageXml->xpath( 'head/link[@type="application/rsd+xml"][@href]' );
+		$rsdXml = new SimpleXMLElement( $tempClient->get( $rsdElement[0]->attributes()['href'] )->getBody() );
+		self::newFromApiEndpoint( $rsdXml->service->apis->api->attributes()->apiLink->__toString() );
 	}
 
 	/**

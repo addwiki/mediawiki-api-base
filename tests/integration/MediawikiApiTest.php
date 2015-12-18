@@ -10,6 +10,11 @@ use Mediawiki\Api\SimpleRequest;
  */
 class MediawikiApiTest extends \PHPUnit_Framework_TestCase {
 
+	public function testNewFromPage() {
+		$api = MediawikiApi::newFromPage( 'http://localhost/w' );
+		$this->assertInstanceOf( 'Mediawiki\Api\MediawikiApi', $api );
+	}
+
 	public function testQueryGetResponse() {
 		$api = new MediawikiApi( 'http://localhost/w/api.php' );
 		$response = $api->getRequest( new SimpleRequest( 'query' ) );
