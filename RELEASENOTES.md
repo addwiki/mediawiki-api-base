@@ -1,8 +1,9 @@
 These are the release notes for the [mediawiki-api-base](README.md).
 
-## Version 2.0.1
+## Version 2.1.0 (29 December 2015)
 * Retry throttled actions that return a failed-save code and anti-abuse message
 * Added delay between retried requests
+* Added and used `Guzzle/ClientFactory`
 
 ## Version 2.0.0 (18 December 2015)
 * Added `MediawikiApi::newFromApiEndpoint` and `MediawikiApi::newFromPage`

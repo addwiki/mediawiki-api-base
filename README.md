@@ -20,7 +20,7 @@ addwiki/mediawiki-api-base is a PHP HTTP client wrapped around guzzle that makes
 
 Use composer to install the library and all its dependencies:
 
-	composer require "addwiki/mediawiki-api-base:~2.0"
+	composer require "addwiki/mediawiki-api-base:~2.1"
 
 ## Example Usage
 

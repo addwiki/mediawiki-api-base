@@ -8,6 +8,7 @@ use GuzzleHttp\Handler\CurlHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Promise\PromiseInterface;
 use InvalidArgumentException;
+use Mediawiki\Api\Guzzle\ClientFactory;
 use Mediawiki\Api\Guzzle\MiddlewareFactory;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerAwareInterface;
@@ -111,16 +112,9 @@ class MediawikiApi implements LoggerAwareInterface {
 	 */
 	private function getClient() {
 		if( $this->client === null ) {
-			$middlewareFactory = new MiddlewareFactory();
-			$middlewareFactory->setLogger( $this->logger );
-
-			$handlerStack = HandlerStack::create( new CurlHandler() );
-			$handlerStack->push( $middlewareFactory->retry() );
-
-			$this->client = new Client( array(
-				'cookies' => true,
-				'handler' => $handlerStack,
-			) );
+			$clientFactory = new ClientFactory();
+			$clientFactory->setLogger( $this->logger );
+			$this->client = $clientFactory->getClient();
 		}
 		return $this->client;
 	}
