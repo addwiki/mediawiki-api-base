@@ -18,9 +18,18 @@ class ClientFactory implements LoggerAwareInterface {
 
 	private $client;
 	private $logger;
+	private $config;
 
-	public function __construct() {
+	/**
+	 * @since 2.1.0
+	 *
+	 * @param array $config with possible keys:
+	 *          middleware => array of extra middleware to pass to guzzle
+	 *          user-agent => string default user agent to use for requests
+	 */
+	public function __construct( array $config = array() ) {
 		$this->logger = new NullLogger();
+		$this->config = $config;
 	}
 
 	/**
@@ -45,10 +54,22 @@ class ClientFactory implements LoggerAwareInterface {
 		$handlerStack = HandlerStack::create( new CurlHandler() );
 		$handlerStack->push( $middlewareFactory->retry() );
 
+		if( array_key_exists( 'user-agent', $this->config ) ) {
+			$ua = $this->config['user-agent'];
+		} else {
+			$ua = 'Addwiki - mediawiki-api-base';
+		}
+
+		if( array_key_exists( 'middleware', $this->config ) ) {
+			foreach( $this->config['middleware'] as $middleware ) {
+				$handlerStack->push( $middleware );
+			}
+		}
+
 		return new Client( array(
 			'cookies' => true,
 			'handler' => $handlerStack,
-			'headers' => array( 'User-Agent' => 'Addwiki - mediawiki-api-base' ),
+			'headers' => array( 'User-Agent' => $ua ),
 		) );
 	}
 
