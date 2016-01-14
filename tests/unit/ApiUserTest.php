@@ -16,9 +16,9 @@ class ApiUserTest extends \PHPUnit_Framework_TestCase {
 	 */
 	public function testValidConstruction( $user, $pass, $domain = null ) {
 		$apiUser = new ApiUser( $user, $pass, $domain );
-		$this->assertEquals( $user, $apiUser->getUsername() );
-		$this->assertEquals( $pass, $apiUser->getPassword() );
-		$this->assertEquals( $domain, $apiUser->getDomain() );
+		$this->assertSame( $user, $apiUser->getUsername() );
+		$this->assertSame( $pass, $apiUser->getPassword() );
+		$this->assertSame( $domain, $apiUser->getDomain() );
 	}
 
 	public function provideValidConstruction() {
@@ -53,8 +53,8 @@ class ApiUserTest extends \PHPUnit_Framework_TestCase {
 	 * @dataProvider provideTestEquals
 	 */
 	public function testEquals( ApiUser $user1, ApiUser $user2, $shouldEqual ) {
-		$this->assertEquals( $shouldEqual, $user1->equals( $user2 ) );
-		$this->assertEquals( $shouldEqual, $user2->equals( $user1 ) );
+		$this->assertSame( $shouldEqual, $user1->equals( $user2 ) );
+		$this->assertSame( $shouldEqual, $user2->equals( $user1 ) );
 	}
 
 	public function provideTestEquals() {

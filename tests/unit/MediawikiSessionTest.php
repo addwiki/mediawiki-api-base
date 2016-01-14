@@ -81,8 +81,8 @@ class MediawikiSessionTest extends PHPUnit_Framework_TestCase {
 		$session = new MediawikiSession( $mockApi );
 
 		//Although we make 2 calls to the method we assert the tokens method about is only called once
-		$this->assertEquals( 'TKN-' . $tokenType, $session->getToken() );
-		$this->assertEquals( 'TKN-' . $tokenType, $session->getToken() );
+		$this->assertSame( 'TKN-' . $tokenType, $session->getToken() );
+		$this->assertSame( 'TKN-' . $tokenType, $session->getToken() );
 	}
 
 	public function provideTokenTypes() {

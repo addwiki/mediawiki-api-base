@@ -116,8 +116,8 @@ class MediawikiApiTest extends PHPUnit_Framework_TestCase {
 			$this->fail( 'No Usage Exception Thrown' );
 		}
 		catch( UsageException $e ) {
-			$this->assertEquals( 'imacode', $e->getApiCode() );
-			$this->assertEquals( 'imamsg', $e->getMessage() );
+			$this->assertSame( 'imacode', $e->getApiCode() );
+			$this->assertSame( 'imamsg', $e->getMessage() );
 		}
 	}
 
@@ -184,7 +184,7 @@ class MediawikiApiTest extends PHPUnit_Framework_TestCase {
 		$api = new MediawikiApi( '', $client );
 
 		$this->assertTrue( $api->login( $user ) );
-		$this->assertEquals( 'U1', $api->isLoggedin() );
+		$this->assertSame( 'U1', $api->isLoggedin() );
 	}
 
 	public function testBadLoginSequence() {
