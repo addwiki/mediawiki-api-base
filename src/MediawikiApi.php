@@ -86,8 +86,6 @@ class MediawikiApi implements LoggerAwareInterface {
 	}
 
 	/**
-	 * @access private
-	 *
 	 * @param string $apiUrl The API Url
 	 * @param Client|null $client Guzzle Client
 	 * @param MediawikiSession|null $session Inject a custom session here
