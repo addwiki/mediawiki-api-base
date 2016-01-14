@@ -3,6 +3,7 @@
 namespace Mediawiki\Api;
 
 use GuzzleHttp\Client;
+use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Handler\CurlHandler;
 use GuzzleHttp\HandlerStack;
@@ -89,10 +90,10 @@ class MediawikiApi implements LoggerAwareInterface {
 	 * @access private
 	 *
 	 * @param string $apiUrl The API Url
-	 * @param Client|null $client Guzzle Client
+	 * @param ClientInterface|null $client Guzzle Client
 	 * @param MediawikiSession|null $session Inject a custom session here
 	 */
-	public function __construct( $apiUrl, Client $client = null, MediawikiSession $session = null ) {
+	public function __construct( $apiUrl, ClientInterface $client = null, MediawikiSession $session = null ) {
 		if( !is_string( $apiUrl ) ) {
 			throw new InvalidArgumentException( '$apiUrl must be a string' );
 		}
@@ -108,7 +109,7 @@ class MediawikiApi implements LoggerAwareInterface {
 	}
 
 	/**
-	 * @return Client
+	 * @return ClientInterface
 	 */
 	private function getClient() {
 		if( $this->client === null ) {
