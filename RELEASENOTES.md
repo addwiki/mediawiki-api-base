@@ -1,11 +1,17 @@
 These are the release notes for the [mediawiki-api-base](README.md).
 
+## Version 2.2.0 (dev)
+
+* Added `MediawikiApiInterface`, now implemented by `MediawikiApi`
+
 ## Version 2.1.0 (29 December 2015)
+
 * Retry throttled actions that return a failed-save code and anti-abuse message
 * Added delay between retried requests
 * Added and used `Guzzle/ClientFactory`
 
 ## Version 2.0.0 (18 December 2015)
+
 * Added `MediawikiApi::newFromApiEndpoint` and `MediawikiApi::newFromPage`
 * MediawikiApi constructor access marked as private (please use static factory methods)
 * Added async methods to MediawikiApi `getRequestAsync` & `postRequestAsync`
@@ -13,6 +19,7 @@ These are the release notes for the [mediawiki-api-base](README.md).
 * Requires "guzzlehttp/promises": "~1.0"
 
 ## Version 1.1.0 (5 September 2015)
+
 * Requests that encounter a connection exception are now retried
 * Requests that result in non blocking mediawiki api error codes are now retried (ratelimited, readonly, internal_api_error_DBQueryError)
 * MediawikiApi now implements PSR-3 LoggerAwareInterface
