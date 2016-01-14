@@ -24,7 +24,7 @@ use SimpleXMLElement;
  *
  * @author Addshore
  */
-class MediawikiApi implements LoggerAwareInterface {
+class MediawikiApi implements MediawikiApiInterface, LoggerAwareInterface {
 
 	/**
 	 * @var Client|null Should be accessed through getClient
