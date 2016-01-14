@@ -100,7 +100,7 @@ class MiddlewareFactoryTest extends \PHPUnit_Framework_TestCase {
 		$client = new Client( [ 'handler' => $handler ] );
 
 		$response = $client->request( 'GET', '/' );
-		$this->assertEquals( 200, $response->getStatusCode() );
+		$this->assertSame( 200, $response->getStatusCode() );
 		$this->assertEquals(
 			array( 'DoNotRetryThisHeader' ),
 			$response->getHeader( 'mediawiki-api-error' )
