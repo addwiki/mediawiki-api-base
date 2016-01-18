@@ -5,6 +5,7 @@ These are the release notes for the [mediawiki-api-base](README.md).
 * Added `MediawikiApiInterface`, now implemented by `MediawikiApi`
 * Added `ApiRequester`, now implemented by `MediawikiApi`
 * Added `AsyncApiRequester`, now implemented by `MediawikiApi`
+* The constructor of `MediawikiApi` was made package public
 
 ## Version 2.1.0 (29 December 2015)
 
