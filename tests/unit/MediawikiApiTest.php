@@ -50,11 +50,7 @@ class MediawikiApiTest extends PHPUnit_Framework_TestCase {
 	}
 
 	private function getMockClient() {
-		$mock = $this->getMockBuilder( 'GuzzleHttp\Client' )
-			->disableOriginalConstructor()
-			->setMethods( array( 'get', 'post' ) )
-			->getMock();
-		return $mock;
+		return $this->getMock( 'GuzzleHttp\ClientInterface' );
 	}
 
 	private function getMockResponse( $responseValue ) {
@@ -80,7 +76,7 @@ class MediawikiApiTest extends PHPUnit_Framework_TestCase {
 	public function testGetRequestThrowsUsageExceptionOnError() {
 		$client = $this->getMockClient();
 		$client->expects( $this->once() )
-			->method( 'get' )
+			->method( 'request' )
 			->will( $this->returnValue(
 				$this->getMockResponse( array( 'error' => array(
 					'code' => 'imacode',
@@ -102,7 +98,7 @@ class MediawikiApiTest extends PHPUnit_Framework_TestCase {
 	public function testPostRequestThrowsUsageExceptionOnError() {
 		$client = $this->getMockClient();
 		$client->expects( $this->once() )
-			->method( 'post' )
+			->method( 'request' )
 			->will( $this->returnValue(
 				$this->getMockResponse( array( 'error' => array(
 					'code' => 'imacode',
@@ -127,8 +123,8 @@ class MediawikiApiTest extends PHPUnit_Framework_TestCase {
 	public function testGetActionReturnsResult( $expectedResult, $action, $params = array() ) {
 		$client = $this->getMockClient();
 		$client->expects( $this->once() )
-			->method( 'get' )
-			->with( null, $this->getExpectedRequestOpts( array_merge( array( 'action' => $action ), $params ) ) )
+			->method( 'request' )
+			->with( 'GET', null, $this->getExpectedRequestOpts( array_merge( array( 'action' => $action ), $params ) ) )
 			->will( $this->returnValue( $this->getMockResponse( $expectedResult ) ) );
 		$api = new MediawikiApi( '', $client );
 
@@ -143,8 +139,8 @@ class MediawikiApiTest extends PHPUnit_Framework_TestCase {
 	public function testPostActionReturnsResult( $expectedResult, $action, $params = array() ) {
 		$client = $this->getMockClient();
 		$client->expects( $this->once() )
-			->method( 'post' )
-			->with( null, $this->getExpectedRequestOpts( array_merge( array( 'action' => $action ), $params ), true ))
+			->method( 'request' )
+			->with( 'POST', null, $this->getExpectedRequestOpts( array_merge( array( 'action' => $action ), $params ), true ))
 			->will( $this->returnValue( $this->getMockResponse( $expectedResult ) ) );
 		$api = new MediawikiApi( '', $client );
 
@@ -171,15 +167,15 @@ class MediawikiApiTest extends PHPUnit_Framework_TestCase {
 			'lgpassword' => 'P1',
 		);
 		$client->expects( $this->at( 0 ) )
-			->method( 'post' )
-			->with( null, $this->getExpectedRequestOpts( $eq1, true ) )
+			->method( 'request' )
+			->with( 'POST', null, $this->getExpectedRequestOpts( $eq1, true ) )
 			->will( $this->returnValue( $this->getMockResponse( array( 'login' => array(
 				'result' => 'NeedToken',
 				'token' => 'IamLoginTK',
 			) ) ) ) );
 		$client->expects( $this->at( 1 ) )
-			->method( 'post' )
-			->with( null, $this->getExpectedRequestOpts( array_merge( $eq1, array( 'lgtoken' => 'IamLoginTK' ) ), true ) )
+			->method( 'request' )
+			->with( 'POST', null, $this->getExpectedRequestOpts( array_merge( $eq1, array( 'lgtoken' => 'IamLoginTK' ) ), true ) )
 			->will( $this->returnValue( $this->getMockResponse( array( 'login' => array( 'result' => 'Success' ) ) ) ) );
 		$api = new MediawikiApi( '', $client );
 
@@ -196,15 +192,15 @@ class MediawikiApiTest extends PHPUnit_Framework_TestCase {
 			'lgpassword' => 'P1',
 		);
 		$client->expects( $this->at( 0 ) )
-			->method( 'post' )
-			->with( null, $this->getExpectedRequestOpts( $eq1, true ) )
+			->method( 'request' )
+			->with( 'POST', null, $this->getExpectedRequestOpts( $eq1, true ) )
 			->will( $this->returnValue( $this->getMockResponse( array( 'login' => array(
 				'result' => 'NeedToken',
 				'token' => 'IamLoginTK',
 			) ) ) ) );
 		$client->expects( $this->at( 1 ) )
-			->method( 'post' )
-			->with( null, $this->getExpectedRequestOpts( array_merge( $eq1, array( 'lgtoken' => 'IamLoginTK' ) ), true ) )
+			->method( 'request' )
+			->with( 'POST', null, $this->getExpectedRequestOpts( array_merge( $eq1, array( 'lgtoken' => 'IamLoginTK' ) ), true ) )
 			->will( $this->returnValue( $this->getMockResponse( array( 'login' => array( 'result' => 'BADTOKENorsmthin' ) ) ) ) );
 		$api = new MediawikiApi( '', $client );
 
@@ -215,8 +211,8 @@ class MediawikiApiTest extends PHPUnit_Framework_TestCase {
 	public function testLogout() {
 		$client = $this->getMockClient();
 		$client->expects( $this->at( 0 ) )
-			->method( 'post' )
-			->with( null, $this->getExpectedRequestOpts( array( 'action' => 'logout' ), true ) )
+			->method( 'request' )
+			->with( 'POST', null, $this->getExpectedRequestOpts( array( 'action' => 'logout' ), true ) )
 			->will( $this->returnValue( $this->getMockResponse( array( ) ) ) );
 		$api = new MediawikiApi( '', $client );
 
@@ -226,8 +222,8 @@ class MediawikiApiTest extends PHPUnit_Framework_TestCase {
 	public function testLogoutOnFailure() {
 		$client = $this->getMockClient();
 		$client->expects( $this->at( 0 ) )
-			->method( 'post' )
-			->with( null, $this->getExpectedRequestOpts( array( 'action' => 'logout' ), true ) )
+			->method( 'request' )
+			->with( 'POST', null, $this->getExpectedRequestOpts( array( 'action' => 'logout' ), true ) )
 			->will( $this->returnValue( $this->getMockResponse( null ) ) );
 		$api = new MediawikiApi( '', $client );
 
@@ -240,8 +236,8 @@ class MediawikiApiTest extends PHPUnit_Framework_TestCase {
 	public function testGetVersion( $apiValue, $expectedVersion ) {
 		$client = $this->getMockClient();
 		$client->expects( $this->exactly( 1 ) )
-			->method( 'get' )
-			->with( null, $this->getExpectedRequestOpts( array( 'action' => 'query', 'meta' => 'siteinfo', 'continue' => '' ) ) )
+			->method( 'request' )
+			->with( 'GET', null, $this->getExpectedRequestOpts( array( 'action' => 'query', 'meta' => 'siteinfo', 'continue' => '' ) ) )
 			->will( $this->returnValue( $this->getMockResponse( array(
 				'query' => array(
 					'general' => array(

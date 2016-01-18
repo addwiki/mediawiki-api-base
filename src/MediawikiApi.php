@@ -5,12 +5,9 @@ namespace Mediawiki\Api;
 use GuzzleHttp\Client;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\RequestException;
-use GuzzleHttp\Handler\CurlHandler;
-use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Promise\PromiseInterface;
 use InvalidArgumentException;
 use Mediawiki\Api\Guzzle\ClientFactory;
-use Mediawiki\Api\Guzzle\MiddlewareFactory;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
@@ -28,7 +25,7 @@ use SimpleXMLElement;
 class MediawikiApi implements MediawikiApiInterface, LoggerAwareInterface {
 
 	/**
-	 * @var Client|null Should be accessed through getClient
+	 * @var ClientInterface|null Should be accessed through getClient
 	 */
 	private $client = null;
 
@@ -142,7 +139,8 @@ class MediawikiApi implements MediawikiApiInterface, LoggerAwareInterface {
 	 *         Can throw UsageExceptions or RejectionExceptions
 	 */
 	public function getRequestAsync( Request $request ) {
-		$promise = $this->getClient()->getAsync(
+		$promise = $this->getClient()->requestAsync(
+			'GET',
 			$this->apiUrl,
 			$this->getClientRequestOptions( $request, 'query' )
 		);
@@ -162,7 +160,8 @@ class MediawikiApi implements MediawikiApiInterface, LoggerAwareInterface {
 	 *         Can throw UsageExceptions or RejectionExceptions
 	 */
 	public function postRequestAsync( Request $request ) {
-		$promise = $this->getClient()->postAsync(
+		$promise = $this->getClient()->requestAsync(
+			'POST',
 			$this->apiUrl,
 			$this->getClientRequestOptions( $request, 'form_params' )
 		);
@@ -180,7 +179,8 @@ class MediawikiApi implements MediawikiApiInterface, LoggerAwareInterface {
 	 * @return mixed Normally an array
 	 */
 	public function getRequest( Request $request ) {
-		$response = $this->getClient()->get(
+		$response = $this->getClient()->request(
+			'GET',
 			$this->apiUrl,
 			$this->getClientRequestOptions( $request, 'query' )
 		);
@@ -196,7 +196,8 @@ class MediawikiApi implements MediawikiApiInterface, LoggerAwareInterface {
 	 * @return mixed Normally an array
 	 */
 	public function postRequest( Request $request ) {
-		$response = $this->getClient()->post(
+		$response = $this->getClient()->request(
+			'POST',
 			$this->apiUrl,
 			$this->getClientRequestOptions( $request, 'form_params' )
 		);
