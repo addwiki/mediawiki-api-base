@@ -27,25 +27,28 @@ Use composer to install the library and all its dependencies:
 You can get an api object by simply passing the api endpoint:
 
 ```php
-$api = MediawikiApi::newFromApiEndpoint( 'http://localhost/w/api.php' );
+$api = \Mediawiki\Api\MediawikiApi::newFromApiEndpoint( 'http://localhost/w/api.php' );
 ```
 
 You can event just pass a page:
 
 ```php
-$api = MediawikiApi::newFromPage( 'https://en.wikipedia.org/wiki/Berlin' );
+$api = \Mediawiki\Api\MediawikiApi::newFromPage( 'https://en.wikipedia.org/wiki/Berlin' );
 ```
 
 You can easily log in and out:
 
 ```php
-$api->login( new ApiUser( 'username', 'password' ) );
+$api->login( new \Mediawiki\Api\ApiUser( 'username', 'password' ) );
 $api->logout();
 ```
 
 And make various requests:
 
 ```php
+use Mediawiki\Api\FluentRequest;
+use Mediawiki\Api\SimpleRequest;
+
 $api->postRequest( FluentRequest::factory()->setAction( 'purge' )->setParam( 'titles', 'FooBar' ) );
 
 $queryResponse = $api->getRequest( FluentRequest::factory()->setAction( 'query' )->setParam( 'meta', 'siteinfo' ) );
@@ -60,6 +63,8 @@ catch ( UsageException $e ) {
 
 Including async requests:
 ```php
+use Mediawiki\Api\FluentRequest;
+
 // Initiate each request but do not block
 $requestPromises = array(
 	'Page1' => $api->postRequest( FluentRequest::factory()->setAction( 'purge' )->setParam( 'titles', 'Page1' ) ),
