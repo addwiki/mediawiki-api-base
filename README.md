@@ -73,7 +73,7 @@ $requestPromises = array(
 );
 
 // Wait on all of the requests to complete.
-$results = Promise\unwrap( $requestPromises );
+$results = GuzzleHttp\Promise\unwrap( $requestPromises );
 
 // You can access each result using the key provided to the unwrap function.
 print_r( $results['Page1'], $results['Page2'], $results['Page3'] )
