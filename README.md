@@ -67,9 +67,9 @@ use Mediawiki\Api\FluentRequest;
 
 // Initiate each request but do not block
 $requestPromises = array(
-	'Page1' => $api->postRequest( FluentRequest::factory()->setAction( 'purge' )->setParam( 'titles', 'Page1' ) ),
-	'Page2' => $api->postRequest( FluentRequest::factory()->setAction( 'purge' )->setParam( 'titles', 'Page2' ) ),
-	'Page3' => $api->postRequest( FluentRequest::factory()->setAction( 'purge' )->setParam( 'titles', 'Page3' ) ),
+	'Page1' => $api->postRequestAsync( FluentRequest::factory()->setAction( 'purge' )->setParam( 'titles', 'Page1' ) ),
+	'Page2' => $api->postRequestAsync( FluentRequest::factory()->setAction( 'purge' )->setParam( 'titles', 'Page2' ) ),
+	'Page3' => $api->postRequestAsync( FluentRequest::factory()->setAction( 'purge' )->setParam( 'titles', 'Page3' ) ),
 );
 
 // Wait on all of the requests to complete.
