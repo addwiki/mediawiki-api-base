@@ -163,7 +163,7 @@ class MediawikiApi implements MediawikiApiInterface, LoggerAwareInterface {
 		$promise = $this->getClient()->requestAsync(
 			'POST',
 			$this->apiUrl,
-			$this->getClientRequestOptions( $request, 'form_params' )
+			$this->getClientRequestOptions( $request, 'multipart' )
 		);
 
 		return $promise->then( function( ResponseInterface $response ) {
@@ -199,7 +199,7 @@ class MediawikiApi implements MediawikiApiInterface, LoggerAwareInterface {
 		$response = $this->getClient()->request(
 			'POST',
 			$this->apiUrl,
-			$this->getClientRequestOptions( $request, 'form_params' )
+			$this->getClientRequestOptions( $request, 'multipart' )
 		);
 
 		return $this->decodeResponse( $response );
@@ -222,7 +222,7 @@ class MediawikiApi implements MediawikiApiInterface, LoggerAwareInterface {
 
 	/**
 	 * @param Request $request
-	 * @param string $paramsKey either 'query' or 'form_params'
+	 * @param string $paramsKey either 'query' or 'multipart'
 	 *
 	 * @throws RequestException
 	 *

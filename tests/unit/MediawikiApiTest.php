@@ -63,7 +63,7 @@ class MediawikiApiTest extends PHPUnit_Framework_TestCase {
 
 	private function getExpectedRequestOpts( $params, $wasPosted = false ) {
 		if( $wasPosted ) {
-			$paramsLocation = 'form_params';
+			$paramsLocation = 'multipart';
 		} else {
 			$paramsLocation = 'query';
 		}
