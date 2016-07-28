@@ -163,7 +163,7 @@ class MediawikiApi implements MediawikiApiInterface, LoggerAwareInterface {
 		$promise = $this->getClient()->requestAsync(
 			'POST',
 			$this->apiUrl,
-			$this->getClientRequestOptions( $request, 'multipart' )
+			$this->getClientRequestOptions( $request, $this->getPostRequestEncoding( $request ) )
 		);
 
 		return $promise->then( function( ResponseInterface $response ) {
@@ -199,7 +199,7 @@ class MediawikiApi implements MediawikiApiInterface, LoggerAwareInterface {
 		$response = $this->getClient()->request(
 			'POST',
 			$this->apiUrl,
-			$this->getClientRequestOptions( $request, 'multipart' )
+			$this->getClientRequestOptions( $request, $this->getPostRequestEncoding( $request ) )
 		);
 
 		return $this->decodeResponse( $response );
@@ -220,6 +220,20 @@ class MediawikiApi implements MediawikiApiInterface, LoggerAwareInterface {
 		return $resultArray;
 	}
 
+    /**
+     * @param Request $request
+     *
+     * @return string
+     */
+	private function getPostRequestEncoding( Request $request ) {
+	    foreach ( $request->getParams() as $value ) {
+            if ( is_resource( $value ) ) {
+                return 'multipart';
+            }
+        }
+        return 'form_params';
+    }
+
 	/**
 	 * @param Request $request
 	 * @param string $paramsKey either 'query' or 'multipart'
@@ -229,11 +243,29 @@ class MediawikiApi implements MediawikiApiInterface, LoggerAwareInterface {
 	 * @return array as needed by ClientInterface::get and ClientInterface::post
 	 */
 	private function getClientRequestOptions( Request $request, $paramsKey ) {
+	    $params = array_merge( $request->getParams(), array( 'format' => 'json' ) );
+	    if ( $paramsKey === 'multipart' ) {
+            $params = $this->encodeMultipartParams( $params );
+        }
+
 		return array(
-			$paramsKey => array_merge( $request->getParams(), array( 'format' => 'json' ) ),
+			$paramsKey => $params,
 			'headers' => array_merge( $this->getDefaultHeaders(), $request->getHeaders() ),
 		);
 	}
+
+    /**
+     * @param array $params
+     * @return array
+     */
+	private function encodeMultipartParams( $params ) {
+	    return array_map( function( $name, $value ) {
+            return array(
+                'name' => $name,
+                'contents' => $value
+            );
+        }, array_keys( $params ), $params );
+    }
 
 	/**
 	 * @return array
