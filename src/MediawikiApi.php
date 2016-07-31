@@ -79,8 +79,8 @@ class MediawikiApi implements MediawikiApiInterface, LoggerAwareInterface {
 		$tempClient = new Client( array( 'headers' => array( 'User-Agent' => 'addwiki-mediawiki-client' ) ) );
 		$pageXml = new SimpleXMLElement( $tempClient->get( $url )->getBody() );
 		$rsdElement = $pageXml->xpath( 'head/link[@type="application/rsd+xml"][@href]' );
-		$rsdXml = new SimpleXMLElement( $tempClient->get( $rsdElement[0]->attributes()['href'] )->getBody() );
-		return self::newFromApiEndpoint( $rsdXml->service->apis->api->attributes()->apiLink->__toString() );
+		$rsdXml = new SimpleXMLElement( $tempClient->get( (string) $rsdElement[0]->attributes()['href'] )->getBody() );
+		return self::newFromApiEndpoint( (string) $rsdXml->service->apis->api->attributes()->apiLink );
 	}
 
 	/**
