@@ -1,5 +1,9 @@
 These are the release notes for the [mediawiki-api-base](README.md).
 
+## Version 2.2.1 (3 August 2016)
+
+* Cast SimpleXMLElements attributes as string in `MediawikiApi::newFromPage()`
+
 ## Version 2.2.0 (18 January 2016)
 
 * Added `MediawikiApiInterface`, now implemented by `MediawikiApi`
