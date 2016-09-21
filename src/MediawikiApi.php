@@ -104,6 +104,16 @@ class MediawikiApi implements MediawikiApiInterface, LoggerAwareInterface {
 	}
 
 	/**
+	 * Get the API URL (the URL to which API requests are sent, usually ending in api.php).
+	 * This is useful if you've created this object via MediawikiApi::newFromPage().
+	 * @return string The API URL.
+	 */
+	public function getApiUrl()
+	{
+		return $this->apiUrl;
+	}
+
+	/**
 	 * @return ClientInterface
 	 */
 	private function getClient() {
