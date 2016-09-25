@@ -16,7 +16,7 @@ class TokenHandlingTest extends \PHPUnit_Framework_TestCase {
 	 * @covers Mediawiki\Api\MediawikiSession::getToken
 	 */
 	public function testGetAnonUserToken() {
-		$api = MediawikiApi::newFromApiEndpoint( 'http://deployment.wikimedia.beta.wmflabs.org/w/api.php' );
+		$api = MediawikiApi::newFromApiEndpoint( 'https://deployment.wikimedia.beta.wmflabs.org/w/api.php' );
 		$this->assertEquals( '+\\', $api->getToken() );
 	}
 
