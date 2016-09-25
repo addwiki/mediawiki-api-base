@@ -61,12 +61,7 @@ class MediawikiApiTest extends PHPUnit_Framework_TestCase {
 		return $mock;
 	}
 
-	private function getExpectedRequestOpts( $params, $wasPosted = false ) {
-		if( $wasPosted ) {
-			$paramsLocation = 'form_params';
-		} else {
-			$paramsLocation = 'query';
-		}
+	private function getExpectedRequestOpts( $params, $paramsLocation ) {
 		return array(
 			$paramsLocation => array_merge( $params, array( 'format' => 'json' ) ),
 			'headers' => array( 'User-Agent' => 'addwiki-mediawiki-client' ),
@@ -124,7 +119,7 @@ class MediawikiApiTest extends PHPUnit_Framework_TestCase {
 		$client = $this->getMockClient();
 		$client->expects( $this->once() )
 			->method( 'request' )
-			->with( 'GET', null, $this->getExpectedRequestOpts( array_merge( array( 'action' => $action ), $params ) ) )
+			->with( 'GET', null, $this->getExpectedRequestOpts( array_merge( array( 'action' => $action ), $params ), 'query' ) )
 			->will( $this->returnValue( $this->getMockResponse( $expectedResult ) ) );
 		$api = new MediawikiApi( '', $client );
 
@@ -140,15 +135,41 @@ class MediawikiApiTest extends PHPUnit_Framework_TestCase {
 		$client = $this->getMockClient();
 		$client->expects( $this->once() )
 			->method( 'request' )
-			->with( 'POST', null, $this->getExpectedRequestOpts( array_merge( array( 'action' => $action ), $params ), true ))
+			->with( 'POST', null, $this->getExpectedRequestOpts( array_merge( array( 'action' => $action ), $params ), 'form_params' ))
 			->will( $this->returnValue( $this->getMockResponse( $expectedResult ) ) );
 		$api = new MediawikiApi( '', $client );
 
 		$result = $api->postRequest( new SimpleRequest( $action, $params ) );
 
 		$this->assertEquals( $expectedResult, $result );
-
 	}
+
+    public function testPostActionWithFileReturnsResult() {
+        $dummyFile = fopen( '/dev/null', 'r' );
+        $params = [
+            'filename' => 'foo.jpg',
+            'file' => $dummyFile
+        ];
+        $client = $this->getMockClient();
+        $client->expects( $this->once() )
+            ->method( 'request' )
+            ->with( 'POST', null, array(
+                'multipart' => array(
+                    array( 'name' => 'action', 'contents' => 'upload' ),
+                    array( 'name' => 'filename', 'contents' => 'foo.jpg' ),
+                    array( 'name' => 'file', 'contents' => $dummyFile ),
+                    array( 'name' => 'format', 'contents' => 'json' ),
+                ),
+                'headers' => array( 'User-Agent' => 'addwiki-mediawiki-client' ),
+            ) )
+            ->will( $this->returnValue( $this->getMockResponse( array( 'success ' => 1 ) ) ) );
+        $api = new MediawikiApi( '', $client );
+
+        $result = $api->postRequest( new SimpleRequest( 'upload', $params ) );
+
+        $this->assertEquals( array( 'success ' => 1 ), $result );
+
+    }
 
 	public function provideActionsParamsResults() {
 		return array(
@@ -168,14 +189,14 @@ class MediawikiApiTest extends PHPUnit_Framework_TestCase {
 		);
 		$client->expects( $this->at( 0 ) )
 			->method( 'request' )
-			->with( 'POST', null, $this->getExpectedRequestOpts( $eq1, true ) )
+			->with( 'POST', null, $this->getExpectedRequestOpts( $eq1, 'form_params' ) )
 			->will( $this->returnValue( $this->getMockResponse( array( 'login' => array(
 				'result' => 'NeedToken',
 				'token' => 'IamLoginTK',
 			) ) ) ) );
 		$client->expects( $this->at( 1 ) )
 			->method( 'request' )
-			->with( 'POST', null, $this->getExpectedRequestOpts( array_merge( $eq1, array( 'lgtoken' => 'IamLoginTK' ) ), true ) )
+			->with( 'POST', null, $this->getExpectedRequestOpts( array_merge( $eq1, array( 'lgtoken' => 'IamLoginTK' ) ), 'form_params' ) )
 			->will( $this->returnValue( $this->getMockResponse( array( 'login' => array( 'result' => 'Success' ) ) ) ) );
 		$api = new MediawikiApi( '', $client );
 
@@ -193,14 +214,14 @@ class MediawikiApiTest extends PHPUnit_Framework_TestCase {
 		);
 		$client->expects( $this->at( 0 ) )
 			->method( 'request' )
-			->with( 'POST', null, $this->getExpectedRequestOpts( $eq1, true ) )
+			->with( 'POST', null, $this->getExpectedRequestOpts( $eq1, 'form_params' ) )
 			->will( $this->returnValue( $this->getMockResponse( array( 'login' => array(
 				'result' => 'NeedToken',
 				'token' => 'IamLoginTK',
 			) ) ) ) );
 		$client->expects( $this->at( 1 ) )
 			->method( 'request' )
-			->with( 'POST', null, $this->getExpectedRequestOpts( array_merge( $eq1, array( 'lgtoken' => 'IamLoginTK' ) ), true ) )
+			->with( 'POST', null, $this->getExpectedRequestOpts( array_merge( $eq1, array( 'lgtoken' => 'IamLoginTK' ) ), 'form_params' ) )
 			->will( $this->returnValue( $this->getMockResponse( array( 'login' => array( 'result' => 'BADTOKENorsmthin' ) ) ) ) );
 		$api = new MediawikiApi( '', $client );
 
@@ -212,7 +233,7 @@ class MediawikiApiTest extends PHPUnit_Framework_TestCase {
 		$client = $this->getMockClient();
 		$client->expects( $this->at( 0 ) )
 			->method( 'request' )
-			->with( 'POST', null, $this->getExpectedRequestOpts( array( 'action' => 'logout' ), true ) )
+			->with( 'POST', null, $this->getExpectedRequestOpts( array( 'action' => 'logout' ), 'form_params' ) )
 			->will( $this->returnValue( $this->getMockResponse( array( ) ) ) );
 		$api = new MediawikiApi( '', $client );
 
@@ -223,7 +244,7 @@ class MediawikiApiTest extends PHPUnit_Framework_TestCase {
 		$client = $this->getMockClient();
 		$client->expects( $this->at( 0 ) )
 			->method( 'request' )
-			->with( 'POST', null, $this->getExpectedRequestOpts( array( 'action' => 'logout' ), true ) )
+			->with( 'POST', null, $this->getExpectedRequestOpts( array( 'action' => 'logout' ), 'form_params' ) )
 			->will( $this->returnValue( $this->getMockResponse( null ) ) );
 		$api = new MediawikiApi( '', $client );
 
@@ -237,7 +258,7 @@ class MediawikiApiTest extends PHPUnit_Framework_TestCase {
 		$client = $this->getMockClient();
 		$client->expects( $this->exactly( 1 ) )
 			->method( 'request' )
-			->with( 'GET', null, $this->getExpectedRequestOpts( array( 'action' => 'query', 'meta' => 'siteinfo', 'continue' => '' ) ) )
+			->with( 'GET', null, $this->getExpectedRequestOpts( array( 'action' => 'query', 'meta' => 'siteinfo', 'continue' => '' ), 'query' ) )
 			->will( $this->returnValue( $this->getMockResponse( array(
 				'query' => array(
 					'general' => array(
