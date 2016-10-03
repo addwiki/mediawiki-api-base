@@ -2,3 +2,4 @@
 vendor
 composer.lock
 test.php
+docs/_build
