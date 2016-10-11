@@ -349,6 +349,7 @@ class MediawikiApi implements MediawikiApiInterface, LoggerAwareInterface {
 		}
 
 		$this->isLoggedIn = false;
+		$this->logger->log( LogLevel::DEBUG, 'Login failed.', $result );
 		$this->throwLoginUsageException( $result );
 		return false;
 	}
