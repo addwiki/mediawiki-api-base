@@ -23,7 +23,7 @@ class ClientFactory implements LoggerAwareInterface {
 	/**
 	 * @since 2.1.0
 	 *
-	 * @param array $config with possible keys:
+	 * @param array $config All configurtion settings supported by Guzzle, and these:
 	 *          middleware => array of extra middleware to pass to guzzle
 	 *          user-agent => string default user agent to use for requests
 	 */
@@ -48,29 +48,36 @@ class ClientFactory implements LoggerAwareInterface {
 	 * @return Client
 	 */
 	private function newClient() {
+		$this->config += array(
+			'cookies' => true,
+			'headers' => array(),
+			'middleware' => array(),
+		);
+
+		if( !array_key_exists( 'User-Agent', $this->config['headers'] ) ) {
+			if( array_key_exists( 'user-agent', $this->config ) ) {
+				$this->config['headers']['User-Agent'] = $this->config['user-agent'];
+			} else {
+				$this->config['headers']['User-Agent'] = 'Addwiki - mediawiki-api-base';
+			}
+		}
+		unset( $this->config['user-agent'] );
+
+		if( !array_key_exists( 'handler', $this->config ) ) {
+			$this->config['handler'] = HandlerStack::create( new CurlHandler() );
+		}
+
 		$middlewareFactory = new MiddlewareFactory();
 		$middlewareFactory->setLogger( $this->logger );
 
-		$handlerStack = HandlerStack::create( new CurlHandler() );
-		$handlerStack->push( $middlewareFactory->retry() );
+		$this->config['middleware'][] = $middlewareFactory->retry();
 
-		if( array_key_exists( 'user-agent', $this->config ) ) {
-			$ua = $this->config['user-agent'];
-		} else {
-			$ua = 'Addwiki - mediawiki-api-base';
+		foreach( $this->config['middleware'] as $name => $middleware ) {
+			$this->config['handler']->push( $middleware );
 		}
+		unset( $this->config['middleware'] );
 
-		if( array_key_exists( 'middleware', $this->config ) ) {
-			foreach( $this->config['middleware'] as $middleware ) {
-				$handlerStack->push( $middleware );
-			}
-		}
-
-		return new Client( array(
-			'cookies' => true,
-			'handler' => $handlerStack,
-			'headers' => array( 'User-Agent' => $ua ),
-		) );
+		return new Client( $this->config );
 	}
 
 	/**
