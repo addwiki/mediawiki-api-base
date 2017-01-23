@@ -53,7 +53,23 @@ class MiddlewareFactory implements LoggerAwareInterface {
 	 * @return callable
 	 */
 	private function getRetryDelay() {
-		return function( $numberOfRetries ) {
+		return function( $numberOfRetries, Response $response = null ) {
+			// The $response argument is only passed as of Guzzle 6.2.2.
+			if( $response !== null ) {
+				// Retry-After may be a number of seconds or an absolute date (RFC 7231,
+				// section 7.1.3).
+				$retryAfter = $response->getHeaderLine( 'Retry-After' );
+
+				if( is_numeric( $retryAfter ) ) {
+					return 1000 * $retryAfter;
+				}
+
+				if( $retryAfter ) {
+					$seconds = strtotime( $retryAfter ) - time();
+					return 1000 * max( 1, $seconds );
+				}
+			}
+
 			return 1000 * $numberOfRetries;
 		};
 	}
@@ -81,7 +97,6 @@ class MiddlewareFactory implements LoggerAwareInterface {
 			}
 
 			if( $response ) {
-				$headers = $response->getHeaders();
 				$data = json_decode( $response->getBody(), true );
 
 				// Retry on server errors
@@ -89,30 +104,33 @@ class MiddlewareFactory implements LoggerAwareInterface {
 					$shouldRetry = true;
 				}
 
-				if ( array_key_exists( 'mediawiki-api-error', $headers ) ) {
-					foreach( $headers['mediawiki-api-error'] as $mediawikiApiErrorHeader ) {
-						if (
-							// Retry if we have a response with an API error worth retrying
-							in_array(
-								$mediawikiApiErrorHeader,
-								array(
-									'ratelimited',
-									'readonly',
-									'internal_api_error_DBQueryError',
-								)
+				foreach( $response->getHeader( 'Mediawiki-Api-Error' ) as $mediawikiApiErrorHeader ) {
+					if (
+						// Retry if the API explicitly tells us to:
+						// https://www.mediawiki.org/wiki/Manual:Maxlag_parameter
+						$response->getHeaderLine( 'Retry-After' )
+						||
+						// Retry if we have a response with an API error worth retrying
+						in_array(
+							$mediawikiApiErrorHeader,
+							array(
+								'ratelimited',
+								'maxlag',
+								'readonly',
+								'internal_api_error_DBQueryError',
 							)
-							||
-							// Or if we have been stopped from saving as an 'anti-abuse measure'
-							// Note: this tries to match "actionthrottledtext" i18n messagae for mediawiki
-							(
-								$mediawikiApiErrorHeader == 'failed-save' &&
-								strstr( $data['error']['info'], 'anti-abuse measure' )
-							)
-						) {
-							$shouldRetry = true;
-						}
-
+						)
+						||
+						// Or if we have been stopped from saving as an 'anti-abuse measure'
+						// Note: this tries to match "actionthrottledtext" i18n messagae for mediawiki
+						(
+							$mediawikiApiErrorHeader == 'failed-save' &&
+							strstr( $data['error']['info'], 'anti-abuse measure' )
+						)
+					) {
+						$shouldRetry = true;
 					}
+
 				}
 			}
 

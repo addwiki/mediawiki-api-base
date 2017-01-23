@@ -20,66 +20,52 @@ use Mediawiki\Api\Guzzle\MiddlewareFactory;
 class MiddlewareFactoryTest extends \PHPUnit_Framework_TestCase {
 
 	public function testRetriesConnectException() {
-		$middlewareFactory = new MiddlewareFactory();
+		$queue = [
+			new ConnectException( 'Error 1', new Request( 'GET', 'test' ) ),
+			new Response( 200, [ 'X-Foo' => 'Bar' ] ),
+		];
 
-		$mock = new MockHandler(
-			array(
-				new ConnectException( "Error 1", new Request( 'GET', 'test' ) ),
-				new Response( 200, [ 'X-Foo' => 'Bar' ] ),
-			)
-		);
+		$client = $this->getClient( $queue, $delays );
+		$response = $client->request( 'GET', '/' );
 
-		$handler = HandlerStack::create( $mock );
-		$handler->push( $middlewareFactory->retry( false ) );
-		$client = new Client( [ 'handler' => $handler ] );
-
-		$this->assertEquals( 200, $client->request( 'GET', '/' )->getStatusCode() );
+		$this->assertEquals( 200, $response->getStatusCode() );
+		$this->assertEquals( [ 1000 ], $delays );
 	}
 
 	public function testRetries500Errors() {
-		$middlewareFactory = new MiddlewareFactory();
+		$queue = [
+			new Response( 500 ),
+			new Response( 200 ),
+		];
 
-		$mock = new MockHandler(
-			array(
-				new Response( 500 ),
-				new Response( 200 ),
-			)
-		);
+		$client = $this->getClient( $queue, $delays );
+		$response = $client->request( 'GET', '/' );
 
-		$handler = HandlerStack::create( $mock );
-		$handler->push( $middlewareFactory->retry( false ) );
-		$client = new Client( [ 'handler' => $handler ] );
-
-		$this->assertEquals( 200, $client->request( 'GET', '/' )->getStatusCode() );
+		$this->assertEquals( 200, $response->getStatusCode() );
+		$this->assertEquals( [ 1000 ], $delays );
 	}
 
 	public function testRetriesSomeMediawikiApiErrorHeaders() {
-		$middlewareFactory = new MiddlewareFactory();
+		$queue = [
+			new Response( 200, array( 'mediawiki-api-error' => 'ratelimited' ) ),
+			new Response( 200, array( 'mediawiki-api-error' => 'maxlag' ) ),
+			new Response( 200, array( 'mediawiki-api-error' => 'readonly' ) ),
+			new Response( 200, array( 'mediawiki-api-error' => 'internal_api_error_DBQueryError' ) ),
+			new Response( 200, array( 'mediawiki-api-error' => 'DoNotRetryThisHeader' ) ),
+		];
 
-		$mock = new MockHandler(
-			array(
-				new Response( 200, array( 'mediawiki-api-error' => 'ratelimited' ) ),
-				new Response( 200, array( 'mediawiki-api-error' => 'readonly' ) ),
-				new Response( 200, array( 'mediawiki-api-error' => 'internal_api_error_DBQueryError' ) ),
-				new Response( 200, array( 'mediawiki-api-error' => 'DoNotRetryThisHeader' ) ),
-			)
-		);
-
-		$handler = HandlerStack::create( $mock );
-		$handler->push( $middlewareFactory->retry( false ) );
-		$client = new Client( [ 'handler' => $handler ] );
-
+		$client = $this->getClient( $queue, $delays );
 		$response = $client->request( 'GET', '/' );
+
 		$this->assertEquals( 200, $response->getStatusCode() );
 		$this->assertEquals(
 			array( 'DoNotRetryThisHeader' ),
 			$response->getHeader( 'mediawiki-api-error' )
 		);
+		$this->assertEquals( [ 1000, 2000, 3000, 4000 ], $delays );
 	}
 
 	public function testRetryAntiAbuseMeasure() {
-		$middlewareFactory = new MiddlewareFactory();
-
 		$antiAbusejson = json_encode(
 			array(
 				'error' => array(
@@ -88,71 +74,142 @@ class MiddlewareFactoryTest extends \PHPUnit_Framework_TestCase {
 			)
 		);
 
-		$mock = new MockHandler(
-			array(
-				new Response( 200, array( 'mediawiki-api-error' => 'failed-save' ), $antiAbusejson ),
-				new Response( 200, array( 'mediawiki-api-error' => 'DoNotRetryThisHeader' ) ),
-			)
-		);
+		$queue = [
+			new Response( 200, array( 'mediawiki-api-error' => 'failed-save' ), $antiAbusejson ),
+			new Response( 200, array( 'mediawiki-api-error' => 'DoNotRetryThisHeader' ) ),
+		];
 
-		$handler = HandlerStack::create( $mock );
-		$handler->push( $middlewareFactory->retry( false ) );
-		$client = new Client( [ 'handler' => $handler ] );
-
+		$client = $this->getClient( $queue, $delays );
 		$response = $client->request( 'GET', '/' );
-		$this->assertSame( 200, $response->getStatusCode() );
-		$this->assertEquals(
-			array( 'DoNotRetryThisHeader' ),
-			$response->getHeader( 'mediawiki-api-error' )
-		);
+
+		$this->assertEquals( 200, $response->getStatusCode() );
+		$this->assertEquals( 'DoNotRetryThisHeader', $response->getHeaderLine( 'mediawiki-api-error' ) );
 	}
 
 	public function testRetryLimit() {
-		$middlewareFactory = new MiddlewareFactory();
+		$queue = [
+			new ConnectException( 'Error 1', new Request( 'GET', 'test' ) ),
+			new ConnectException( 'Error 2', new Request( 'GET', 'test' ) ),
+			new ConnectException( 'Error 3', new Request( 'GET', 'test' ) ),
+			new ConnectException( 'Error 4', new Request( 'GET', 'test' ) ),
+			new ConnectException( 'Error 5', new Request( 'GET', 'test' ) ),
+			new ConnectException( 'Error 6', new Request( 'GET', 'test' ) ),
+			new Response( 200 ),
+		];
 
-		$mock = new MockHandler(
-			array(
-				new ConnectException( "Error 1", new Request( 'GET', 'test' ) ),
-				new ConnectException( "Error 2", new Request( 'GET', 'test' ) ),
-				new ConnectException( "Error 3", new Request( 'GET', 'test' ) ),
-				new ConnectException( "Error 4", new Request( 'GET', 'test' ) ),
-				new ConnectException( "Error 5", new Request( 'GET', 'test' ) ),
-				new ConnectException( "Error 6", new Request( 'GET', 'test' ) ),
-			)
-		);
-
-		$handler = HandlerStack::create( $mock );
-		$handler->push( $middlewareFactory->retry( false ) );
-		$client = new Client( [ 'handler' => $handler ] );
+		$client = $this->getClient( $queue );
 
 		$this->setExpectedException(
 			'GuzzleHttp\Exception\ConnectException',
 			'Error 6'
 		);
 
-		$client->request( 'GET', '/' )->getStatusCode();
+		$client->request( 'GET', '/' );
 	}
 
-	public function testRetryDelay() {
-		$middlewareFactory = new MiddlewareFactory();
+	public function testConnectExceptionRetryDelay() {
+		$queue = [
+			new ConnectException( '+1 second delay', new Request( 'GET', 'test' ) ),
+			new ConnectException( '+2 second delay', new Request( 'GET', 'test' ) ),
+			new Response( 200 ),
+		];
 
-		$mock = new MockHandler(
-			array(
-				new ConnectException( "+1 second delay", new Request( 'GET', 'test' ) ),
-				new ConnectException( "+2 second delay", new Request( 'GET', 'test' ) ),
-				new Response( 200 ),
-			)
-		);
+		$client = $this->getClient( $queue, $delays );
+		$response = $client->request( 'GET', '/' );
+
+		$this->assertEquals( 200, $response->getStatusCode() );
+		$this->assertEquals( [ 1000, 2000 ], $delays );
+	}
+
+	public function testServerErrorRetryDelay() {
+		$queue = [
+			new Response( 500 ),
+			new Response( 503 ),
+			new Response( 200 ),
+		];
+
+		$client = $this->getClient( $queue, $delays );
+		$response = $client->request( 'GET', '/' );
+
+		$this->assertEquals( 200, $response->getStatusCode() );
+		$this->assertEquals( [ 1000, 2000 ], $delays );
+	}
+
+	public function testRelativeRetryDelayHeaderRetryDelay() {
+		$queue = [
+			new Response( 200, [ 'mediawiki-api-error' => 'maxlag', 'retry-after' => 10 ] ),
+			new Response( 200 ),
+		];
+
+		$this->getClient( $queue, $delays )->request( 'GET', '/' );
+
+		$this->assertEquals( [ 10000 ], $delays );
+	}
+
+	public function testAbsoluteRetryDelayHeaderRetryDelay() {
+		$queue = [
+			new Response(
+				200,
+				[
+					'mediawiki-api-error' => 'maxlag',
+					'retry-after' => gmdate( DATE_RFC1123, time() + 600 ),
+				]
+			),
+			new Response( 200 ),
+		];
+
+		$client = $this->getClient( $queue, $delays );
+		$response = $client->request( 'GET', '/' );
+
+		$this->assertEquals( 200, $response->getStatusCode() );
+		$this->assertCount( 1, $delays );
+		// Allow 5 second delay while running this test.
+		$this->assertGreaterThan( 600000 - 5000 , $delays[0] );
+	}
+
+	public function testPastRetryDelayHeaderRetryDelay() {
+		$queue = [
+			new Response(
+				200,
+				[
+					'mediawiki-api-error' => 'maxlag',
+					'retry-after' => 'Fri, 31 Dec 1999 23:59:59 GMT',
+				]
+			),
+			new Response( 200 ),
+		];
+
+		$client = $this->getClient( $queue, $delays );
+		$response = $client->request( 'GET', '/' );
+
+		$this->assertEquals( 200, $response->getStatusCode() );
+		$this->assertEquals( [ 1000 ] , $delays );
+	}
+
+	private function getClient( array $queue, &$delays = null ) {
+		$mock = new MockHandler( $queue );
 
 		$handler = HandlerStack::create( $mock );
-		$handler->push( $middlewareFactory->retry( true ) );
-		$client = new Client( [ 'handler' => $handler ] );
 
-		$startTime = time();
-		$client->request( 'GET', '/' )->getStatusCode();
-		$endTime = time();
+		$middlewareFactory = new MiddlewareFactory();
+		$handler->push( $middlewareFactory->retry() );
 
-		$this->assertGreaterThan( $startTime + 2, $endTime );
+		$delayMocker = $this->getDelayMocker( $delays );
+		$handler->push( $delayMocker );
+
+		return new Client( [ 'handler' => $handler ] );
 	}
 
+	private function getDelayMocker( &$delays ) {
+		return function( callable $handler) use ( &$delays ) {
+			return function( $request, array $options ) use ( $handler, &$delays ) {
+				if( isset( $options['delay'] ) ) {
+					$delays[] = $options['delay'];
+					unset( $options['delay'] );
+				}
+				return $handler( $request, $options );
+			};
+		};
+
+	}
 }
