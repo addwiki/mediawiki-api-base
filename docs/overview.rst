@@ -109,10 +109,21 @@ install the dependencies using Composer:
     curl -s http://getcomposer.org/installer | php
     ./composer.phar install --dev
 
-Guzzle is tested with PHPUnit. Run all of the tests as follows:
+The library is tested with a combination of linters and phpunit. Run all of the tests as follows:
 
 .. code-block:: bash
 
     ./composer.phar test
 
-If you only want to run the unit or integration tests try replacing 'test' with 'test-unit' and 'test-integration' respectively.
+You can choose to run each part of the whole test suite individually using the following commands:
+
+.. code-block:: bash
+
+    # Run the linting only
+    ./composer.phar lint
+    # Run phpunit only
+    ./composer.phar phpunit
+    # Run only the phpunit unit tests
+    ./composer.phar phpunit-unit
+    # Run only the phpunit integration tests
+    ./composer.phar phpunit-integration
