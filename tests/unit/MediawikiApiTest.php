@@ -144,9 +144,17 @@ class MediawikiApiTest extends PHPUnit_Framework_TestCase {
 		$this->assertEquals( $expectedResult, $result );
 	}
 
+	private function getNullFilePointer() {
+		if ( !file_exists( '/dev/null' ) ) {
+			// windows
+			return fopen( 'NUL', 'r' );
+		}
+		return fopen( '/dev/null', 'r' );
+	}
+
 	public function testPostActionWithFileReturnsResult() {
 
-		$dummyFile = fopen( '/dev/null', 'r' );
+		$dummyFile = $this->getNullFilePointer();
 		$params = [
 			'filename' => 'foo.jpg',
 			'file' => $dummyFile,
