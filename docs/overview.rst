@@ -100,15 +100,19 @@ Running the tests
 -----------------
 
 In order to contribute, you'll need to checkout the source from GitHub and
-install Guzzle's dependencies using Composer:
+install the dependencies using Composer:
 
 .. code-block:: bash
 
     git clone https://github.com/addwiki/mediawiki-api-base.git
-    cd mediawiki-api-base && curl -s http://getcomposer.org/installer | php && ./composer.phar install --dev
+    cd mediawiki-api-base
+    curl -s http://getcomposer.org/installer | php
+    ./composer.phar install --dev
 
-Guzzle is unit tested with PHPUnit. Run the tests using the Makefile:
+Guzzle is tested with PHPUnit. Run all of the tests as follows:
 
 .. code-block:: bash
 
-    phpunit
+    ./composer.phar test
+
+If you only want to run the unit or integration tests try replacing 'test' with 'test-unit' and 'test-integration' respectively.
