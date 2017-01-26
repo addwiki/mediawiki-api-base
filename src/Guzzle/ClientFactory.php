@@ -10,7 +10,7 @@ use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
 /**
- * @since 2.1.0
+ * @since 2.1
  *
  * @author Addshore
  */
@@ -21,9 +21,9 @@ class ClientFactory implements LoggerAwareInterface {
 	private $config;
 
 	/**
-	 * @since 2.1.0
+	 * @since 2.1
 	 *
-	 * @param array $config All configurtion settings supported by Guzzle, and these:
+	 * @param array $config All configuration settings supported by Guzzle, and these:
 	 *          middleware => array of extra middleware to pass to guzzle
 	 *          user-agent => string default user agent to use for requests
 	 */
@@ -33,7 +33,7 @@ class ClientFactory implements LoggerAwareInterface {
 	}
 
 	/**
-	 * @since 2.1.0
+	 * @since 2.1
 	 *
 	 * @return Client
 	 */
@@ -83,7 +83,7 @@ class ClientFactory implements LoggerAwareInterface {
 	/**
 	 * Sets a logger instance on the object
 	 *
-	 * @since 2.1.0
+	 * @since 2.1
 	 *
 	 * @param LoggerInterface $logger
 	 *

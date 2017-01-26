@@ -144,32 +144,33 @@ class MediawikiApiTest extends PHPUnit_Framework_TestCase {
 		$this->assertEquals( $expectedResult, $result );
 	}
 
-    public function testPostActionWithFileReturnsResult() {
-        $dummyFile = fopen( '/dev/null', 'r' );
-        $params = [
-            'filename' => 'foo.jpg',
-            'file' => $dummyFile
-        ];
-        $client = $this->getMockClient();
-        $client->expects( $this->once() )
-            ->method( 'request' )
-            ->with( 'POST', null, array(
-                'multipart' => array(
-                    array( 'name' => 'action', 'contents' => 'upload' ),
-                    array( 'name' => 'filename', 'contents' => 'foo.jpg' ),
-                    array( 'name' => 'file', 'contents' => $dummyFile ),
-                    array( 'name' => 'format', 'contents' => 'json' ),
-                ),
-                'headers' => array( 'User-Agent' => 'addwiki-mediawiki-client' ),
-            ) )
-            ->will( $this->returnValue( $this->getMockResponse( array( 'success ' => 1 ) ) ) );
-        $api = new MediawikiApi( '', $client );
+	public function testPostActionWithFileReturnsResult() {
 
-        $result = $api->postRequest( new SimpleRequest( 'upload', $params ) );
+		$dummyFile = fopen( '/dev/null', 'r' );
+		$params = [
+			'filename' => 'foo.jpg',
+			'file' => $dummyFile,
+		];
+		$client = $this->getMockClient();
+		$client->expects( $this->once() )->method( 'request' )->with(
+				'POST',
+				null,
+				array(
+					'multipart' => array(
+						array( 'name' => 'action', 'contents' => 'upload' ),
+						array( 'name' => 'filename', 'contents' => 'foo.jpg' ),
+						array( 'name' => 'file', 'contents' => $dummyFile ),
+						array( 'name' => 'format', 'contents' => 'json' ),
+					),
+					'headers' => array( 'User-Agent' => 'addwiki-mediawiki-client' ),
+				)
+			)->will( $this->returnValue( $this->getMockResponse( array( 'success ' => 1 ) ) ) );
+		$api = new MediawikiApi( '', $client );
 
-        $this->assertEquals( array( 'success ' => 1 ), $result );
+		$result = $api->postRequest( new SimpleRequest( 'upload', $params ) );
 
-    }
+		$this->assertEquals( array( 'success ' => 1 ), $result );
+	}
 
 	public function provideActionsParamsResults() {
 		return array(

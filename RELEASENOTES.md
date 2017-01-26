@@ -1,5 +1,11 @@
 These are the release notes for the [mediawiki-api-base](README.md).
 
+## Version 2.3.0 (No yet released)
+
+* All guzzle configuration settings can now be overridden in `ClientFactory`
+* Requests that fail due to maxlag will be automatically retried
+* Added `MediawikiApi::getApiUrl`
+
 ## Version 2.2.1 (3 August 2016)
 
 * Cast SimpleXMLElements attributes as string in `MediawikiApi::newFromPage()`

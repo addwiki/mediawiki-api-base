@@ -55,7 +55,7 @@ class MediawikiApi implements MediawikiApiInterface, LoggerAwareInterface {
 	private $apiUrl;
 
 	/**
-	 * @since 2.0.0
+	 * @since 2.0
 	 *
 	 * @param string $apiEndpoint e.g. https://en.wikipedia.org/w/api.php
 	 *
@@ -66,7 +66,7 @@ class MediawikiApi implements MediawikiApiInterface, LoggerAwareInterface {
 	}
 
 	/**
-	 * @since 2.0.0
+	 * @since 2.0
 	 *
 	 * @param string $url e.g. https://en.wikipedia.org OR https://de.wikipedia.org/wiki/Berlin
 	 *
@@ -106,6 +106,9 @@ class MediawikiApi implements MediawikiApiInterface, LoggerAwareInterface {
 	/**
 	 * Get the API URL (the URL to which API requests are sent, usually ending in api.php).
 	 * This is useful if you've created this object via MediawikiApi::newFromPage().
+	 *
+	 * @since 2.3
+	 *
 	 * @return string The API URL.
 	 */
 	public function getApiUrl() {
@@ -252,10 +255,11 @@ class MediawikiApi implements MediawikiApiInterface, LoggerAwareInterface {
 	 * @return array as needed by ClientInterface::get and ClientInterface::post
 	 */
 	private function getClientRequestOptions( Request $request, $paramsKey ) {
-	    $params = array_merge( $request->getParams(), array( 'format' => 'json' ) );
-	    if ( $paramsKey === 'multipart' ) {
-            $params = $this->encodeMultipartParams( $params );
-        }
+
+		$params = array_merge( $request->getParams(), array( 'format' => 'json' ) );
+		if ( $paramsKey === 'multipart' ) {
+			$params = $this->encodeMultipartParams( $params );
+		}
 
 		return array(
 			$paramsKey => $params,
@@ -263,18 +267,25 @@ class MediawikiApi implements MediawikiApiInterface, LoggerAwareInterface {
 		);
 	}
 
-    /**
-     * @param array $params
-     * @return array
-     */
+	/**
+	 * @param array $params
+	 *
+	 * @return array
+	 */
 	private function encodeMultipartParams( $params ) {
-	    return array_map( function( $name, $value ) {
-            return array(
-                'name' => $name,
-                'contents' => $value
-            );
-        }, array_keys( $params ), $params );
-    }
+
+		return array_map(
+			function ( $name, $value ) {
+
+				return array(
+					'name' => $name,
+					'contents' => $value,
+				);
+			},
+			array_keys( $params ),
+			$params
+		);
+	}
 
 	/**
 	 * @return array

@@ -2,7 +2,6 @@
 
 namespace Mediawiki\Api\Test\Unit\Guzzle;
 
-use GuzzleHttp\Client;
 use GuzzleHttp\HandlerStack;
 use Mediawiki\Api\Guzzle\ClientFactory;
 use Psr\Http\Message\RequestInterface;
