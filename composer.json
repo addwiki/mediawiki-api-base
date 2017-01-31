@@ -25,8 +25,8 @@
 	"scripts": {
 		"lint": "parallel-lint . --exclude vendor",
 		"phpunit": "phpunit",
-		"phpunit-unit": "phpunit --testsuite addwiki/mediawiki-api-base/unit",
-		"phpunit-integration": "phpunit --testsuite addwiki/mediawiki-api-base/integration",
+		"phpunit-unit": "phpunit --testsuite unit",
+		"phpunit-integration": "phpunit --testsuite integration",
 		"test": [
 			"@lint",
 			"@phpunit"

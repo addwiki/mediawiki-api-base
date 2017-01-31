@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit colors="true">
     <testsuites>
-        <testsuite name="addwiki/mediawiki-api-base/unit">
+        <testsuite name="unit">
             <directory suffix="Test.php">./tests/unit</directory>
         </testsuite>
-        <testsuite name="addwiki/mediawiki-api-base/integration">
+        <testsuite name="integration">
             <directory suffix="Test.php">./tests/integration</directory>
         </testsuite>
     </testsuites>
