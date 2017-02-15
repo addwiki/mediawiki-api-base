@@ -7,13 +7,47 @@ php:
   - 7.0
   - 7.1
 
-before_script:
+env:
+  - MW=master
+
+matrix:
+  include:
+  - php: 7.1
+    env: MW=REL1_28
+  - php: 7.1
+    env: MW=REL1_27
+  - php: 7.1
+    env: MW=REL1_26
+  - php: 7.1
+    env: MW=REL1_25
+  - php: 7.1
+    env: MW=REL1_24
+  - php: 7.1
+    env: MW=REL1_23
+  - php: 7.1
+    env: MW=REL1_22
+  - php: 7.1
+    env: MW=REL1_21
+  - php: 7.1
+    env: MW=REL1_20
+
+addons:
+  mariadb: '10.0'
+
+before_install:
+  - bash ./build/travis/install-mediawiki.sh
+
+install:
   - composer install
 
-script:
-  - composer ci
+before_script:
+  - bash ./build/travis/run-webserver.sh
 
-after_script:
+script:
+  - composer lint
+  - composer phpunit-coverage
+
+after_success:
   - wget https://scrutinizer-ci.com/ocular.phar
   - php ocular.phar code-coverage:upload --format=php-clover coverage.clover
 

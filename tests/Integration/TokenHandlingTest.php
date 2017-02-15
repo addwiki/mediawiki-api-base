@@ -2,8 +2,6 @@
 
 namespace Mediawiki\Api\Test\Integration;
 
-use Mediawiki\Api\MediawikiApi;
-
 /**
  * @author Addshore
  */
@@ -16,7 +14,7 @@ class TokenHandlingTest extends \PHPUnit_Framework_TestCase {
 	 * @covers Mediawiki\Api\MediawikiSession::getToken
 	 */
 	public function testGetAnonUserToken() {
-		$api = MediawikiApi::newFromApiEndpoint( 'https://deployment.wikimedia.beta.wmflabs.org/w/api.php' );
+		$api = TestEnvironment::newInstance()->getApi();
 		$this->assertEquals( '+\\', $api->getToken() );
 	}
 
