@@ -5,9 +5,10 @@ set -x
 # HHVM doesn't have a built in web server
 # We can't guarantee any single PHP version is always installed on Travis hosts
 # So list the versions and try to pick the latest PHP version
-if [[ $TRAVIS_PHP_VERSION == *"hhvm"* ]]
+# Also the web server on 7.1 seems to have issues, so don't use that?
+if [[ $TRAVIS_PHP_VERSION == *"hhvm"* ]] || [[ $TRAVIS_PHP_VERSION == *"7.1"* ]]
 then
-	WEBSERVERPHPVERSION=`phpenv versions | grep -v system | grep -v hhvm | tail -n 1 | xargs`
+	WEBSERVERPHPVERSION=`phpenv versions | grep -v system | grep -v hhvm | grep -v 7.1 | tail -n 1 | xargs`
 	phpenv global $WEBSERVERPHPVERSION
 	php --version
 fi
