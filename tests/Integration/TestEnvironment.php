@@ -45,7 +45,7 @@ class TestEnvironment {
 		}
 
 		$this->apiUrl = $apiUrl;
-		$this->pageUrl = str_replace( 'api.php', 'index.php?title=Special:Random', $apiUrl );
+		$this->pageUrl = str_replace( 'api.php', 'index.php?title=Special:SpecialPages', $apiUrl );
 		$this->api = MediawikiApi::newFromApiEndpoint( $this->apiUrl );
 	}
 
