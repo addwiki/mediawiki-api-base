@@ -15,14 +15,15 @@ fi
 mkdir ./../web
 cd ./../web
 
-travis_retry wget https://github.com/wikimedia/mediawiki/archive/$MW.tar.gz
+wget https://github.com/wikimedia/mediawiki/archive/$MW.tar.gz
 tar -zxf $MW.tar.gz
 mv mediawiki-$MW w
 ln -s ./w ./wiki
+
 cd w
 
-travis_retry composer self-update
-travis_retry composer install
+composer self-update
+composer install
 
 mysql -e 'CREATE DATABASE mediawiki;'
 php maintenance/install.php --dbtype $DBTYPE --dbuser root --dbname mediawiki --dbpath $(pwd) --pass adminpass TravisWiki admin

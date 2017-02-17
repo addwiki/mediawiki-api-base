@@ -35,6 +35,7 @@ class TestEnvironment {
 	public function __construct() {
 		$apiUrl = getenv( 'MEDIAWIKI_API_URL' );
 		if ( getenv( 'TRAVIS' ) ) {
+			// TODO set this in one of the travis scripts?
 			$apiUrl = 'http://localhost:8080/w/api.php';
 		}
 

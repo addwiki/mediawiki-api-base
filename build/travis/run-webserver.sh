@@ -23,4 +23,3 @@ then
 	phpenv global $TRAVIS_PHP_VERSION
 	php --version
 fi
-
