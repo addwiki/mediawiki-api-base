@@ -20,8 +20,10 @@ matrix:
     env: MW=REL1_26
   - php: 7.1
     env: MW=REL1_25
+  - php: 7.1
+    env: MW=REL1_24
   allow_failures:
-  - env: MW=REL1_25
+  - env: MW=REL1_24
 
 addons:
   mariadb: '10.0'

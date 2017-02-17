@@ -27,7 +27,7 @@ class MediawikiApiTest extends \PHPUnit_Framework_TestCase {
 	public function testQueryGetResponse() {
 		$api = TestEnvironment::newInstance()->getApi();
 		$response = $api->getRequest( new SimpleRequest( 'query' ) );
-		$this->assertEquals( array( 'batchcomplete' => '' ), $response );
+		$this->assertInternalType( 'array', $response );
 	}
 
 	/**
@@ -39,7 +39,7 @@ class MediawikiApiTest extends \PHPUnit_Framework_TestCase {
 	public function testQueryGetResponseAsync() {
 		$api = TestEnvironment::newInstance()->getApi();
 		$response = $api->getRequestAsync( new SimpleRequest( 'query' ) );
-		$this->assertEquals( array( 'batchcomplete' => '' ), $response->wait() );
+		$this->assertInternalType( 'array', $response->wait() );
 	}
 
 	/**
@@ -51,7 +51,7 @@ class MediawikiApiTest extends \PHPUnit_Framework_TestCase {
 	public function testQueryPostResponse() {
 		$api = TestEnvironment::newInstance()->getApi();
 		$response = $api->postRequest( new SimpleRequest( 'query' ) );
-		$this->assertEquals( array( 'batchcomplete' => '' ), $response );
+		$this->assertInternalType( 'array', $response );
 	}
 
 	/**
@@ -63,7 +63,7 @@ class MediawikiApiTest extends \PHPUnit_Framework_TestCase {
 	public function testQueryPostResponseAsync() {
 		$api = TestEnvironment::newInstance()->getApi();
 		$response = $api->postRequestAsync( new SimpleRequest( 'query' ) );
-		$this->assertEquals( array( 'batchcomplete' => '' ), $response->wait() );
+		$this->assertInternalType( 'array', $response->wait() );
 	}
 
 }
