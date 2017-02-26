@@ -7,14 +7,45 @@ php:
   - 7.0
   - 7.1
 
+env:
+  - MW=master
+
+matrix:
+  include:
+  - php: 7.1
+    env: MW=REL1_28
+  - php: 7.1
+    env: MW=REL1_27
+  - php: 7.1
+    env: MW=REL1_26
+  - php: 7.1
+    env: MW=REL1_25
+  - php: 7.1
+    env: MW=REL1_24
+  allow_failures:
+  - env: MW=REL1_24
+
+addons:
+  mariadb: '10.0'
+
+before_install:
+  - bash ./build/travis/install-mediawiki.sh
+
+install:
+  - travis_retry composer install
+
 before_script:
-  - composer install
+  - bash ./build/travis/run-webserver.sh
+  - export ADDWIKI_MW_API='http://localhost:8080/w/api.php'
+  - export ADDWIKI_MW_USER='CIUser'
+  - export ADDWIKI_MW_PASSWORD='CIPass'
 
 script:
-  - composer ci
+  - composer lint
+  - composer phpunit-coverage
 
-after_script:
-  - wget https://scrutinizer-ci.com/ocular.phar
+after_success:
+  - travis_retry wget https://scrutinizer-ci.com/ocular.phar
   - php ocular.phar code-coverage:upload --format=php-clover coverage.clover
 
 cache:

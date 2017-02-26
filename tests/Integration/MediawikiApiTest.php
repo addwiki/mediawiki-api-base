@@ -14,7 +14,7 @@ class MediawikiApiTest extends \PHPUnit_Framework_TestCase {
 	 * @covers Mediawiki\Api\MediawikiApi::newFromPage
 	 */
 	public function testNewFromPage() {
-		$api = MediawikiApi::newFromPage( 'https://deployment.wikimedia.beta.wmflabs.org/wiki/Main_Page' );
+		$api = MediawikiApi::newFromPage( TestEnvironment::newInstance()->getPageUrl() );
 		$this->assertInstanceOf( 'Mediawiki\Api\MediawikiApi', $api );
 	}
 
@@ -25,9 +25,9 @@ class MediawikiApiTest extends \PHPUnit_Framework_TestCase {
 	 * @covers Mediawiki\Api\MediawikiApi::getClient
 	 */
 	public function testQueryGetResponse() {
-		$api = MediawikiApi::newFromApiEndpoint( 'https://deployment.wikimedia.beta.wmflabs.org/w/api.php' );
+		$api = TestEnvironment::newInstance()->getApi();
 		$response = $api->getRequest( new SimpleRequest( 'query' ) );
-		$this->assertEquals( array( 'batchcomplete' => '' ), $response );
+		$this->assertInternalType( 'array', $response );
 	}
 
 	/**
@@ -37,9 +37,9 @@ class MediawikiApiTest extends \PHPUnit_Framework_TestCase {
 	 * @covers Mediawiki\Api\MediawikiApi::getClient
 	 */
 	public function testQueryGetResponseAsync() {
-		$api = MediawikiApi::newFromApiEndpoint( 'https://deployment.wikimedia.beta.wmflabs.org/w/api.php' );
+		$api = TestEnvironment::newInstance()->getApi();
 		$response = $api->getRequestAsync( new SimpleRequest( 'query' ) );
-		$this->assertEquals( array( 'batchcomplete' => '' ), $response->wait() );
+		$this->assertInternalType( 'array', $response->wait() );
 	}
 
 	/**
@@ -49,9 +49,9 @@ class MediawikiApiTest extends \PHPUnit_Framework_TestCase {
 	 * @covers Mediawiki\Api\MediawikiApi::getClient
 	 */
 	public function testQueryPostResponse() {
-		$api = MediawikiApi::newFromApiEndpoint( 'https://deployment.wikimedia.beta.wmflabs.org/w/api.php' );
+		$api = TestEnvironment::newInstance()->getApi();
 		$response = $api->postRequest( new SimpleRequest( 'query' ) );
-		$this->assertEquals( array( 'batchcomplete' => '' ), $response );
+		$this->assertInternalType( 'array', $response );
 	}
 
 	/**
@@ -61,9 +61,9 @@ class MediawikiApiTest extends \PHPUnit_Framework_TestCase {
 	 * @covers Mediawiki\Api\MediawikiApi::getClient
 	 */
 	public function testQueryPostResponseAsync() {
-		$api = MediawikiApi::newFromApiEndpoint( 'https://deployment.wikimedia.beta.wmflabs.org/w/api.php' );
+		$api = TestEnvironment::newInstance()->getApi();
 		$response = $api->postRequestAsync( new SimpleRequest( 'query' ) );
-		$this->assertEquals( array( 'batchcomplete' => '' ), $response->wait() );
+		$this->assertInternalType( 'array', $response->wait() );
 	}
 
 }

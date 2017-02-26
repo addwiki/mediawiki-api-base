@@ -27,19 +27,21 @@
 		"phpunit": "phpunit",
 		"phpunit-unit": "phpunit --testsuite unit",
 		"phpunit-integration": "phpunit --testsuite integration",
+		"phpunit-coverage": "phpunit --coverage-clover=coverage.clover",
 		"test": [
 			"@lint",
 			"@phpunit"
-		],
-		"ci": [
-			"@lint",
-			"phpunit --coverage-clover=coverage.clover"
 		]
 	},
 	"autoload": {
 		"psr-4": {
 			"Mediawiki\\Api\\": "src/"
 		}
+	},
+	"autoload-dev": {
+		"files": [
+			"tests/Integration/TestEnvironment.php"
+		]
 	},
 	"extra": {
 		"branch-alias": {
