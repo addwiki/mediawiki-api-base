@@ -70,47 +70,4 @@ class TestEnvironment {
 		return $this->api;
 	}
 
-	/**
-	 * Run all jobs in the queue. This only works if the MediaWiki installation has $wgJobRunRate
-	 * set to greater than zero.
-	 * @todo This and TestEnvironment::getJobQueueLength() should probably not live here.
-	 * @return void
-	 */
-	public function runJobs( $maxJobs = 10 ) {
-		$reqestProps = [ 'meta'=>'siteinfo', 'siprop'=>'general' ];
-		$siteInfoRequest = new SimpleRequest( 'query', $reqestProps );
-		$out = $this->getApi()->getRequest( $siteInfoRequest );
-		$mainPageUrl = $out['query']['general']['base'];
-
-		$jobsRun = 0;
-		$initialLength = $this->getJobQueueLength( $this->getApi() );
-		do {
-			$jobsRun++;
-			$cf = new ClientFactory();
-			$cf->getClient()->get( $mainPageUrl );
-
-			$currentLength = $this->getJobQueueLength( $this->getApi() );
-		} while (
-			$currentLength > 0 &&
-			$jobsRun < $maxJobs &&
-			$currentLength < $initialLength - $maxJobs
-		);
-	}
-
-	/**
-	 * Get the number of jobs currently in the queue.
-	 * @todo This and TestEnvironment::runJobs() should probably not live here.
-	 * @param MediawikiApi $api
-	 * @return integer
-	 */
-	public function getJobQueueLength( MediawikiApi $api ) {
-		$req = new SimpleRequest( 'query', [
-				'meta'=>'siteinfo',
-				'siprop'=>'statistics',
-			]
-		);
-		$out = $api->getRequest( $req );
-		return (int) $out['query']['statistics']['jobs'];
-	}
-
 }
