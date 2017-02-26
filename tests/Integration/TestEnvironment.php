@@ -28,20 +28,16 @@ class TestEnvironment {
 	/**
 	 * Set up the test environment by creating a new API object pointing to a
 	 * MediaWiki installation on localhost (or elsewhere as specified by the
-	 * MEDIAWIKI_API_URL environment variable).
+	 * ADDWIKI_MW_API environment variable).
 	 *
-	 * @throws Exception If the MEDIAWIKI_API_URL environment variable does not end in 'api.php'
+	 * @throws Exception If the ADDWIKI_MW_API environment variable does not end in 'api.php'
 	 */
 	public function __construct() {
-		$apiUrl = getenv( 'MEDIAWIKI_API_URL' );
-		if ( getenv( 'TRAVIS' ) ) {
-			// TODO set this in one of the travis scripts?
-			$apiUrl = 'http://localhost:8080/w/api.php';
-		}
+		$apiUrl = getenv( 'ADDWIKI_MW_API' );
 
 		if ( substr( $apiUrl, -7 ) !== 'api.php' ) {
 			$msg = "URL incorrect: $apiUrl"
-				." (Set the MEDIAWIKI_API_URL environment variable correctly)";
+				." (Set the ADDWIKI_MW_API environment variable correctly)";
 			throw new Exception( $msg );
 		}
 

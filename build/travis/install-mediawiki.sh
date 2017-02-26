@@ -4,8 +4,6 @@ set -x
 
 originalDirectory=$(pwd)
 
-DBTYPE='mysql'
-
 if [[ $TRAVIS_PHP_VERSION == *"hhvm"* ]]
 then
 	PHPINI=/etc/hhvm/php.ini
@@ -26,6 +24,6 @@ composer self-update
 composer install
 
 mysql -e 'CREATE DATABASE mediawiki;'
-php maintenance/install.php --dbtype $DBTYPE --dbuser root --dbname mediawiki --dbpath $(pwd) --pass adminpass TravisWiki admin
+php maintenance/install.php --dbtype mysql --dbuser root --dbname mediawiki --dbpath $(pwd) --pass CIPass TravisWiki CIUser
 
 cd $originalDirectory
