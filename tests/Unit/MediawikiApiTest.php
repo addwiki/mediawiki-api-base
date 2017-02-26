@@ -86,7 +86,7 @@ class MediawikiApiTest extends PHPUnit_Framework_TestCase {
 		}
 		catch( UsageException $e ) {
 			$this->assertEquals( 'imacode', $e->getApiCode() );
-			$this->assertEquals( 'imamsg', $e->getMessage() );
+			$this->assertEquals( 'imamsg', $e->getRawMessage() );
 		}
 	}
 
@@ -108,7 +108,7 @@ class MediawikiApiTest extends PHPUnit_Framework_TestCase {
 		}
 		catch( UsageException $e ) {
 			$this->assertSame( 'imacode', $e->getApiCode() );
-			$this->assertSame( 'imamsg', $e->getMessage() );
+			$this->assertSame( 'imamsg', $e->getRawMessage() );
 		}
 	}
 

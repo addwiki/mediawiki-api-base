@@ -392,37 +392,11 @@ class MediawikiApi implements MediawikiApiInterface, LoggerAwareInterface {
 
 		throw new UsageException(
 			'login-' . $loginResult,
-			$this->getLoginExceptionMessage( $loginResult ),
+			array_key_exists( 'reason', $result['login'] )
+				? $result['login']['reason']
+				: 'No Reason given',
 			$result
 		);
-	}
-
-	/**
-	 * @param string $loginResult
-	 *
-	 * @return string
-	 */
-	private function getLoginExceptionMessage( $loginResult ) {
-		switch( $loginResult ) {
-			case 'Illegal';
-				return 'You provided an illegal username';
-			case 'NotExists';
-				return 'The username you provided doesn\'t exist';
-			case 'WrongPass';
-				return 'The password you provided is incorrect';
-			case 'WrongPluginPass';
-				return 'An authentication plugin rather than MediaWiki itself rejected the password';
-			case 'CreateBlocked';
-				return 'The wiki tried to automatically create a new account for you, but your IP address has been blocked from account creation';
-			case 'Throttled';
-				return 'You\'ve logged in too many times in a short time.';
-			case 'Blocked';
-				return 'User is blocked';
-			case 'NeedToken';
-				return 'Either you did not provide the login token or the sessionid cookie.';
-			default:
-				return $loginResult;
-		}
 	}
 
 	/**
