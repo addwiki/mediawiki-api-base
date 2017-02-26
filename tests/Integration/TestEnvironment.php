@@ -3,9 +3,7 @@
 namespace Mediawiki\Api\Test\Integration;
 
 use Exception;
-use Mediawiki\Api\Guzzle\ClientFactory;
 use Mediawiki\Api\MediawikiApi;
-use Mediawiki\Api\SimpleRequest;
 
 /**
  * @author Addshore
