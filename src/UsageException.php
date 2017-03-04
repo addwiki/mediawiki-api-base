@@ -24,6 +24,11 @@ class UsageException extends Exception {
 	private $result;
 
 	/**
+	 * @var string
+	 */
+	private $rawMessage;
+
+	/**
 	 * @since 0.1
 	 *
 	 * @param string $apiCode
@@ -33,6 +38,10 @@ class UsageException extends Exception {
 	public function __construct( $apiCode = '', $message = '', $result = array() ) {
 		$this->apiCode = $apiCode;
 		$this->result = $result;
+		$this->rawMessage = $message;
+		$message = 'Code: ' . $apiCode . PHP_EOL .
+			'Message: ' . $message . PHP_EOL .
+			'Result: ' . json_encode( $result );
 		parent::__construct( $message, 0, null );
 	}
 
@@ -52,6 +61,15 @@ class UsageException extends Exception {
 	 */
 	public function getApiResult() {
 		return $this->result;
+	}
+
+	/**
+	 * @since 2.3.0
+	 *
+	 * @return string
+	 */
+	public function getRawMessage() {
+		return $this->rawMessage;
 	}
 
 }
