@@ -17,7 +17,7 @@ You can get an api object by simply passing the api endpoint:
 
     $api = MediawikiApi::newFromApiEndpoint( 'https://en.wikipedia.org/w/api.php' );
 
-You can event just pass a page:
+You can even just pass a page:
 
 .. code-block:: php
 
