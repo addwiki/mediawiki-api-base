@@ -310,7 +310,12 @@ class MediawikiApi implements MediawikiApiInterface, LoggerAwareInterface {
 	private function logWarnings( $result ) {
 		if( is_array( $result ) && array_key_exists( 'warnings', $result ) ) {
 			foreach( $result['warnings'] as $module => $warningData ) {
-				$this->logger->log( LogLevel::WARNING, $module . ': ' . $warningData['*'], array( 'data' => $warningData ) );
+				// Accomodate both formatversion=2 and old-style API results
+				if( isset( $warningData['*'] ) ) {
+					$this->logger->log( LogLevel::WARNING, $module . ': ' . $warningData['*'], array( 'data' => $warningData ) );
+				} else {
+					$this->logger->log( LogLevel::WARNING, $module . ': ' . $warningData['warnings'], array( 'data' => $warningData ) );
+				}
 			}
 		}
 	}
