@@ -19,6 +19,18 @@ class MediawikiApiTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	/**
+	 * @covers Mediawiki\Api\MediawikiApi::newFromPage
+	 * @expectedException Mediawiki\Api\RsdException
+	 * @expectedExceptionMessageRegExp |Unable to find RSD URL in page.*|
+	 */
+	public function testNewFromPageInvalidHtml() {
+		// This could be any URL that doesn't contain the RSD link, but the README URL
+		// is a test-accessible one that doesn't return 404.
+		$nonWikiPage = str_replace( 'api.php', 'README', TestEnvironment::newInstance()->getApiUrl() );
+		MediawikiApi::newFromPage( $nonWikiPage );
+	}
+
+	/**
 	 * @covers Mediawiki\Api\MediawikiApi::getRequest
 	 * @covers Mediawiki\Api\MediawikiApi::getClientRequestOptions
 	 * @covers Mediawiki\Api\MediawikiApi::decodeResponse
