@@ -2,6 +2,8 @@
 
 namespace Mediawiki\Api;
 
+use DOMDocument;
+use DOMXPath;
 use GuzzleHttp\Client;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\RequestException;
@@ -66,21 +68,32 @@ class MediawikiApi implements MediawikiApiInterface, LoggerAwareInterface {
 	}
 
 	/**
+	 * Create a new MediawikiApi object from a URL to any page in a MediaWiki website.
+	 *
 	 * @since 2.0
+	 * @see https://en.wikipedia.org/wiki/Really_Simple_Discovery
 	 *
 	 * @param string $url e.g. https://en.wikipedia.org OR https://de.wikipedia.org/wiki/Berlin
-	 *
 	 * @return self returns a MediawikiApi instance using the apiEndpoint provided by the RSD
 	 *              file accessible on all Mediawiki pages
-	 *
-	 * @see https://en.wikipedia.org/wiki/Really_Simple_Discovery
+	 * @throws RsdException If the RSD URL could not be found in the page's HTML.
 	 */
 	public static function newFromPage( $url ) {
-		$tempClient = new Client( array( 'headers' => array( 'User-Agent' => 'addwiki-mediawiki-client' ) ) );
-		$pageXml = new SimpleXMLElement( $tempClient->get( $url )->getBody() );
-		$rsdElement = $pageXml->xpath( 'head/link[@type="application/rsd+xml"][@href]' );
-		$rsdXml = new SimpleXMLElement( $tempClient->get( (string) $rsdElement[0]->attributes()['href'] )->getBody() );
-		return self::newFromApiEndpoint( (string) $rsdXml->service->apis->api->attributes()->apiLink );
+		$tempClient = new Client( [ 'headers' => [ 'User-Agent' => 'addwiki-mediawiki-client' ] ] );
+
+		// Get the page HTML and extract the RSD link.
+		$pageHtml = $tempClient->get( $url )->getBody();
+		$pageDoc = new DOMDocument();
+		$pageDoc->loadHTML( $pageHtml );
+		$link = ( new DOMXpath( $pageDoc ) )->query( 'head/link[@type="application/rsd+xml"][@href]' );
+		if ( $link->length === 0 ) {
+			throw new RsdException( "Unable to find RSD URL in page: $url" );
+		}
+		$rsdUrl = $link->item( 0 )->attributes->getnamedItem( 'href' )->nodeValue;
+
+		// Then get the RSD XML, and return the API link.
+		$rsdXml = new SimpleXMLElement( $tempClient->get( $rsdUrl )->getBody() );
+		return self::newFromApiEndpoint( (string)$rsdXml->service->apis->api->attributes()->apiLink );
 	}
 
 	/**
