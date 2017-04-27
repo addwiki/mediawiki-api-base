@@ -1,5 +1,8 @@
 These are the release notes for the [mediawiki-api-base](README.md) library.
 
+## Version 2.4.0 (work in progress)
+* TBA
+
 ## Version 2.3.0 (27 April 2017)
 
 * All guzzle configuration settings can now be overridden in `ClientFactory`. [#27](https://github.com/addwiki/mediawiki-api-base/pull/27)
