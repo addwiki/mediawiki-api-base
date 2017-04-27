@@ -1,11 +1,15 @@
-These are the release notes for the [mediawiki-api-base](README.md).
+These are the release notes for the [mediawiki-api-base](README.md) library.
 
-## Version 2.3.0 (No yet released)
+## Version 2.3.0 (27 April 2017)
 
-* All guzzle configuration settings can now be overridden in `ClientFactory`
-* Requests that fail due to maxlag will be automatically retried
-* Added `MediawikiApi::getApiUrl`
-* UsageException messages now include the error code and result the API returned
+* All guzzle configuration settings can now be overridden in `ClientFactory`. [#27](https://github.com/addwiki/mediawiki-api-base/pull/27)
+* Requests that fail due to maxlag will be automatically retried. [#28](https://github.com/addwiki/mediawiki-api-base/pull/28). Fixes [T143193](https://phabricator.wikimedia.org/T143193).
+* Added `MediawikiApi::getApiUrl`. [#24](https://github.com/addwiki/mediawiki-api-base/pull/24)
+* Debugging infomation now logged when login fails. [#26](https://github.com/addwiki/mediawiki-api-base/pull/26)
+* UsageException messages now include the error code and result the API returned. [#31](https://github.com/addwiki/mediawiki-api-base/pull/31)
+* Both formatversion=2 and old style API results supported [#33](https://github.com/addwiki/mediawiki-api-base/pull/33)
+* Fix [MediawikiApi::newFromPage() fails on non-XML HTML](https://phabricator.wikimedia.org/T163527). [#34](https://github.com/addwiki/mediawiki-api-base/pull/34)
+* Various CI improvements.
 
 ## Version 2.2.1 (3 August 2016)
 
