@@ -47,11 +47,11 @@ class MiddlewareFactoryTest extends \PHPUnit_Framework_TestCase {
 
 	public function testRetriesSomeMediawikiApiErrorHeaders() {
 		$queue = [
-			new Response( 200, array( 'mediawiki-api-error' => 'ratelimited' ) ),
-			new Response( 200, array( 'mediawiki-api-error' => 'maxlag' ) ),
-			new Response( 200, array( 'mediawiki-api-error' => 'readonly' ) ),
-			new Response( 200, array( 'mediawiki-api-error' => 'internal_api_error_DBQueryError' ) ),
-			new Response( 200, array( 'mediawiki-api-error' => 'DoNotRetryThisHeader' ) ),
+			new Response( 200, [ 'mediawiki-api-error' => 'ratelimited' ] ),
+			new Response( 200, [ 'mediawiki-api-error' => 'maxlag' ] ),
+			new Response( 200, [ 'mediawiki-api-error' => 'readonly' ] ),
+			new Response( 200, [ 'mediawiki-api-error' => 'internal_api_error_DBQueryError' ] ),
+			new Response( 200, [ 'mediawiki-api-error' => 'DoNotRetryThisHeader' ] ),
 		];
 
 		$client = $this->getClient( $queue, $delays );
@@ -59,7 +59,7 @@ class MiddlewareFactoryTest extends \PHPUnit_Framework_TestCase {
 
 		$this->assertEquals( 200, $response->getStatusCode() );
 		$this->assertEquals(
-			array( 'DoNotRetryThisHeader' ),
+			[ 'DoNotRetryThisHeader' ],
 			$response->getHeader( 'mediawiki-api-error' )
 		);
 		$this->assertEquals( [ 1000, 2000, 3000, 4000 ], $delays );
@@ -67,16 +67,16 @@ class MiddlewareFactoryTest extends \PHPUnit_Framework_TestCase {
 
 	public function testRetryAntiAbuseMeasure() {
 		$antiAbusejson = json_encode(
-			array(
-				'error' => array(
+			[
+				'error' => [
 					'info' => 'anti-abuse measure'
-				)
-			)
+				]
+			]
 		);
 
 		$queue = [
-			new Response( 200, array( 'mediawiki-api-error' => 'failed-save' ), $antiAbusejson ),
-			new Response( 200, array( 'mediawiki-api-error' => 'DoNotRetryThisHeader' ) ),
+			new Response( 200, [ 'mediawiki-api-error' => 'failed-save' ], $antiAbusejson ),
+			new Response( 200, [ 'mediawiki-api-error' => 'DoNotRetryThisHeader' ] ),
 		];
 
 		$client = $this->getClient( $queue, $delays );
@@ -164,7 +164,7 @@ class MiddlewareFactoryTest extends \PHPUnit_Framework_TestCase {
 		$this->assertEquals( 200, $response->getStatusCode() );
 		$this->assertCount( 1, $delays );
 		// Allow 5 second delay while running this test.
-		$this->assertGreaterThan( 600000 - 5000 , $delays[0] );
+		$this->assertGreaterThan( 600000 - 5000, $delays[0] );
 	}
 
 	public function testPastRetryDelayHeaderRetryDelay() {
@@ -183,7 +183,7 @@ class MiddlewareFactoryTest extends \PHPUnit_Framework_TestCase {
 		$response = $client->request( 'GET', '/' );
 
 		$this->assertEquals( 200, $response->getStatusCode() );
-		$this->assertEquals( [ 1000 ] , $delays );
+		$this->assertEquals( [ 1000 ], $delays );
 	}
 
 	private function getClient( array $queue, &$delays = null ) {
@@ -201,9 +201,9 @@ class MiddlewareFactoryTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	private function getDelayMocker( &$delays ) {
-		return function( callable $handler) use ( &$delays ) {
+		return function( callable $handler ) use ( &$delays ) {
 			return function( $request, array $options ) use ( $handler, &$delays ) {
-				if( isset( $options['delay'] ) ) {
+				if ( isset( $options['delay'] ) ) {
 					$delays[] = $options['delay'];
 					unset( $options['delay'] );
 				}

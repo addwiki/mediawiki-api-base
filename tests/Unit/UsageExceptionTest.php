@@ -21,11 +21,11 @@ class UsageExceptionTest extends PHPUnit_Framework_TestCase {
 			$e->getMessage()
 		);
 		$this->assertSame( '', $e->getApiCode() );
-		$this->assertEquals( array(), $e->getApiResult() );
+		$this->assertEquals( [], $e->getApiResult() );
 	}
 
 	public function testUsageExceptionWithParams() {
-		$e = new UsageException( 'imacode', 'imamsg', array( 'foo' => 'bar' ) );
+		$e = new UsageException( 'imacode', 'imamsg', [ 'foo' => 'bar' ] );
 		$this->assertSame( 'imacode', $e->getApiCode() );
 		$this->assertSame(
 			'Code: imacode' . PHP_EOL .
@@ -33,7 +33,7 @@ class UsageExceptionTest extends PHPUnit_Framework_TestCase {
 			'Result: {"foo":"bar"}',
 			$e->getMessage()
 		);
-		$this->assertEquals( array( 'foo' => 'bar' ), $e->getApiResult() );
+		$this->assertEquals( [ 'foo' => 'bar' ], $e->getApiResult() );
 	}
 
 }

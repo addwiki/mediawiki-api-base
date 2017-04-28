@@ -101,11 +101,12 @@ class MediawikiApi implements MediawikiApiInterface, LoggerAwareInterface {
 	 * @param ClientInterface|null $client Guzzle Client
 	 * @param MediawikiSession|null $session Inject a custom session here
 	 */
-	public function __construct( $apiUrl, ClientInterface $client = null, MediawikiSession $session = null ) {
-		if( !is_string( $apiUrl ) ) {
+	public function __construct( $apiUrl, ClientInterface $client = null,
+								 MediawikiSession $session = null ) {
+		if ( !is_string( $apiUrl ) ) {
 			throw new InvalidArgumentException( '$apiUrl must be a string' );
 		}
-		if( $session === null ) {
+		if ( $session === null ) {
 			$session = new MediawikiSession( $this );
 		}
 
@@ -132,7 +133,7 @@ class MediawikiApi implements MediawikiApiInterface, LoggerAwareInterface {
 	 * @return ClientInterface
 	 */
 	private function getClient() {
-		if( $this->client === null ) {
+		if ( $this->client === null ) {
 			$clientFactory = new ClientFactory();
 			$clientFactory->setLogger( $this->logger );
 			$this->client = $clientFactory->getClient();
@@ -171,7 +172,7 @@ class MediawikiApi implements MediawikiApiInterface, LoggerAwareInterface {
 		);
 
 		return $promise->then( function( ResponseInterface $response ) {
-			return call_user_func( array( $this, 'decodeResponse' ), $response );
+			return call_user_func( [ $this, 'decodeResponse' ], $response );
 		} );
 	}
 
@@ -192,7 +193,7 @@ class MediawikiApi implements MediawikiApiInterface, LoggerAwareInterface {
 		);
 
 		return $promise->then( function( ResponseInterface $response ) {
-			return call_user_func( array( $this, 'decodeResponse' ), $response );
+			return call_user_func( [ $this, 'decodeResponse' ], $response );
 		} );
 	}
 
@@ -245,19 +246,19 @@ class MediawikiApi implements MediawikiApiInterface, LoggerAwareInterface {
 		return $resultArray;
 	}
 
-    /**
-     * @param Request $request
-     *
-     * @return string
-     */
+	/**
+	 * @param Request $request
+	 *
+	 * @return string
+	 */
 	private function getPostRequestEncoding( Request $request ) {
 	    foreach ( $request->getParams() as $value ) {
-            if ( is_resource( $value ) ) {
-                return 'multipart';
-            }
-        }
-        return 'form_params';
-    }
+			if ( is_resource( $value ) ) {
+				return 'multipart';
+			}
+		   }
+		return 'form_params';
+	}
 
 	/**
 	 * @param Request $request
@@ -269,15 +270,15 @@ class MediawikiApi implements MediawikiApiInterface, LoggerAwareInterface {
 	 */
 	private function getClientRequestOptions( Request $request, $paramsKey ) {
 
-		$params = array_merge( $request->getParams(), array( 'format' => 'json' ) );
+		$params = array_merge( $request->getParams(), [ 'format' => 'json' ] );
 		if ( $paramsKey === 'multipart' ) {
 			$params = $this->encodeMultipartParams( $params );
 		}
 
-		return array(
+		return [
 			$paramsKey => $params,
 			'headers' => array_merge( $this->getDefaultHeaders(), $request->getHeaders() ),
-		);
+		];
 	}
 
 	/**
@@ -290,10 +291,10 @@ class MediawikiApi implements MediawikiApiInterface, LoggerAwareInterface {
 		return array_map(
 			function ( $name, $value ) {
 
-				return array(
+				return [
 					'name' => $name,
 					'contents' => $value,
-				);
+				];
 			},
 			array_keys( $params ),
 			$params
@@ -304,14 +305,14 @@ class MediawikiApi implements MediawikiApiInterface, LoggerAwareInterface {
 	 * @return array
 	 */
 	private function getDefaultHeaders() {
-		return array(
+		return [
 			'User-Agent' => $this->getUserAgent(),
-		);
+		];
 	}
 
 	private function getUserAgent() {
 		$loggedIn = $this->isLoggedin();
-		if( $loggedIn ) {
+		if ( $loggedIn ) {
 			return 'addwiki-mediawiki-client/' . $loggedIn;
 		}
 		return 'addwiki-mediawiki-client';
@@ -321,13 +322,14 @@ class MediawikiApi implements MediawikiApiInterface, LoggerAwareInterface {
 	 * @param $result
 	 */
 	private function logWarnings( $result ) {
-		if( is_array( $result ) && array_key_exists( 'warnings', $result ) ) {
-			foreach( $result['warnings'] as $module => $warningData ) {
+		if ( is_array( $result ) && array_key_exists( 'warnings', $result ) ) {
+			foreach ( $result['warnings'] as $module => $warningData ) {
 				// Accomodate both formatversion=2 and old-style API results
-				if( isset( $warningData['*'] ) ) {
-					$this->logger->log( LogLevel::WARNING, $module . ': ' . $warningData['*'], array( 'data' => $warningData ) );
+				$logPrefix = $module . ': ';
+				if ( isset( $warningData['*'] ) ) {
+					$this->logger->warning( $logPrefix . $warningData['*'], [ 'data' => $warningData ] );
 				} else {
-					$this->logger->log( LogLevel::WARNING, $module . ': ' . $warningData['warnings'], array( 'data' => $warningData ) );
+					$this->logger->warning( $logPrefix . $warningData['warnings'], [ 'data' => $warningData ] );
 				}
 			}
 		}
@@ -339,7 +341,7 @@ class MediawikiApi implements MediawikiApiInterface, LoggerAwareInterface {
 	 * @throws UsageException
 	 */
 	private function throwUsageExceptions( $result ) {
-		if( is_array( $result ) && array_key_exists( 'error', $result ) ) {
+		if ( is_array( $result ) && array_key_exists( 'error', $result ) ) {
 			throw new UsageException(
 				$result['error']['code'],
 				$result['error']['info'],
@@ -370,7 +372,8 @@ class MediawikiApi implements MediawikiApiInterface, LoggerAwareInterface {
 		$credentials = $this->getLoginParams( $apiUser );
 		$result = $this->postRequest( new SimpleRequest( 'login', $credentials ) );
 		if ( $result['login']['result'] == "NeedToken" ) {
-			$result = $this->postRequest( new SimpleRequest( 'login', array_merge( array( 'lgtoken' => $result['login']['token'] ), $credentials) ) );
+			$params = array_merge( [ 'lgtoken' => $result['login']['token'] ], $credentials );
+			$result = $this->postRequest( new SimpleRequest( 'login', $params ) );
 		}
 		if ( $result['login']['result'] == "Success" ) {
 			$this->isLoggedIn = $apiUser->getUsername();
@@ -389,12 +392,12 @@ class MediawikiApi implements MediawikiApiInterface, LoggerAwareInterface {
 	 * @return string[]
 	 */
 	private function getLoginParams( ApiUser $apiUser ) {
-		$params = array(
+		$params = [
 			'lgname' => $apiUser->getUsername(),
 			'lgpassword' => $apiUser->getPassword(),
-		);
+		];
 
-		if( !is_null( $apiUser->getDomain() ) ) {
+		if ( !is_null( $apiUser->getDomain() ) ) {
 			$params['lgdomain'] = $apiUser->getDomain();
 		}
 		return $params;
@@ -425,7 +428,7 @@ class MediawikiApi implements MediawikiApiInterface, LoggerAwareInterface {
 	public function logout() {
 		$this->logger->log( LogLevel::DEBUG, 'Logging out' );
 		$result = $this->postRequest( new SimpleRequest( 'logout' ) );
-		if( $result === array() ) {
+		if ( $result === [] ) {
 			$this->isLoggedIn = false;
 			$this->clearTokens();
 			return true;
@@ -456,12 +459,12 @@ class MediawikiApi implements MediawikiApiInterface, LoggerAwareInterface {
 	/**
 	 * @return string
 	 */
-	public function getVersion(){
-		if( !isset( $this->version ) ) {
-			$result = $this->getRequest( new SimpleRequest( 'query', array(
+	public function getVersion() {
+		if ( !isset( $this->version ) ) {
+			$result = $this->getRequest( new SimpleRequest( 'query', [
 				'meta' => 'siteinfo',
 				'continue' => '',
-			) ) );
+			] ) );
 			preg_match(
 				'/\d+(?:\.\d+)+/',
 				$result['query']['general']['generator'],

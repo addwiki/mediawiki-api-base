@@ -39,7 +39,7 @@ class MiddlewareFactory implements LoggerAwareInterface {
 	 * @return callable
 	 */
 	public function retry( $delay = true ) {
-		if( $delay ) {
+		if ( $delay ) {
 			return Middleware::retry( $this->newRetryDecider(), $this->getRetryDelay() );
 		} else {
 			return Middleware::retry( $this->newRetryDecider() );
@@ -55,16 +55,16 @@ class MiddlewareFactory implements LoggerAwareInterface {
 	private function getRetryDelay() {
 		return function( $numberOfRetries, Response $response = null ) {
 			// The $response argument is only passed as of Guzzle 6.2.2.
-			if( $response !== null ) {
+			if ( $response !== null ) {
 				// Retry-After may be a number of seconds or an absolute date (RFC 7231,
 				// section 7.1.3).
 				$retryAfter = $response->getHeaderLine( 'Retry-After' );
 
-				if( is_numeric( $retryAfter ) ) {
+				if ( is_numeric( $retryAfter ) ) {
 					return 1000 * $retryAfter;
 				}
 
-				if( $retryAfter ) {
+				if ( $retryAfter ) {
 					$seconds = strtotime( $retryAfter ) - time();
 					return 1000 * max( 1, $seconds );
 				}
@@ -92,19 +92,19 @@ class MiddlewareFactory implements LoggerAwareInterface {
 			$shouldRetry = false;
 
 			// Retry connection exceptions
-			if( $exception instanceof ConnectException ) {
+			if ( $exception instanceof ConnectException ) {
 				$shouldRetry = true;
 			}
 
-			if( $response ) {
+			if ( $response ) {
 				$data = json_decode( $response->getBody(), true );
 
 				// Retry on server errors
-				if( $response->getStatusCode() >= 500 ) {
+				if ( $response->getStatusCode() >= 500 ) {
 					$shouldRetry = true;
 				}
 
-				foreach( $response->getHeader( 'Mediawiki-Api-Error' ) as $mediawikiApiErrorHeader ) {
+				foreach ( $response->getHeader( 'Mediawiki-Api-Error' ) as $mediawikiApiErrorHeader ) {
 					if (
 						// Retry if the API explicitly tells us to:
 						// https://www.mediawiki.org/wiki/Manual:Maxlag_parameter
@@ -113,12 +113,12 @@ class MiddlewareFactory implements LoggerAwareInterface {
 						// Retry if we have a response with an API error worth retrying
 						in_array(
 							$mediawikiApiErrorHeader,
-							array(
+							[
 								'ratelimited',
 								'maxlag',
 								'readonly',
 								'internal_api_error_DBQueryError',
-							)
+							]
 						)
 						||
 						// Or if we have been stopped from saving as an 'anti-abuse measure'
@@ -135,7 +135,7 @@ class MiddlewareFactory implements LoggerAwareInterface {
 			}
 
 			// Log if we are retrying
-			if( $shouldRetry ) {
+			if ( $shouldRetry ) {
 				$this->logger->warning(
 					sprintf(
 						'Retrying %s %s %s/5, %s',

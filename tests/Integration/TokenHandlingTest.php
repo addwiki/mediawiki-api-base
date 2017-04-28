@@ -19,10 +19,10 @@ class TokenHandlingTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	public function provideTokenTypes() {
-		return array(
-			array( 'csrf' ),
-			array( 'edit' ),
-		);
+		return [
+			[ 'csrf' ],
+			[ 'edit' ],
+		];
 	}
 
 }

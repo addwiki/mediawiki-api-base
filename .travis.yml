@@ -42,6 +42,7 @@ before_script:
 
 script:
   - composer lint
+  - composer phpcs
   - composer phpunit-coverage
 
 after_success:

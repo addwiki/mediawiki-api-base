@@ -38,10 +38,11 @@ class ApiUser {
 	 * @throws \InvalidArgumentException
 	 */
 	public function __construct( $username, $password, $domain = null ) {
-		if( !is_string( $username ) || !is_string( $password ) || !( is_null( $domain ) || is_string( $domain ) ) ) {
+		$domainIsStringOrNull = ( is_string( $domain ) || is_null( $domain ) );
+		if ( !is_string( $username ) || !is_string( $password ) || !$domainIsStringOrNull ) {
 			throw new InvalidArgumentException( 'Username, Password and Domain must all be strings' );
 		}
-		if( empty( $username ) || empty( $password ) ) {
+		if ( empty( $username ) || empty( $password ) ) {
 			throw new InvalidArgumentException( 'Username and Password are not allowed to be empty' );
 		}
 		$this->username = $username;
@@ -86,4 +87,4 @@ class ApiUser {
 			&& $this->domain == $other->getDomain();
 	}
 
-} 
+}

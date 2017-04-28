@@ -27,27 +27,27 @@ class ClientFactoryTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	public function testUserAgent() {
-		$clientFactory = new ClientFactory( array( 'user-agent' => 'Foobar' ) );
+		$clientFactory = new ClientFactory( [ 'user-agent' => 'Foobar' ] );
 
 		$client = $clientFactory->getClient();
 
-		$this->assertNull( $client->getConfig('user-agent') );
+		$this->assertNull( $client->getConfig( 'user-agent' ) );
 
 		$config = $client->getConfig();
 		$this->assertEquals( $config['headers']['User-Agent'], 'Foobar' );
 	}
 
 	public function testHeaders() {
-		$clientFactory = new ClientFactory( array(
-			'headers' => array(
+		$clientFactory = new ClientFactory( [
+			'headers' => [
 				'User-Agent' => 'Foobar',
 				'X-Foo' => 'Bar',
-			)
-		) );
+			]
+		] );
 
 		$client = $clientFactory->getClient();
 
-		$headers = $client->getConfig('headers');
+		$headers = $client->getConfig( 'headers' );
 		$this->assertCount( 2, $headers );
 		$this->assertEquals( $headers['User-Agent'], 'Foobar' );
 		$this->assertEquals( $headers['X-Foo'], 'Bar' );
@@ -56,26 +56,26 @@ class ClientFactoryTest extends \PHPUnit_Framework_TestCase {
 	public function testHandler() {
 		$handler = HandlerStack::create();
 
-		$clientFactory = new ClientFactory( array( 'handler' => $handler ) );
+		$clientFactory = new ClientFactory( [ 'handler' => $handler ] );
 
 		$client = $clientFactory->getClient();
 
-		$this->assertSame( $handler, $client->getConfig('handler') );
+		$this->assertSame( $handler, $client->getConfig( 'handler' ) );
 	}
 
 	public function testMiddleware() {
 		$invoked = false;
-		$middleware = function() use (&$invoked) {
-			return function() use (&$invoked) {
+		$middleware = function() use ( &$invoked ) {
+			return function() use ( &$invoked ) {
 				$invoked = true;
 			};
 		};
 
-		$clientFactory = new ClientFactory( array( 'middleware' => array( $middleware ) ) );
+		$clientFactory = new ClientFactory( [ 'middleware' => [ $middleware ] ] );
 
 		$client = $clientFactory->getClient();
 
-		$this->assertNull( $client->getConfig('middleware') );
+		$this->assertNull( $client->getConfig( 'middleware' ) );
 
 		$request = $this->getMockBuilder( RequestInterface::class )->getMock();
 
@@ -84,7 +84,7 @@ class ClientFactoryTest extends \PHPUnit_Framework_TestCase {
 		$handler->remove( 'allow_redirects' );
 		$handler->remove( 'cookies' );
 		$handler->remove( 'prepare_body' );
-		$handler($request, array());
+		$handler( $request, [] );
 
 		$this->assertTrue( $invoked );
 	}
