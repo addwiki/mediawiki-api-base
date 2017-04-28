@@ -36,20 +36,20 @@ class MediawikiSessionTest extends PHPUnit_Framework_TestCase {
 		$mockApi->expects( $this->exactly( 2 ) )
 			->method( 'postRequest' )
 			->with( $this->isInstanceOf( '\Mediawiki\Api\SimpleRequest' ) )
-			->will( $this->returnValue( array(
-				'query' => array(
-					'tokens' => array(
+			->will( $this->returnValue( [
+				'query' => [
+					'tokens' => [
 					$tokenType => 'TKN-' . $tokenType,
-					)
-				)
-			) ) );
+					]
+				]
+			] ) );
 
 		$session = new MediawikiSession( $mockApi );
 
-		//Although we make 2 calls to the method we assert the tokens method about is only called once
+		// Although we make 2 calls to the method we assert the tokens method about is only called once
 		$this->assertEquals( 'TKN-' . $tokenType, $session->getToken() );
 		$this->assertEquals( 'TKN-' . $tokenType, $session->getToken() );
-		//Then clearing the tokens and calling again should make a second call!
+		// Then clearing the tokens and calling again should make a second call!
 		$session->clearTokens();
 		$this->assertEquals( 'TKN-' . $tokenType, $session->getToken() );
 	}
@@ -62,34 +62,34 @@ class MediawikiSessionTest extends PHPUnit_Framework_TestCase {
 		$mockApi->expects( $this->at( 0 ) )
 			->method( 'postRequest' )
 			->with( $this->isInstanceOf( '\Mediawiki\Api\SimpleRequest' ) )
-			->will( $this->returnValue( array(
-				'warnings' => array(
-					'query' => array(
+			->will( $this->returnValue( [
+				'warnings' => [
+					'query' => [
 						'*' => "Unrecognized value for parameter 'meta': tokens",
-					)
-				)
-			) ) );
+					]
+				]
+			] ) );
 		$mockApi->expects( $this->at( 1 ) )
 			->method( 'postRequest' )
 			->with( $this->isInstanceOf( '\Mediawiki\Api\SimpleRequest' ) )
-			->will( $this->returnValue( array(
-				'tokens' => array(
+			->will( $this->returnValue( [
+				'tokens' => [
 					$tokenType => 'TKN-' . $tokenType,
-				)
-			) ) );
+				]
+			] ) );
 
 		$session = new MediawikiSession( $mockApi );
 
-		//Although we make 2 calls to the method we assert the tokens method about is only called once
+		// Although we make 2 calls to the method we assert the tokens method about is only called once
 		$this->assertSame( 'TKN-' . $tokenType, $session->getToken() );
 		$this->assertSame( 'TKN-' . $tokenType, $session->getToken() );
 	}
 
 	public function provideTokenTypes() {
-		return array(
-			array( 'csrf' ),
-			array( 'edit' ),
-		);
+		return [
+			[ 'csrf' ],
+			[ 'edit' ],
+		];
 	}
 
 }

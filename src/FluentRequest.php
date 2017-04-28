@@ -12,12 +12,12 @@ class FluentRequest implements Request {
 	/**
 	 * @var array
 	 */
-	private $params = array();
+	private $params = [];
 
 	/**
 	 * @var array
 	 */
-	private $headers = array();
+	private $headers = [];
 
 	/**
 	 * @since 1.0

@@ -37,10 +37,10 @@ class SimpleRequest implements Request {
 	 */
 	public function __construct(
 		$action,
-		array $params = array(),
-		array $headers = array()
+		array $params = [],
+		array $headers = []
 	) {
-		if( !is_string( $action ) ) {
+		if ( !is_string( $action ) ) {
 			throw new InvalidArgumentException( '$action must be string' );
 		}
 		$this->action = $action;
@@ -49,7 +49,7 @@ class SimpleRequest implements Request {
 	}
 
 	public function getParams() {
-		return array_merge( array( 'action' => $this->action ) , $this->params );
+		return array_merge( [ 'action' => $this->action ], $this->params );
 	}
 
 	public function getHeaders() {

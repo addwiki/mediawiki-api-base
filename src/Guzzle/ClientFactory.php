@@ -27,7 +27,7 @@ class ClientFactory implements LoggerAwareInterface {
 	 *          middleware => array of extra middleware to pass to guzzle
 	 *          user-agent => string default user agent to use for requests
 	 */
-	public function __construct( array $config = array() ) {
+	public function __construct( array $config = [] ) {
 		$this->logger = new NullLogger();
 		$this->config = $config;
 	}
@@ -38,7 +38,7 @@ class ClientFactory implements LoggerAwareInterface {
 	 * @return Client
 	 */
 	public function getClient() {
-		if( $this->client === null ) {
+		if ( $this->client === null ) {
 			$this->client = $this->newClient();
 		}
 		return $this->client;
@@ -48,14 +48,14 @@ class ClientFactory implements LoggerAwareInterface {
 	 * @return Client
 	 */
 	private function newClient() {
-		$this->config += array(
+		$this->config += [
 			'cookies' => true,
-			'headers' => array(),
-			'middleware' => array(),
-		);
+			'headers' => [],
+			'middleware' => [],
+		];
 
-		if( !array_key_exists( 'User-Agent', $this->config['headers'] ) ) {
-			if( array_key_exists( 'user-agent', $this->config ) ) {
+		if ( !array_key_exists( 'User-Agent', $this->config['headers'] ) ) {
+			if ( array_key_exists( 'user-agent', $this->config ) ) {
 				$this->config['headers']['User-Agent'] = $this->config['user-agent'];
 			} else {
 				$this->config['headers']['User-Agent'] = 'Addwiki - mediawiki-api-base';
@@ -63,7 +63,7 @@ class ClientFactory implements LoggerAwareInterface {
 		}
 		unset( $this->config['user-agent'] );
 
-		if( !array_key_exists( 'handler', $this->config ) ) {
+		if ( !array_key_exists( 'handler', $this->config ) ) {
 			$this->config['handler'] = HandlerStack::create( new CurlHandler() );
 		}
 
@@ -72,7 +72,7 @@ class ClientFactory implements LoggerAwareInterface {
 
 		$this->config['middleware'][] = $middlewareFactory->retry();
 
-		foreach( $this->config['middleware'] as $name => $middleware ) {
+		foreach ( $this->config['middleware'] as $name => $middleware ) {
 			$this->config['handler']->push( $middleware );
 		}
 		unset( $this->config['middleware'] );

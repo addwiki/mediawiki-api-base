@@ -17,7 +17,7 @@ class MediawikiSession implements LoggerAwareInterface {
 	/**
 	 * @var array
 	 */
-	private $tokens = array();
+	private $tokens = [];
 
 	/**
 	 * @var MediawikiApi
@@ -66,12 +66,12 @@ class MediawikiSession implements LoggerAwareInterface {
 	 */
 	public function getToken( $type = 'csrf' ) {
 		// If we don't already have the token that we want
-		if( !array_key_exists( $type, $this->tokens ) ) {
+		if ( !array_key_exists( $type, $this->tokens ) ) {
 
-			$this->logger->log( LogLevel::DEBUG, 'Getting fresh token', array( 'type' => $type ) );
+			$this->logger->log( LogLevel::DEBUG, 'Getting fresh token', [ 'type' => $type ] );
 
 			// If we know that we don't have the new module mw<1.25
-			if( $this->usePre125TokensModule ) {
+			if ( $this->usePre125TokensModule ) {
 				return $this->reallyGetPre125Token( $type );
 			} else {
 				return $this->reallyGetToken( $type );
@@ -84,8 +84,8 @@ class MediawikiSession implements LoggerAwareInterface {
 
 	private function reallyGetPre125Token( $type ) {
 		// Suppress deprecation warning
-		$result = @$this->api->postRequest(
-			new SimpleRequest( 'tokens', array( 'type' => $this->getOldTokenType( $type ) ) )
+		$result = @$this->api->postRequest( // @codingStandardsIgnoreLine
+			new SimpleRequest( 'tokens', [ 'type' => $this->getOldTokenType( $type ) ] )
 		);
 		$this->tokens[$type] = array_pop( $result['tokens'] );
 
@@ -94,16 +94,17 @@ class MediawikiSession implements LoggerAwareInterface {
 
 	private function reallyGetToken( $type ) {
 		// We suppress errors on this call so the user doesn't get get a warning that isn't their fault.
-		$result = @$this->api->postRequest(
-			new SimpleRequest( 'query', array(
+		$result = @$this->api->postRequest( // @codingStandardsIgnoreLine
+			new SimpleRequest( 'query', [
 				'meta' => 'tokens',
 				'type' => $this->getNewTokenType( $type ),
 				'continue' => '',
-			) )
+			] )
 		);
 		// If mw<1.25 (no new module)
-		if( array_key_exists( 'warnings', $result ) && array_key_exists( 'query', $result['warnings'] ) &&
-			strstr( $result['warnings']['query']['*'], "Unrecognized value for parameter 'meta': tokens" ) ) {
+		$metaWarning = "Unrecognized value for parameter 'meta': tokens";
+		if ( isset( $result['warnings']['query']['*'] )
+			&& false !== strpos( $result['warnings']['query']['*'], $metaWarning ) ) {
 			$this->usePre125TokensModule = true;
 			$this->logger->log( LogLevel::DEBUG, 'Falling back to pre 1.25 token system' );
 			$this->tokens[$type] = $this->reallyGetPre125Token( $type );
@@ -147,7 +148,8 @@ class MediawikiSession implements LoggerAwareInterface {
 	 */
 	private function getOldTokenType( $type ) {
 		switch ( $type ) {
-			// Guess that we want an edit token, this may not always work as we might be trying to use it for something else...
+			// Guess that we want an edit token, this may not always work as we might be trying to
+			// use it for something else...
 			case 'csrf':
 				return 'edit';
 		}
@@ -160,8 +162,8 @@ class MediawikiSession implements LoggerAwareInterface {
 	 * @since 0.2
 	 */
 	public function clearTokens() {
-		$this->logger->log( LogLevel::DEBUG, 'Clearing session tokens', array( 'tokens' => $this->tokens ) );
-		$this->tokens = array();
+		$this->logger->log( LogLevel::DEBUG, 'Clearing session tokens', [ 'tokens' => $this->tokens ] );
+		$this->tokens = [];
 	}
 
 }

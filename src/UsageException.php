@@ -35,7 +35,7 @@ class UsageException extends Exception {
 	 * @param string $message
 	 * @param array $result the result the exception was generated from
 	 */
-	public function __construct( $apiCode = '', $message = '', $result = array() ) {
+	public function __construct( $apiCode = '', $message = '', $result = [] ) {
 		$this->apiCode = $apiCode;
 		$this->result = $result;
 		$this->rawMessage = $message;

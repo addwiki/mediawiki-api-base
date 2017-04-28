@@ -22,10 +22,10 @@ class ApiUserTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	public function provideValidConstruction() {
-		return array(
-			array( 'user', 'pass' ),
-			array( 'user', 'pass', 'domain' ),
-		);
+		return [
+			[ 'user', 'pass' ],
+			[ 'user', 'pass', 'domain' ],
+		];
 	}
 
 	/**
@@ -37,16 +37,16 @@ class ApiUserTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	public function provideInvalidConstruction() {
-		return array(
-			array( 'user', '' ),
-			array( '', 'pass' ),
-			array( '', '' ),
-			array( 'user', array() ),
-			array( 'user', 455667 ),
-			array( 34567, 'pass' ),
-			array( array(), 'pass' ),
-			array( 'user', 'pass', array() ),
-		);
+		return [
+			[ 'user', '' ],
+			[ '', 'pass' ],
+			[ '', '' ],
+			[ 'user', [] ],
+			[ 'user', 455667 ],
+			[ 34567, 'pass' ],
+			[ [], 'pass' ],
+			[ 'user', 'pass', [] ],
+		];
 	}
 
 	/**
@@ -58,14 +58,14 @@ class ApiUserTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	public function provideTestEquals() {
-		return array(
-			array( new ApiUser( 'usera', 'passa' ), new ApiUser( 'usera', 'passa' ), true ),
-			array( new ApiUser( 'usera', 'passa', 'domain' ), new ApiUser( 'usera', 'passa', 'domain' ), true ),
-			array( new ApiUser( 'DIFF', 'passa' ), new ApiUser( 'usera', 'passa' ), false ),
-			array( new ApiUser( 'usera', 'DIFF' ), new ApiUser( 'usera', 'passa' ), false ),
-			array( new ApiUser( 'usera', 'passa' ), new ApiUser( 'DIFF', 'passa' ), false ),
-			array( new ApiUser( 'usera', 'passa' ), new ApiUser( 'usera', 'DIFF' ), false ),
-		);
+		return [
+			[ new ApiUser( 'usera', 'passa' ), new ApiUser( 'usera', 'passa' ), true ],
+			[ new ApiUser( 'usera', 'passa', 'domain' ), new ApiUser( 'usera', 'passa', 'domain' ), true ],
+			[ new ApiUser( 'DIFF', 'passa' ), new ApiUser( 'usera', 'passa' ), false ],
+			[ new ApiUser( 'usera', 'DIFF' ), new ApiUser( 'usera', 'passa' ), false ],
+			[ new ApiUser( 'usera', 'passa' ), new ApiUser( 'DIFF', 'passa' ), false ],
+			[ new ApiUser( 'usera', 'passa' ), new ApiUser( 'usera', 'DIFF' ), false ],
+		];
 	}
 
 }
