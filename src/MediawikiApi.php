@@ -79,15 +79,30 @@ class MediawikiApi implements MediawikiApiInterface, LoggerAwareInterface {
 	 * @throws RsdException If the RSD URL could not be found in the page's HTML.
 	 */
 	public static function newFromPage( $url ) {
+		// Set up HTTP client and HTML document.
 		$tempClient = new Client( [ 'headers' => [ 'User-Agent' => 'addwiki-mediawiki-client' ] ] );
-
-		// Get the page HTML and extract the RSD link.
 		$pageHtml = $tempClient->get( $url )->getBody();
 		$pageDoc = new DOMDocument();
+
+		// Try to load the HTML (turn off errors temporarily; most don't matter, and if they do get
+		// in the way of finding the API URL, will be reported in the RsdException below).
+		$internalErrors = libxml_use_internal_errors( true );
 		$pageDoc->loadHTML( $pageHtml );
-		$link = ( new DOMXpath( $pageDoc ) )->query( 'head/link[@type="application/rsd+xml"][@href]' );
+		$libXmlErrors = libxml_get_errors();
+		libxml_use_internal_errors( $internalErrors );
+
+		// Extract the RSD link.
+		$xpath = 'head/link[@type="application/rsd+xml"][@href]';
+		$link = ( new DOMXpath( $pageDoc ) )->query( $xpath );
 		if ( $link->length === 0 ) {
-			throw new RsdException( "Unable to find RSD URL in page: $url" );
+			// Format libxml errors for display.
+			$libXmlErrorStr = array_reduce( $libXmlErrors, function( $prevErr, $err ) {
+				return $prevErr . ', ' . $err->message . ' (line '.$err->line . ')';
+			} );
+			if ( $libXmlErrorStr ) {
+				$libXmlErrorStr = "In addition, libxml had the following errors: $libXmlErrorStr";
+			}
+			throw new RsdException( "Unable to find RSD URL in page: $url $libXmlErrorStr" );
 		}
 		$rsdUrl = $link->item( 0 )->attributes->getnamedItem( 'href' )->nodeValue;
 
