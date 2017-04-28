@@ -4,6 +4,7 @@ namespace Mediawiki\Api\Test\Integration;
 
 use Exception;
 use Mediawiki\Api\MediawikiApi;
+use Mediawiki\Api\SimpleRequest;
 
 /**
  * @author Addshore
@@ -68,4 +69,19 @@ class TestEnvironment {
 		return $this->api;
 	}
 
+	/**
+	 * Save a wiki page.
+	 * @param string $title
+	 * @param string $content
+	 */
+	public function savePage( $title, $content ) {
+
+		$params = [
+			'title' => $title,
+			'text' => $content,
+			'md5' => md5( $content ),
+			'token' => $this->api->getToken(),
+		];
+		$this->api->postRequest( new SimpleRequest( 'edit', $params ) );
+	}
 }

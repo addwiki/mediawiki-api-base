@@ -31,6 +31,28 @@ class MediawikiApiTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	/**
+	 * Duplicate element IDs break DOMDocument::loadHTML
+	 * @see https://phabricator.wikimedia.org/T163527#3219833
+	 * @covers Mediawiki\Api\MediawikiApi::newFromPage
+	 */
+	public function testNewFromPageWithDuplicateId() {
+		$testPageName = __METHOD__;
+		$testEnv = TestEnvironment::newInstance();
+		$wikiPageUrl = str_replace( 'api.php', "index.php?title=$testPageName", $testEnv->getApiUrl() );
+
+		// Test with no duplicate IDs.
+		$testEnv->savePage( $testPageName, '<p id="unique-id"></p>' );
+		$api1 = MediawikiApi::newFromPage( $wikiPageUrl );
+		$this->assertInstanceOf( MediawikiApi::class, $api1 );
+
+		// Test with duplicate ID.
+		$wikiText = '<p id="duplicated-id"></p><div id="duplicated-id"></div>';
+		$testEnv->savePage( $testPageName, $wikiText );
+		$api2 = MediawikiApi::newFromPage( $wikiPageUrl );
+		$this->assertInstanceOf( MediawikiApi::class, $api2 );
+	}
+
+	/**
 	 * @covers Mediawiki\Api\MediawikiApi::getRequest
 	 * @covers Mediawiki\Api\MediawikiApi::getClientRequestOptions
 	 * @covers Mediawiki\Api\MediawikiApi::decodeResponse
