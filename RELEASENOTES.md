@@ -42,6 +42,10 @@ These are the release notes for the [mediawiki-api-base](README.md) library.
 * Requires "guzzlehttp/guzzle": "~6.0" ( From "guzzle/guzzle": "~5.2" )
 * Requires "guzzlehttp/promises": "~1.0"
 
+## Version 1.1.1 (20 July 2016)
+
+* Issue with README fixed
+
 ## Version 1.1.0 (5 September 2015)
 
 * Requests that encounter a connection exception are now retried
