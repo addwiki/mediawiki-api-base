@@ -3,6 +3,9 @@ These are the release notes for the [mediawiki-api-base](README.md) library.
 ## Version 2.4.0 (work in progress)
 * TBA
 
+## Version 2.3.1 (3 May 2017)
+* Don't fail on libxml errors if the RSD URL can still be found. PR [#35](https://github.com/addwiki/mediawiki-api-base/pull/35), Fixes [T163527](https://phabricator.wikimedia.org/T163527).
+
 ## Version 2.3.0 (27 April 2017)
 
 * All guzzle configuration settings can now be overridden in `ClientFactory`. [#27](https://github.com/addwiki/mediawiki-api-base/pull/27)
