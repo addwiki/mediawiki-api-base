@@ -43,10 +43,5 @@
 		"files": [
 			"tests/Integration/TestEnvironment.php"
 		]
-	},
-	"extra": {
-		"branch-alias": {
-			"dev-master": "2.4.x-dev"
-		}
 	}
 }
