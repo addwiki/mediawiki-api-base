@@ -43,7 +43,7 @@ class FluentRequestTest extends PHPUnit_Framework_TestCase {
 	public function testAddParams() {
 		$request = new FluentRequest();
 
-		$params = [ 'a'=> 'foo', 'b' => 'bar' ];
+		$params = [ 'a' => 'foo', 'b' => 'bar' ];
 		$request->addParams( $params );
 
 		$this->assertEquals( $params, $request->getParams() );

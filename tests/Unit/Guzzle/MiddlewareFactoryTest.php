@@ -201,8 +201,8 @@ class MiddlewareFactoryTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	private function getDelayMocker( &$delays ) {
-		return function( callable $handler ) use ( &$delays ) {
-			return function( $request, array $options ) use ( $handler, &$delays ) {
+		return function ( callable $handler ) use ( &$delays ) {
+			return function ( $request, array $options ) use ( $handler, &$delays ) {
 				if ( isset( $options['delay'] ) ) {
 					$delays[] = $options['delay'];
 					unset( $options['delay'] );
@@ -210,6 +210,5 @@ class MiddlewareFactoryTest extends \PHPUnit_Framework_TestCase {
 				return $handler( $request, $options );
 			};
 		};
-
 	}
 }

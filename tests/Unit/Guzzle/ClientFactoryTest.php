@@ -65,8 +65,8 @@ class ClientFactoryTest extends \PHPUnit_Framework_TestCase {
 
 	public function testMiddleware() {
 		$invoked = false;
-		$middleware = function() use ( &$invoked ) {
-			return function() use ( &$invoked ) {
+		$middleware = function () use ( &$invoked ) {
+			return function () use ( &$invoked ) {
 				$invoked = true;
 			};
 		};

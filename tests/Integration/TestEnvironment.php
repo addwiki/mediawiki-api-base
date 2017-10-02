@@ -75,7 +75,6 @@ class TestEnvironment {
 	 * @param string $content
 	 */
 	public function savePage( $title, $content ) {
-
 		$params = [
 			'title' => $title,
 			'text' => $content,

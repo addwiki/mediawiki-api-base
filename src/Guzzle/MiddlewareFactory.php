@@ -53,7 +53,7 @@ class MiddlewareFactory implements LoggerAwareInterface {
 	 * @return callable
 	 */
 	private function getRetryDelay() {
-		return function( $numberOfRetries, Response $response = null ) {
+		return function ( $numberOfRetries, Response $response = null ) {
 			// The $response argument is only passed as of Guzzle 6.2.2.
 			if ( $response !== null ) {
 				// Retry-After may be a number of seconds or an absolute date (RFC 7231,

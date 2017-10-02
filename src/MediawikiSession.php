@@ -67,7 +67,6 @@ class MediawikiSession implements LoggerAwareInterface {
 	public function getToken( $type = 'csrf' ) {
 		// If we don't already have the token that we want
 		if ( !array_key_exists( $type, $this->tokens ) ) {
-
 			$this->logger->log( LogLevel::DEBUG, 'Getting fresh token', [ 'type' => $type ] );
 
 			// If we know that we don't have the new module mw<1.25
