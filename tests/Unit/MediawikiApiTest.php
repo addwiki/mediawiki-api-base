@@ -155,7 +155,6 @@ class MediawikiApiTest extends PHPUnit_Framework_TestCase {
 	}
 
 	public function testPostActionWithFileReturnsResult() {
-
 		$dummyFile = $this->getNullFilePointer();
 		$params = [
 			'filename' => 'foo.jpg',

@@ -96,7 +96,7 @@ class MediawikiApi implements MediawikiApiInterface, LoggerAwareInterface {
 		$link = ( new DOMXpath( $pageDoc ) )->query( $xpath );
 		if ( $link->length === 0 ) {
 			// Format libxml errors for display.
-			$libXmlErrorStr = array_reduce( $libXmlErrors, function( $prevErr, $err ) {
+			$libXmlErrorStr = array_reduce( $libXmlErrors, function ( $prevErr, $err ) {
 				return $prevErr . ', ' . $err->message . ' (line '.$err->line . ')';
 			} );
 			if ( $libXmlErrorStr ) {
@@ -186,7 +186,7 @@ class MediawikiApi implements MediawikiApiInterface, LoggerAwareInterface {
 			$this->getClientRequestOptions( $request, 'query' )
 		);
 
-		return $promise->then( function( ResponseInterface $response ) {
+		return $promise->then( function ( ResponseInterface $response ) {
 			return call_user_func( [ $this, 'decodeResponse' ], $response );
 		} );
 	}
@@ -207,7 +207,7 @@ class MediawikiApi implements MediawikiApiInterface, LoggerAwareInterface {
 			$this->getClientRequestOptions( $request, $this->getPostRequestEncoding( $request ) )
 		);
 
-		return $promise->then( function( ResponseInterface $response ) {
+		return $promise->then( function ( ResponseInterface $response ) {
 			return call_user_func( [ $this, 'decodeResponse' ], $response );
 		} );
 	}
@@ -267,11 +267,11 @@ class MediawikiApi implements MediawikiApiInterface, LoggerAwareInterface {
 	 * @return string
 	 */
 	private function getPostRequestEncoding( Request $request ) {
-	    foreach ( $request->getParams() as $value ) {
+		foreach ( $request->getParams() as $value ) {
 			if ( is_resource( $value ) ) {
 				return 'multipart';
 			}
-		   }
+		}
 		return 'form_params';
 	}
 
@@ -284,7 +284,6 @@ class MediawikiApi implements MediawikiApiInterface, LoggerAwareInterface {
 	 * @return array as needed by ClientInterface::get and ClientInterface::post
 	 */
 	private function getClientRequestOptions( Request $request, $paramsKey ) {
-
 		$params = array_merge( $request->getParams(), [ 'format' => 'json' ] );
 		if ( $paramsKey === 'multipart' ) {
 			$params = $this->encodeMultipartParams( $params );
@@ -302,10 +301,8 @@ class MediawikiApi implements MediawikiApiInterface, LoggerAwareInterface {
 	 * @return array
 	 */
 	private function encodeMultipartParams( $params ) {
-
 		return array_map(
 			function ( $name, $value ) {
-
 				return [
 					'name' => $name,
 					'contents' => $value,
