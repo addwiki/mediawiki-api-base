@@ -31,8 +31,8 @@ class UsageException extends Exception {
 	/**
 	 * @since 0.1
 	 *
-	 * @param string $apiCode
-	 * @param string $message
+	 * @param string $apiCode The API error code.
+	 * @param string $message The API error message.
 	 * @param array $result the result the exception was generated from
 	 */
 	public function __construct( $apiCode = '', $message = '', $result = [] ) {

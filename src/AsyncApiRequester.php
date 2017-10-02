@@ -15,7 +15,7 @@ interface AsyncApiRequester {
 	/**
 	 * @since 2.2
 	 *
-	 * @param Request $request
+	 * @param Request $request The GET request to send.
 	 *
 	 * @return PromiseInterface
 	 *         Normally promising an array, though can be mixed (json_decode result)
@@ -26,7 +26,7 @@ interface AsyncApiRequester {
 	/**
 	 * @since 2.2
 	 *
-	 * @param Request $request
+	 * @param Request $request The POST request to send.
 	 *
 	 * @return PromiseInterface
 	 *         Normally promising an array, though can be mixed (json_decode result)

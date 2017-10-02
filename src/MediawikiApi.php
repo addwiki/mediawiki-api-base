@@ -161,7 +161,7 @@ class MediawikiApi implements MediawikiApiInterface, LoggerAwareInterface {
 	 *
 	 * @since 1.1
 	 *
-	 * @param LoggerInterface $logger
+	 * @param LoggerInterface $logger The new Logger object.
 	 *
 	 * @return null
 	 */
@@ -173,7 +173,7 @@ class MediawikiApi implements MediawikiApiInterface, LoggerAwareInterface {
 	/**
 	 * @since 2.0
 	 *
-	 * @param Request $request
+	 * @param Request $request The GET request to send.
 	 *
 	 * @return PromiseInterface
 	 *         Normally promising an array, though can be mixed (json_decode result)
@@ -194,7 +194,7 @@ class MediawikiApi implements MediawikiApiInterface, LoggerAwareInterface {
 	/**
 	 * @since 2.0
 	 *
-	 * @param Request $request
+	 * @param Request $request The POST request to send.
 	 *
 	 * @return PromiseInterface
 	 *         Normally promising an array, though can be mixed (json_decode result)
@@ -215,7 +215,7 @@ class MediawikiApi implements MediawikiApiInterface, LoggerAwareInterface {
 	/**
 	 * @since 0.2
 	 *
-	 * @param Request $request
+	 * @param Request $request The GET request to send.
 	 *
 	 * @return mixed Normally an array
 	 */
@@ -232,7 +232,7 @@ class MediawikiApi implements MediawikiApiInterface, LoggerAwareInterface {
 	/**
 	 * @since 0.2
 	 *
-	 * @param Request $request
+	 * @param Request $request The POST request to send.
 	 *
 	 * @return mixed Normally an array
 	 */
@@ -374,7 +374,7 @@ class MediawikiApi implements MediawikiApiInterface, LoggerAwareInterface {
 	/**
 	 * @since 0.1
 	 *
-	 * @param ApiUser $apiUser
+	 * @param ApiUser $apiUser The ApiUser to log in as.
 	 *
 	 * @throws UsageException
 	 * @return bool success
@@ -451,7 +451,7 @@ class MediawikiApi implements MediawikiApiInterface, LoggerAwareInterface {
 	/**
 	 * @since 0.1
 	 *
-	 * @param string $type
+	 * @param string $type The token type to get.
 	 *
 	 * @return string
 	 */
@@ -460,9 +460,9 @@ class MediawikiApi implements MediawikiApiInterface, LoggerAwareInterface {
 	}
 
 	/**
-	 * @since 0.1
+	 * Clear all tokens stored by the API.
 	 *
-	 * Clears all tokens stored by the api
+	 * @since 0.1
 	 */
 	public function clearTokens() {
 		$this->session->clearTokens();
