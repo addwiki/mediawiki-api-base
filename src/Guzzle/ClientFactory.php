@@ -85,7 +85,7 @@ class ClientFactory implements LoggerAwareInterface {
 	 *
 	 * @since 2.1
 	 *
-	 * @param LoggerInterface $logger
+	 * @param LoggerInterface $logger The new Logger object.
 	 *
 	 * @return null
 	 */

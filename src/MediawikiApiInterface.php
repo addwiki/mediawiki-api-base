@@ -20,7 +20,7 @@ interface MediawikiApiInterface extends ApiRequester, AsyncApiRequester {
 	/**
 	 * @since 2.2
 	 *
-	 * @param ApiUser $apiUser
+	 * @param ApiUser $apiUser The ApiUser to log in as.
 	 *
 	 * @throws UsageException
 	 * @return bool success
@@ -37,7 +37,7 @@ interface MediawikiApiInterface extends ApiRequester, AsyncApiRequester {
 	/**
 	 * @since 2.2
 	 *
-	 * @param string $type
+	 * @param string $type The type of token to get.
 	 *
 	 * @return string
 	 */

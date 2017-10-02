@@ -35,7 +35,7 @@ class MediawikiSession implements LoggerAwareInterface {
 	private $logger;
 
 	/**
-	 * @param MediawikiApi $api
+	 * @param MediawikiApi $api The API object to use for this session.
 	 */
 	public function __construct( MediawikiApi $api ) {
 		$this->api = $api;
@@ -47,7 +47,7 @@ class MediawikiSession implements LoggerAwareInterface {
 	 *
 	 * @since 1.1
 	 *
-	 * @param LoggerInterface $logger
+	 * @param LoggerInterface $logger The new Logger object.
 	 *
 	 * @return null
 	 */
@@ -60,7 +60,7 @@ class MediawikiSession implements LoggerAwareInterface {
 	 *
 	 * @since 0.1
 	 *
-	 * @param string $type
+	 * @param string $type The type of token to get.
 	 *
 	 * @return string
 	 */

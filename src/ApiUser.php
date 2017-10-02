@@ -31,9 +31,9 @@ class ApiUser {
 	private $domain;
 
 	/**
-	 * @param string $username
-	 * @param string $password
-	 * @param string|null $domain
+	 * @param string $username The username.
+	 * @param string $password The user's password.
+	 * @param string|null $domain The domain (for authentication systems that support domains).
 	 *
 	 * @throws \InvalidArgumentException
 	 */
@@ -76,7 +76,7 @@ class ApiUser {
 
 	/**
 	 * @since 0.1
-	 * @param mixed $other
+	 * @param mixed $other Another ApiUser object to compare with.
 	 *
 	 * @return bool
 	 */

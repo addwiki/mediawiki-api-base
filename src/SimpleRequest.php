@@ -29,17 +29,13 @@ class SimpleRequest implements Request {
 	private $headers;
 
 	/**
-	 * @param string $action
-	 * @param array $params
-	 * @param array $headers
+	 * @param string $action The API action.
+	 * @param array $params The parameters for the action.
+	 * @param array $headers Any extra HTTP headers to send.
 	 *
 	 * @throws InvalidArgumentException
 	 */
-	public function __construct(
-		$action,
-		array $params = [],
-		array $headers = []
-	) {
+	public function __construct( $action, array $params = [], array $headers = [] ) {
 		if ( !is_string( $action ) ) {
 			throw new InvalidArgumentException( '$action must be string' );
 		}
@@ -48,10 +44,16 @@ class SimpleRequest implements Request {
 		$this->headers = $headers;
 	}
 
+	/**
+	 * @return string[]
+	 */
 	public function getParams() {
 		return array_merge( [ 'action' => $this->action ], $this->params );
 	}
 
+	/**
+	 * @return string[]
+	 */
 	public function getHeaders() {
 		return $this->headers;
 	}

@@ -49,7 +49,7 @@ class FluentRequest implements Request {
 	/**
 	 * @since 1.0
 	 *
-	 * @param string $action
+	 * @param string $action The action name.
 	 *
 	 * @return $this
 	 */
@@ -63,7 +63,7 @@ class FluentRequest implements Request {
 	 *
 	 * @since 1.0
 	 *
-	 * @param array $params
+	 * @param array $params New parameters.
 	 *
 	 * @return $this
 	 */
@@ -77,7 +77,7 @@ class FluentRequest implements Request {
 	 *
 	 * @since 1.0
 	 *
-	 * @param array $params
+	 * @param array $params Additional parameters.
 	 *
 	 * @return $this
 	 */
@@ -87,10 +87,12 @@ class FluentRequest implements Request {
 	}
 
 	/**
+	 * Set a single parameter.
+	 *
 	 * @since 1.0
 	 *
-	 * @param string $param
-	 * @param string $value
+	 * @param string $param The parameter name.
+	 * @param string $value The parameter value.
 	 *
 	 * @return $this
 	 */
@@ -100,11 +102,11 @@ class FluentRequest implements Request {
 	}
 
 	/**
-	 * Totally overwrite any previously set params
+	 * Totally overwrite any previously set HTTP headers.
 	 *
 	 * @since 1.0
 	 *
-	 * @param array $headers
+	 * @param array $headers New headers.
 	 *
 	 * @return $this
 	 */

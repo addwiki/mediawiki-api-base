@@ -11,6 +11,12 @@ use Mediawiki\Api\SimpleRequest;
  */
 class TestEnvironment {
 
+	/**
+	 * Get a new TestEnvironment.
+	 * This is identical to calling self::__construct() but is useful for fluent construction.
+	 *
+	 * @return TestEnvironment
+	 */
 	public static function newInstance() {
 		return new self();
 	}
@@ -71,8 +77,8 @@ class TestEnvironment {
 
 	/**
 	 * Save a wiki page.
-	 * @param string $title
-	 * @param string $content
+	 * @param string $title The title of the page.
+	 * @param string $content The complete page text to save.
 	 */
 	public function savePage( $title, $content ) {
 		$params = [

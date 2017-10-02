@@ -57,7 +57,7 @@ class MediawikiSessionTest extends PHPUnit_Framework_TestCase {
 	/**
 	 * @dataProvider provideTokenTypes
 	 */
-	public function testGetToken_pre125( $tokenType ) {
+	public function testGetTokenPre125( $tokenType ) {
 		$mockApi = $this->getMockApi();
 		$mockApi->expects( $this->at( 0 ) )
 			->method( 'postRequest' )

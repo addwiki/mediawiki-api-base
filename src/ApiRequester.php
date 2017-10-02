@@ -13,7 +13,7 @@ interface ApiRequester {
 	/**
 	 * @since 2.2
 	 *
-	 * @param Request $request
+	 * @param Request $request The GET request to send.
 	 *
 	 * @return mixed Normally an array
 	 */
@@ -22,7 +22,7 @@ interface ApiRequester {
 	/**
 	 * @since 2.2
 	 *
-	 * @param Request $request
+	 * @param Request $request The POST request to send.
 	 *
 	 * @return mixed Normally an array
 	 */
