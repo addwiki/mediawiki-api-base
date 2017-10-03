@@ -267,6 +267,9 @@ class MediawikiApi implements MediawikiApiInterface, LoggerAwareInterface {
 	 * @return string
 	 */
 	private function getPostRequestEncoding( Request $request ) {
+		if ( $request instanceof MultipartRequest ) {
+			return 'multipart';
+		}
 		foreach ( $request->getParams() as $value ) {
 			if ( is_resource( $value ) ) {
 				return 'multipart';
@@ -286,7 +289,7 @@ class MediawikiApi implements MediawikiApiInterface, LoggerAwareInterface {
 	private function getClientRequestOptions( Request $request, $paramsKey ) {
 		$params = array_merge( $request->getParams(), [ 'format' => 'json' ] );
 		if ( $paramsKey === 'multipart' ) {
-			$params = $this->encodeMultipartParams( $params );
+			$params = $this->encodeMultipartParams( $request, $params );
 		}
 
 		return [
@@ -296,17 +299,31 @@ class MediawikiApi implements MediawikiApiInterface, LoggerAwareInterface {
 	}
 
 	/**
-	 * @param array $params
+	 * Turn the normal key-value array of request parameters into a multipart array where each
+	 * parameter is a new array with a 'name' and 'contents' elements (and optionally more, if the
+	 * request is a MultipartRequest).
+	 *
+	 * @param Request $request The request to which the parameters belong.
+	 * @param string[] $params The existing parameters. Not the same as $request->getParams().
 	 *
 	 * @return array
 	 */
-	private function encodeMultipartParams( $params ) {
+	private function encodeMultipartParams( Request $request, $params ) {
+		// See if there are any multipart parameters in this request.
+		$multipartParams = ( $request instanceof MultipartRequest )
+			? $request->getMultipartParams()
+			: [];
 		return array_map(
-			function ( $name, $value ) {
-				return [
+			function ( $name, $value ) use ( $multipartParams ) {
+				$partParams = [
 					'name' => $name,
 					'contents' => $value,
 				];
+				if ( isset( $multipartParams[ $name ] ) ) {
+					// If extra parameters have been set for this part, use them.
+					$partParams = array_merge( $multipartParams[ $name ], $partParams );
+				}
+				return $partParams;
 			},
 			array_keys( $params ),
 			$params

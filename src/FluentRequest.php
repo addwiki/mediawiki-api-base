@@ -40,10 +40,10 @@ class FluentRequest implements Request {
 	/**
 	 * @since 1.0
 	 *
-	 * @return self
+	 * @return static
 	 */
 	public static function factory() {
-		return new self();
+		return new static();
 	}
 
 	/**
