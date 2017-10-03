@@ -6,6 +6,7 @@ Welcome to mediawiki-api-base's documentation!
 
     overview
     quickstart
+    multipart
 
 Indices and tables
 ==================
