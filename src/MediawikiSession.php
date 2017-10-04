@@ -2,6 +2,7 @@
 
 namespace Mediawiki\Api;
 
+use Exception;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
@@ -107,6 +108,9 @@ class MediawikiSession implements LoggerAwareInterface {
 			$this->usePre125TokensModule = true;
 			$this->logger->log( LogLevel::DEBUG, 'Falling back to pre 1.25 token system' );
 			$this->tokens[$type] = $this->reallyGetPre125Token( $type );
+		} elseif ( !isset( $result['query']['tokens'] ) ) {
+			$err = "Unable to retrieve token " . print_r( $result, true );
+			throw new Exception( $err );
 		} else {
 			$this->tokens[$type] = array_pop( $result['query']['tokens'] );
 		}
