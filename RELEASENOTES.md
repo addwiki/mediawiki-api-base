@@ -1,6 +1,6 @@
 These are the release notes for the [mediawiki-api-base](README.md) library.
 
-## Version 2.4.0 (31 October 2017)
+## Version 2.4.0 (2 November 2017)
 * New MultipartRequest class added. PR [#38](https://github.com/addwiki/mediawiki-api-base/pull/38).
 
 ## Version 2.3.1 (3 May 2017)
