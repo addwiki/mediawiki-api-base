@@ -7,6 +7,7 @@ use Mediawiki\Api\MediawikiApi;
 use Mediawiki\Api\SimpleRequest;
 use Mediawiki\Api\UsageException;
 use PHPUnit_Framework_TestCase;
+use Psr\Log\LoggerInterface;
 use stdClass;
 
 /**
@@ -292,5 +293,35 @@ class MediawikiApiTest extends PHPUnit_Framework_TestCase {
 			[ 'MediaWiki 1.19', '1.19' ],
 			[ 'MediaWiki 1.0.0', '1.0.0' ],
 		];
+	}
+
+	public function testLogWarningsWithWarningsDeeperInTheArray() {
+		$input = [
+			'upload' => [
+				'result' => 'Warning',
+				'warnings' => [
+					'duplicate-archive' => 'Test.jpg'
+				],
+				'fileKey' => '157pzg7r75j4.bs0wl9.15.jpg',
+				'sessionKey' => '157pzg7r75j4.bs0wl9.15.jpg'
+			]
+		];
+
+		$client = $this->getMockClient();
+		$api = new MediawikiApi( '', $client );
+
+		$logger = $this->getMock( LoggerInterface::class );
+		$logger
+			->expects( $this->once() )
+			->method( 'warning' );
+
+		$api->setLogger( $logger );
+
+		// Make logWarnings() accessible so we can test it the easy way.
+		$reflection = new \ReflectionClass( get_class( $api ) );
+		$method = $reflection->getMethod( 'logWarnings' );
+		$method->setAccessible( true );
+
+		$method->invokeArgs( $api, $input );
 	}
 }

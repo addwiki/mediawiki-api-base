@@ -351,17 +351,50 @@ class MediawikiApi implements MediawikiApiInterface, LoggerAwareInterface {
 	 * @param $result
 	 */
 	private function logWarnings( $result ) {
-		if ( is_array( $result ) && array_key_exists( 'warnings', $result ) ) {
-			foreach ( $result['warnings'] as $module => $warningData ) {
-				// Accomodate both formatversion=2 and old-style API results
-				$logPrefix = $module . ': ';
-				if ( isset( $warningData['*'] ) ) {
-					$this->logger->warning( $logPrefix . $warningData['*'], [ 'data' => $warningData ] );
-				} else {
-					$this->logger->warning( $logPrefix . $warningData['warnings'], [ 'data' => $warningData ] );
+		if ( is_array( $result ) ) {
+			// Let's see if there is 'warnings' key on the first level of the array...
+			if ( $this->logWarning( $result ) ) {
+				return;
+			}
+
+			// ...if no then go one level deeper and check there for it.
+			foreach ( $result as $value ) {
+				if ( !is_array( $value ) ) {
+					continue;
 				}
+
+				$this->logWarning( $value );
 			}
 		}
+	}
+
+	/**
+	 * @param array $array Array response to look for warning in.
+	 *
+	 * @return bool Whether any warning has been logged or not.
+	 */
+	protected function logWarning( $array ) {
+		$found = false;
+
+		if ( !array_key_exists( 'warnings', $array ) ) {
+			return false;
+		}
+
+		foreach ( $array['warnings'] as $module => $warningData ) {
+			// Accommodate both formatversion=2 and old-style API results
+			$logPrefix = $module . ': ';
+			if ( isset( $warningData['*'] ) ) {
+				$this->logger->warning( $logPrefix . $warningData['*'], [ 'data' => $warningData ] );
+			} elseif ( isset( $warningData['warnings'] ) ) {
+				$this->logger->warning( $logPrefix . $warningData['warnings'], [ 'data' => $warningData ] );
+			} else {
+				$this->logger->warning( $logPrefix, [ 'data' => $warningData ] );
+			}
+
+			$found = true;
+		}
+
+		return $found;
 	}
 
 	/**
