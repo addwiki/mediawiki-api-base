@@ -49,7 +49,7 @@ The library provides two different way of constructing requests.
 
     $purgeRequest = new SimpleRequest( 'purge', array( 'titles' => 'Berlin' ) );
     // or
-    $purgeRequest = FluentRequest::factory()->setAction( 'purge' )->setParam( 'titles', 'Berlin' ) );
+    $purgeRequest = FluentRequest::factory()->setAction( 'purge' )->setParam( 'titles', 'Berlin' );
 
 Sending requests
 ----------------------------------
