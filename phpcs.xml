@@ -3,4 +3,5 @@
 	<rule ref="vendor/mediawiki/mediawiki-codesniffer/MediaWiki"/>
 	<file>.</file>
 	<exclude-pattern>vendor/</exclude-pattern>
+	<exclude-pattern>docs/</exclude-pattern>
 </ruleset>
