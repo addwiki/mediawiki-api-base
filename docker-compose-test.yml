@@ -1,0 +1,13 @@
+version: '3'
+services:
+  addwiki:
+    image: php:${PHP_TAG}
+    working_dir: /code
+    depends_on:
+      - mediawiki
+    volumes:
+      - ./:/code
+  mediawiki:
+    image: mediawiki:${MW_TAG}
+    ports:
+      - 8080:80

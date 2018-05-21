@@ -4,3 +4,4 @@ composer.lock
 test.php
 docs/_build
 phpunit.xml
+.env

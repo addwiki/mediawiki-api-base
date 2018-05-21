@@ -32,6 +32,18 @@
 			"@lint",
 			"@phpcs",
 			"@phpunit"
+		],
+		"test-docker-compose" : "docker-compose --file docker-compose-test.yml",
+		"test-docker": [
+			"printf \"PHP_TAG=5.6-cli-alpine\\nMW_TAG=1.30\\n\" > ./.env",
+			"cat ./.env",
+			"docker-compose --file docker-compose-test.yml up -d",
+			"docker-compose --file docker-compose-test.yml exec -T mediawiki php //var/www/html/maintenance/install.php --dbtype sqlite --dbuser db --dbname mw --dbpath //var/www/data --pass adminpass TestWiki Adminuser",
+			"docker-compose --file docker-compose-test.yml run -T addwiki /code/vendor/bin/parallel-lint . --exclude vendor",
+			"docker-compose --file docker-compose-test.yml run -T addwiki /code/vendor/bin/phpcs -ps",
+			"docker-compose --file docker-compose-test.yml run -T addwiki /code/vendor/bin/phpunit",
+			"docker-compose --file docker-compose-test.yml down",
+			"rm ./.env"
 		]
 	},
 	"autoload": {
