@@ -32,7 +32,7 @@ Logging in and out
 
 .. code-block:: php
 
-    use \MediawikiApi\Api\ApiUser;
+    use \Mediawiki\Api\ApiUser;
 
     $api->login( new ApiUser( 'username', 'password' ) );
     $api->logout();
