@@ -489,7 +489,9 @@ class MediawikiApi implements MediawikiApiInterface, LoggerAwareInterface {
 	 */
 	public function logout() {
 		$this->logger->log( LogLevel::DEBUG, 'Logging out' );
-		$result = $this->postRequest( new SimpleRequest( 'logout' ) );
+		$result = $this->postRequest( new SimpleRequest( 'logout', [
+			'token' => $this->getToken()
+		] ) );
 		if ( $result === [] ) {
 			$this->isLoggedIn = false;
 			$this->clearTokens();

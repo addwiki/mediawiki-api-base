@@ -246,10 +246,29 @@ class MediawikiApiTest extends PHPUnit_Framework_TestCase {
 
 	public function testLogout() {
 		$client = $this->getMockClient();
-		$client->expects( $this->at( 0 ) )
-			->method( 'request' )
-			->with( 'POST', null, $this->getExpectedRequestOpts( [ 'action' => 'logout' ], 'form_params' ) )
-			->will( $this->returnValue( $this->getMockResponse( [] ) ) );
+		$client->method( 'request' )
+			->withConsecutive(
+				[ 'POST', null, $this->getExpectedRequestOpts( [
+					'action' => 'query',
+					'meta' => 'tokens',
+					'type' => 'csrf',
+					'continue' => ''
+				], 'form_params' ) ],
+				[ 'POST', null, $this->getExpectedRequestOpts( [
+					'action' => 'logout',
+					'token' => 'TKN-csrf'
+				], 'form_params' ) ]
+			)
+			->willReturnOnConsecutiveCalls(
+				$this->returnValue( $this->getMockResponse( [
+					'query' => [
+						'tokens' => [
+							'csrf' => 'TKN-csrf',
+						]
+					]
+				] ) ),
+				$this->returnValue( $this->getMockResponse( [] ) )
+			);
 		$api = new MediawikiApi( '', $client );
 
 		$this->assertTrue( $api->logout() );
@@ -257,10 +276,29 @@ class MediawikiApiTest extends PHPUnit_Framework_TestCase {
 
 	public function testLogoutOnFailure() {
 		$client = $this->getMockClient();
-		$client->expects( $this->at( 0 ) )
-			->method( 'request' )
-			->with( 'POST', null, $this->getExpectedRequestOpts( [ 'action' => 'logout' ], 'form_params' ) )
-			->will( $this->returnValue( $this->getMockResponse( null ) ) );
+		$client->method( 'request' )
+			->withConsecutive(
+				[ 'POST', null, $this->getExpectedRequestOpts( [
+					'action' => 'query',
+					'meta' => 'tokens',
+					'type' => 'csrf',
+					'continue' => ''
+				], 'form_params' ) ],
+				[ 'POST', null, $this->getExpectedRequestOpts( [
+					'action' => 'logout',
+					'token' => 'TKN-csrf'
+				], 'form_params' ) ]
+			)
+			->willReturnOnConsecutiveCalls(
+				$this->returnValue( $this->getMockResponse( [
+					'query' => [
+						'tokens' => [
+							'csrf' => 'TKN-csrf',
+						]
+					]
+				] ) ),
+				$this->returnValue( $this->getMockResponse( null ) )
+			);
 		$api = new MediawikiApi( '', $client );
 
 		$this->assertFalse( $api->logout() );
