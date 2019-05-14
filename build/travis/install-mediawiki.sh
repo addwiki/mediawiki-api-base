@@ -4,12 +4,6 @@ set -x
 
 originalDirectory=$(pwd)
 
-if [[ $TRAVIS_PHP_VERSION == *"hhvm"* ]]
-then
-	PHPINI=/etc/hhvm/php.ini
-	echo "hhvm.enable_zend_compat = true" >> $PHPINI
-fi
-
 mkdir ./../web
 cd ./../web
 
