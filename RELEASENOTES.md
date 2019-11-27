@@ -1,5 +1,8 @@
 These are the release notes for the [mediawiki-api-base](README.md) library.
 
+## Version 2.5.0 (27 November 2019)
+* Token passed to action=logout api call, as now required by MediaWiki. PR [#44](https://github.com/addwiki/mediawiki-api-base/pull/44).
+
 ## Version 2.4.0 (2 November 2017)
 * New MultipartRequest class added. PR [#38](https://github.com/addwiki/mediawiki-api-base/pull/38).
 
