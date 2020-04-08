@@ -2,10 +2,15 @@
 	"name": "addwiki/mediawiki-api-base",
 	"type": "library",
 	"description": "A basic Mediawiki api base library",
-	"keywords": ["Mediawiki"],
+	"keywords": [
+		"Mediawiki"
+	],
+	"version": "2.5.0",
 	"license": "GPL-2.0+",
 	"authors": [
-		{ "name": "Addshore" }
+		{
+			"name": "Addshore"
+		}
 	],
 	"require": {
 		"php": ">=5.5",
@@ -14,25 +19,12 @@
 		"psr/log": "~1.0"
 	},
 	"require-dev": {
-		"phpunit/phpunit": "~4.8.0|~5.3.0",
 		"jakub-onderka/php-parallel-lint": "0.9.2",
-		"mediawiki/mediawiki-codesniffer": "^13.0"
+		"mediawiki/mediawiki-codesniffer": "^13.0",
+		"phpunit/phpunit": "~4.8.0 || ~5.3.0"
 	},
 	"suggest": {
 		"etsy/phan": "Allows running static analysis on the package (requires PHP 7+)"
-	},
-	"scripts": {
-		"lint": "parallel-lint . --exclude vendor",
-		"phpunit": "phpunit",
-		"phpunit-unit": "phpunit --testsuite unit",
-		"phpunit-integration": "phpunit --testsuite integration",
-		"phpunit-coverage": "phpunit --coverage-clover=coverage.clover",
-		"phpcs": "phpcs -ps",
-		"test": [
-			"@lint",
-			"@phpcs",
-			"@phpunit"
-		]
 	},
 	"autoload": {
 		"psr-4": {
@@ -44,9 +36,17 @@
 			"tests/Integration/TestEnvironment.php"
 		]
 	},
-	"extra": {
-		"branch-alias": {
-			"dev-master": "2.5.x-dev"
-		}
+	"scripts": {
+		"lint": "parallel-lint . --exclude vendor",
+		"phpcs": "phpcs -ps",
+		"phpunit": "phpunit",
+		"phpunit-coverage": "phpunit --coverage-clover=coverage.clover",
+		"phpunit-integration": "phpunit --testsuite integration",
+		"phpunit-unit": "phpunit --testsuite unit",
+		"test": [
+			"@lint",
+			"@phpcs",
+			"@phpunit"
+		]
 	}
 }
