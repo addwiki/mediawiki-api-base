@@ -18,6 +18,6 @@ composer self-update
 composer install
 
 mysql -e 'CREATE DATABASE mediawiki;'
-php maintenance/install.php --dbtype mysql --dbuser root --dbname mediawiki --dbpath $(pwd) --pass CIPass TravisWiki CIUser
+php maintenance/install.php --dbtype mysql --dbuser root --dbname mediawiki --dbpath $(pwd) --pass CIPass1234 TravisWiki CIUser
 
 cd $originalDirectory

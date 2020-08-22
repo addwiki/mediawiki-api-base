@@ -3,12 +3,14 @@
 namespace Mediawiki\Api\Test\Integration;
 
 use Mediawiki\Api\MediawikiApi;
+use Mediawiki\Api\RsdException;
 use Mediawiki\Api\SimpleRequest;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @author Addshore
  */
-class MediawikiApiTest extends \PHPUnit_Framework_TestCase {
+class MediawikiApiTest extends TestCase {
 
 	/**
 	 * @covers Mediawiki\Api\MediawikiApi::newFromPage
@@ -20,10 +22,10 @@ class MediawikiApiTest extends \PHPUnit_Framework_TestCase {
 
 	/**
 	 * @covers Mediawiki\Api\MediawikiApi::newFromPage
-	 * @expectedException Mediawiki\Api\RsdException
-	 * @expectedExceptionMessageRegExp |Unable to find RSD URL in page.*|
 	 */
 	public function testNewFromPageInvalidHtml() {
+		$this->expectException( RsdException::class );
+		$this->expectExceptionMessageRegExp( '|Unable to find RSD URL in page.*|' );
 		// This could be any URL that doesn't contain the RSD link, but the README URL
 		// is a test-accessible one that doesn't return 404.
 		$nonWikiPage = str_replace( 'api.php', 'README', TestEnvironment::newInstance()->getApiUrl() );
@@ -61,7 +63,7 @@ class MediawikiApiTest extends \PHPUnit_Framework_TestCase {
 	public function testQueryGetResponse() {
 		$api = TestEnvironment::newInstance()->getApi();
 		$response = $api->getRequest( new SimpleRequest( 'query' ) );
-		$this->assertInternalType( 'array', $response );
+		$this->assertIsArray( $response );
 	}
 
 	/**
@@ -73,7 +75,7 @@ class MediawikiApiTest extends \PHPUnit_Framework_TestCase {
 	public function testQueryGetResponseAsync() {
 		$api = TestEnvironment::newInstance()->getApi();
 		$response = $api->getRequestAsync( new SimpleRequest( 'query' ) );
-		$this->assertInternalType( 'array', $response->wait() );
+		$this->assertIsArray( $response->wait() );
 	}
 
 	/**
@@ -85,7 +87,7 @@ class MediawikiApiTest extends \PHPUnit_Framework_TestCase {
 	public function testQueryPostResponse() {
 		$api = TestEnvironment::newInstance()->getApi();
 		$response = $api->postRequest( new SimpleRequest( 'query' ) );
-		$this->assertInternalType( 'array', $response );
+		$this->assertIsArray( $response );
 	}
 
 	/**
@@ -97,7 +99,7 @@ class MediawikiApiTest extends \PHPUnit_Framework_TestCase {
 	public function testQueryPostResponseAsync() {
 		$api = TestEnvironment::newInstance()->getApi();
 		$response = $api->postRequestAsync( new SimpleRequest( 'query' ) );
-		$this->assertInternalType( 'array', $response->wait() );
+		$this->assertIsArray( $response->wait() );
 	}
 
 }

@@ -4,18 +4,18 @@ namespace Mediawiki\Api\Test\Unit;
 
 use Mediawiki\Api\MediawikiApi;
 use Mediawiki\Api\MediawikiSession;
-use PHPUnit_Framework_MockObject_MockObject;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @author Addshore
  *
  * @covers Mediawiki\Api\MediawikiSession
  */
-class MediawikiSessionTest extends PHPUnit_Framework_TestCase {
+class MediawikiSessionTest extends TestCase {
 
 	/**
-	 * @return PHPUnit_Framework_MockObject_MockObject|MediawikiApi
+	 * @return MockObject|MediawikiApi
 	 */
 	private function getMockApi() {
 		return $this->getMockBuilder( '\Mediawiki\Api\MediawikiApi' )

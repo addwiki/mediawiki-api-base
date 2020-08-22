@@ -4,9 +4,9 @@ namespace Mediawiki\Api\Test\Unit;
 
 use Exception;
 use Mediawiki\Api\MultipartRequest;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
-class MultipartRequestTest extends PHPUnit_Framework_TestCase {
+class MultipartRequestTest extends TestCase {
 
 	public function testBasics() {
 		$request = new MultipartRequest();
@@ -34,10 +34,10 @@ class MultipartRequestTest extends PHPUnit_Framework_TestCase {
 
 	/**
 	 * You are not allowed to set multipart parameters on a parameter that doesn't exist.
-	 * @expectedException Exception
-	 * @expectedExceptionMessage Parameter 'testparam' is not already set on this request.
 	 */
 	public function testParamNotYetSet() {
+		$this->expectException( Exception::class );
+		$this->expectExceptionMessage( "Parameter 'testparam' is not already set on this request." );
 		$request = new MultipartRequest();
 		$request->addMultipartParams( [ 'testparam' => [] ] );
 	}
