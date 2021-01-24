@@ -11,6 +11,15 @@ use Mediawiki\Api\SimpleRequest;
  */
 class TestEnvironment {
 
+	/** @var MediawikiApi */
+	private $api;
+
+	/** @var string */
+	private $apiUrl;
+
+	/** @var string */
+	private $pageUrl;
+
 	/**
 	 * Get a new TestEnvironment.
 	 * This is identical to calling self::__construct() but is useful for fluent construction.
@@ -20,15 +29,6 @@ class TestEnvironment {
 	public static function newInstance() {
 		return new self();
 	}
-
-	/** @var MediawikiApi */
-	private $api;
-
-	/** @var string */
-	private $apiUrl;
-
-	/** @var string */
-	private $pageUrl;
 
 	/**
 	 * Set up the test environment by creating a new API object pointing to a
