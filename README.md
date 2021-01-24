@@ -1,6 +1,5 @@
 # mediawiki-api-base
 
-[![Build Status](https://travis-ci.org/addwiki/mediawiki-api-base.svg?branch=master)](https://travis-ci.org/addwiki/mediawiki-api-base)
 [![Code Coverage](https://scrutinizer-ci.com/g/addwiki/mediawiki-api-base/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/addwiki/mediawiki-api-base/?branch=master)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/addwiki/mediawiki-api-base/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/addwiki/mediawiki-api-base/?branch=master)
 
@@ -10,3 +9,23 @@
 Issue tracker: https://phabricator.wikimedia.org/project/profile/1490/
 
 Documentation: https://addwiki.readthedocs.io
+
+## Integration tests
+
+Run the MediaWiki test site:
+
+```sh
+docker-compose -f docker-compose-ci.yml up -d
+```
+
+Run the tests:
+
+```sh
+composer phpunit-integration
+```
+
+Destroy the site that was used for testing:
+
+```sh
+docker-compose -f docker-compose-ci.yml down --volumes
+```

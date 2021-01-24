@@ -40,6 +40,10 @@ class TestEnvironment {
 	public function __construct() {
 		$apiUrl = getenv( 'ADDWIKI_MW_API' );
 
+		if ( !$apiUrl ) {
+			$apiUrl = "http://localhost:8877/api.php";
+		}
+
 		if ( substr( $apiUrl, -7 ) !== 'api.php' ) {
 			$msg = "URL incorrect: $apiUrl"
 				." (Set the ADDWIKI_MW_API environment variable correctly)";

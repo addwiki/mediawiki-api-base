@@ -43,7 +43,7 @@
         "test": [
             "@lint",
             "@phpcs",
-            "@phpunit-unit"
+            "@phpunit"
         ]
     },
     "extra": {
