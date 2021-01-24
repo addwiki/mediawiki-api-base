@@ -5,7 +5,7 @@ namespace Mediawiki\Api\Test\Integration;
 /**
  * @author Addshore
  */
-class TokenHandlingTest extends \PHPUnit_Framework_TestCase {
+class TokenHandlingTest extends \PHPUnit\Framework\TestCase {
 
 	/**
 	 * @dataProvider provideTokenTypes

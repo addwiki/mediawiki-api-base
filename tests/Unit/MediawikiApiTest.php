@@ -6,7 +6,6 @@ use Mediawiki\Api\ApiUser;
 use Mediawiki\Api\MediawikiApi;
 use Mediawiki\Api\SimpleRequest;
 use Mediawiki\Api\UsageException;
-use PHPUnit_Framework_TestCase;
 use Psr\Log\LoggerInterface;
 use stdClass;
 
@@ -15,7 +14,7 @@ use stdClass;
  *
  * @covers Mediawiki\Api\MediawikiApi
  */
-class MediawikiApiTest extends PHPUnit_Framework_TestCase {
+class MediawikiApiTest extends \PHPUnit\Framework\TestCase {
 
 	public function provideValidConstruction() {
 		return [
@@ -46,16 +45,16 @@ class MediawikiApiTest extends PHPUnit_Framework_TestCase {
 	 * @dataProvider provideInvalidConstruction
 	 */
 	public function testInvalidConstruction( $apiLocation ) {
-		$this->setExpectedException( 'InvalidArgumentException' );
+		$this->expectException( 'InvalidArgumentException' );
 		new MediawikiApi( $apiLocation );
 	}
 
 	private function getMockClient() {
-		return $this->getMock( 'GuzzleHttp\ClientInterface' );
+		return $this->createMock( 'GuzzleHttp\ClientInterface' );
 	}
 
 	private function getMockResponse( $responseValue ) {
-		$mock = $this->getMock( 'Psr\Http\Message\ResponseInterface' );
+		$mock = $this->createMock( 'Psr\Http\Message\ResponseInterface' );
 		$mock->expects( $this->any() )
 			->method( 'getBody' )
 			->will( $this->returnValue( json_encode( $responseValue ) ) );
@@ -240,7 +239,7 @@ class MediawikiApiTest extends PHPUnit_Framework_TestCase {
 			->will( $this->returnValue( $response ) );
 		$api = new MediawikiApi( '', $client );
 
-		$this->setExpectedException( 'Mediawiki\Api\UsageException' );
+		$this->expectException( 'Mediawiki\Api\UsageException' );
 		$api->login( $user );
 	}
 
@@ -348,7 +347,7 @@ class MediawikiApiTest extends PHPUnit_Framework_TestCase {
 		$client = $this->getMockClient();
 		$api = new MediawikiApi( '', $client );
 
-		$logger = $this->getMock( LoggerInterface::class );
+		$logger = $this->createMock( LoggerInterface::class );
 		$logger
 			->expects( $this->once() )
 			->method( 'warning' );

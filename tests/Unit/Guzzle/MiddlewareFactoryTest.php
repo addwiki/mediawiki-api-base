@@ -17,7 +17,7 @@ use Mediawiki\Api\Guzzle\MiddlewareFactory;
  *
  * @covers Mediawiki\Api\Guzzle\MiddlewareFactory
  */
-class MiddlewareFactoryTest extends \PHPUnit_Framework_TestCase {
+class MiddlewareFactoryTest extends \PHPUnit\Framework\TestCase {
 
 	public function testRetriesConnectException() {
 		$queue = [
@@ -99,7 +99,7 @@ class MiddlewareFactoryTest extends \PHPUnit_Framework_TestCase {
 
 		$client = $this->getClient( $queue );
 
-		$this->setExpectedException(
+		$this->expectException(
 			'GuzzleHttp\Exception\ConnectException',
 			'Error 6'
 		);

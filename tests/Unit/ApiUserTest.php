@@ -9,7 +9,7 @@ use Mediawiki\Api\ApiUser;
  *
  * @covers Mediawiki\Api\ApiUser
  */
-class ApiUserTest extends \PHPUnit_Framework_TestCase {
+class ApiUserTest extends \PHPUnit\Framework\TestCase {
 
 	/**
 	 * @dataProvider provideValidConstruction
@@ -32,7 +32,7 @@ class ApiUserTest extends \PHPUnit_Framework_TestCase {
 	 * @dataProvider provideInvalidConstruction
 	 */
 	public function testInvalidConstruction( $user, $pass, $domain = null ) {
-		$this->setExpectedException( 'InvalidArgumentException' );
+		$this->expectException( 'InvalidArgumentException' );
 		 new ApiUser( $user, $pass, $domain );
 	}
 

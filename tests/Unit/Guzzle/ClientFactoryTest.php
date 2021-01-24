@@ -11,7 +11,7 @@ use Psr\Http\Message\RequestInterface;
  *
  * @covers Mediawiki\Api\Guzzle\ClientFactory
  */
-class ClientFactoryTest extends \PHPUnit_Framework_TestCase {
+class ClientFactoryTest extends \PHPUnit\Framework\TestCase {
 
 	public function testNoConfig() {
 		$clientFactory = new ClientFactory();
@@ -77,7 +77,7 @@ class ClientFactoryTest extends \PHPUnit_Framework_TestCase {
 
 		$this->assertNull( $client->getConfig( 'middleware' ) );
 
-		$request = $this->getMockBuilder( RequestInterface::class )->getMock();
+		$request = $this->createMock( RequestInterface::class );
 
 		$handler = $client->getConfig( 'handler' );
 		$handler->remove( 'http_errors' );

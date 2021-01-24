@@ -8,7 +8,7 @@ use Mediawiki\Api\SimpleRequest;
 /**
  * @author Addshore
  */
-class MediawikiApiTest extends \PHPUnit_Framework_TestCase {
+class MediawikiApiTest extends \PHPUnit\Framework\TestCase {
 
 	/**
 	 * @covers Mediawiki\Api\MediawikiApi::newFromPage
