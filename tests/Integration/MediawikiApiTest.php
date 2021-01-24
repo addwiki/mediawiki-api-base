@@ -26,7 +26,7 @@ class MediawikiApiTest extends \PHPUnit_Framework_TestCase {
 	public function testNewFromPageInvalidHtml() {
 		// This could be any URL that doesn't contain the RSD link, but the README URL
 		// is a test-accessible one that doesn't return 404.
-		$nonWikiPage = str_replace( 'api.php', 'README.md', TestEnvironment::newInstance()->getApiUrl() );
+		$nonWikiPage = str_replace( 'api.php', 'README', TestEnvironment::newInstance()->getApiUrl() );
 		MediawikiApi::newFromPage( $nonWikiPage );
 	}
 

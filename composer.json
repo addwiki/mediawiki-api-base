@@ -1,52 +1,54 @@
 {
-	"name": "addwiki/mediawiki-api-base",
-	"type": "library",
-	"description": "A basic Mediawiki api base library",
-	"keywords": [
-		"Mediawiki"
-	],
-	"version": "2.5.0",
-	"license": "GPL-2.0+",
-	"authors": [
-		{
-			"name": "Addshore"
-		}
-	],
-	"require": {
-		"php": ">=5.5",
-		"guzzlehttp/guzzle": "~6.0",
-		"guzzlehttp/promises": "~1.0",
-		"psr/log": "~1.0"
-	},
-	"require-dev": {
-		"jakub-onderka/php-parallel-lint": "0.9.2",
-		"mediawiki/mediawiki-codesniffer": "^13.0",
-		"phpunit/phpunit": "~4.8.0 || ~5.3.0"
-	},
-	"suggest": {
-		"etsy/phan": "Allows running static analysis on the package (requires PHP 7+)"
-	},
-	"autoload": {
-		"psr-4": {
-			"Mediawiki\\Api\\": "src/"
-		}
-	},
-	"autoload-dev": {
-		"files": [
-			"tests/Integration/TestEnvironment.php"
-		]
-	},
-	"scripts": {
-		"lint": "parallel-lint . --exclude vendor",
-		"phpcs": "phpcs -ps",
-		"phpunit": "phpunit",
-		"phpunit-coverage": "phpunit --coverage-clover=coverage.clover",
-		"phpunit-integration": "phpunit --testsuite integration",
-		"phpunit-unit": "phpunit --testsuite unit",
-		"test": [
-			"@lint",
-			"@phpcs",
-			"@phpunit"
-		]
-	}
+    "name": "addwiki/mediawiki-api-base",
+    "type": "library",
+    "description": "A basic Mediawiki api base library",
+    "keywords": ["Mediawiki"],
+    "license": "GPL-2.0+",
+    "authors": [
+        {
+            "name": "Addshore"
+        }
+    ],
+    "require": {
+        "php": "^7.2",
+        "guzzlehttp/guzzle": "~6.0",
+        "guzzlehttp/promises": "~1.0",
+        "psr/log": "~1.0"
+    },
+    "require-dev": {
+        "jakub-onderka/php-parallel-lint": "^0.9.2",
+        "mediawiki/mediawiki-codesniffer": "^13.0",
+        "phpunit/phpunit": "~8"
+    },
+    "suggest": {
+        "etsy/phan": "Allows running static analysis on the package (requires PHP 7+)"
+    },
+    "autoload": {
+        "psr-4": {
+            "Mediawiki\\Api\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "files": [
+            "tests/Integration/TestEnvironment.php"
+        ]
+    },
+    "scripts": {
+        "lint": "parallel-lint . --exclude vendor",
+        "phpcs": "phpcs -ps",
+        "phpunit": "phpunit",
+        "phpunit-coverage": "phpunit --coverage-clover=coverage.clover",
+        "phpunit-integration": "phpunit --testsuite integration",
+        "phpunit-unit": "phpunit --testsuite unit",
+        "test": [
+            "@lint",
+            "@phpcs",
+            "@phpunit"
+        ]
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "2.6-dev"
+        }
+    }
 }
