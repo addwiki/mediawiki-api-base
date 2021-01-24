@@ -4,7 +4,7 @@ On Packagist:
 [![Latest Stable Version](https://poser.pugx.org/addwiki/mediawiki-api-base/version.png)](https://packagist.org/packages/addwiki/mediawiki-api-base)
 [![Download count](https://poser.pugx.org/addwiki/mediawiki-api-base/d/total.png)](https://packagist.org/packages/addwiki/mediawiki-api-base)
 
-Issue tracker: https://phabricator.wikimedia.org/project/profile/1490/
+Issue tracker: https://github.com/addwiki/addwiki/issues
 
 Documentation: https://addwiki.readthedocs.io
 
