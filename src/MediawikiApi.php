@@ -97,7 +97,7 @@ class MediawikiApi implements MediawikiApiInterface, LoggerAwareInterface {
 		if ( $link->length === 0 ) {
 			// Format libxml errors for display.
 			$libXmlErrorStr = array_reduce( $libXmlErrors, function ( $prevErr, $err ) {
-				return $prevErr . ', ' . $err->message . ' (line '.$err->line . ')';
+				return $prevErr . ', ' . $err->message . ' (line ' . $err->line . ')';
 			} );
 			if ( $libXmlErrorStr ) {
 				$libXmlErrorStr = "In addition, libxml had the following errors: $libXmlErrorStr";
