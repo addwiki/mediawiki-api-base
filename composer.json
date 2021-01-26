@@ -1,9 +1,9 @@
 {
     "name": "addwiki/mediawiki-api-base",
     "type": "library",
-    "description": "A basic Mediawiki api base library",
-    "keywords": ["Mediawiki"],
-    "license": "GPL-2.0+",
+    "description": "Simple MediaWiki API library",
+    "keywords": ["Mediawiki","API"],
+    "license": "GPL-2.0-or-later",
     "authors": [
         {
             "name": "Addshore"
