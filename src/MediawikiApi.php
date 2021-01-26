@@ -348,7 +348,7 @@ class MediawikiApi implements MediawikiApiInterface, LoggerAwareInterface {
 	}
 
 	/**
-	 * @param $result
+	 * @param array $result
 	 */
 	private function logWarnings( $result ) {
 		if ( is_array( $result ) ) {
