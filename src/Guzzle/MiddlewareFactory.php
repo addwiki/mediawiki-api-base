@@ -35,7 +35,7 @@ class MiddlewareFactory implements LoggerAwareInterface {
 	}
 
 	/**
-	 * @access private
+	 * @private
 	 *
 	 * @param bool $delay default to true, can be false to speed up tests
 	 *

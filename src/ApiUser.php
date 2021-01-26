@@ -38,7 +38,7 @@ class ApiUser {
 	 * @throws \InvalidArgumentException
 	 */
 	public function __construct( $username, $password, $domain = null ) {
-		$domainIsStringOrNull = ( is_string( $domain ) || is_null( $domain ) );
+		$domainIsStringOrNull = ( is_string( $domain ) || $domain === null );
 		if ( !is_string( $username ) || !is_string( $password ) || !$domainIsStringOrNull ) {
 			throw new InvalidArgumentException( 'Username, Password and Domain must all be strings' );
 		}

@@ -459,7 +459,7 @@ class MediawikiApi implements MediawikiApiInterface, LoggerAwareInterface {
 			'lgpassword' => $apiUser->getPassword(),
 		];
 
-		if ( !is_null( $apiUser->getDomain() ) ) {
+		if ( $apiUser->getDomain() !== null ) {
 			$params['lgdomain'] = $apiUser->getDomain();
 		}
 		return $params;
