@@ -1,4 +1,8 @@
-These are the release notes for the [mediawiki-api-base](README.md) library.
+# Release Notes
+
+## Version 2.6 (WIP)
+
+- Require PHP 7.2+
 
 ## Version 2.5.0 (27 November 2019)
 * Token passed to action=logout api call, as now required by MediaWiki. PR [#44](https://github.com/addwiki/mediawiki-api-base/pull/44).
