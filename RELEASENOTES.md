@@ -1,8 +1,10 @@
 # Release Notes
 
-## Version 2.6 (WIP)
+## Version 2.6 (2 February 2021)
 
 - Require PHP 7.2+
+- Initial release from new development monorepo
+- All addwiki libraries now have aligned version numbers
 
 ## Version 2.5.0 (27 November 2019)
 * Token passed to action=logout api call, as now required by MediaWiki. PR [#44](https://github.com/addwiki/mediawiki-api-base/pull/44).
