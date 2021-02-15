@@ -3,7 +3,7 @@
 namespace Mediawiki\Api\Guzzle;
 
 use GuzzleHttp\Exception\ConnectException;
-use GuzzleHttp\Exception\RequestException;
+use GuzzleHttp\Exception\TransferException;
 use GuzzleHttp\Middleware;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
@@ -85,7 +85,7 @@ class MiddlewareFactory implements LoggerAwareInterface {
 			$retries,
 			Request $request,
 			Response $response = null,
-			RequestException $exception = null
+			TransferException $exception = null
 		) {
 			// Don't retry if we have run out of retries
 			if ( $retries >= 5 ) {
