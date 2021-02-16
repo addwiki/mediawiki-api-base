@@ -364,6 +364,6 @@ class MediawikiApiTest extends TestCase {
 		$method = $reflection->getMethod( 'logWarnings' );
 		$method->setAccessible( true );
 
-		$method->invokeArgs( $api, $input );
+		$method->invokeArgs( $api, [ $input ] );
 	}
 }
