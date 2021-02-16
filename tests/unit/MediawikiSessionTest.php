@@ -4,6 +4,8 @@ namespace Mediawiki\Api\Test\Unit;
 
 use Mediawiki\Api\MediawikiApi;
 use Mediawiki\Api\MediawikiSession;
+use Mediawiki\Api\SimpleRequest;
+use PHPUnit\Framework\TestCase;
 use PHPUnit_Framework_MockObject_MockObject;
 
 /**
@@ -11,18 +13,18 @@ use PHPUnit_Framework_MockObject_MockObject;
  *
  * @covers Mediawiki\Api\MediawikiSession
  */
-class MediawikiSessionTest extends \PHPUnit\Framework\TestCase {
+class MediawikiSessionTest extends TestCase {
 
 	/**
 	 * @return PHPUnit_Framework_MockObject_MockObject|MediawikiApi
 	 */
 	private function getMockApi() {
-		return $this->createMock( '\Mediawiki\Api\MediawikiApi' );
+		return $this->createMock( MediawikiApi::class );
 	}
 
 	public function testConstruction() {
 		$session = new MediawikiSession( $this->getMockApi() );
-		$this->assertInstanceOf( '\Mediawiki\Api\MediawikiSession', $session );
+		$this->assertInstanceOf( MediawikiSession::class, $session );
 	}
 
 	/**
@@ -32,7 +34,7 @@ class MediawikiSessionTest extends \PHPUnit\Framework\TestCase {
 		$mockApi = $this->getMockApi();
 		$mockApi->expects( $this->exactly( 2 ) )
 			->method( 'postRequest' )
-			->with( $this->isInstanceOf( '\Mediawiki\Api\SimpleRequest' ) )
+			->with( $this->isInstanceOf( SimpleRequest::class ) )
 			->will( $this->returnValue( [
 				'query' => [
 					'tokens' => [
@@ -58,7 +60,7 @@ class MediawikiSessionTest extends \PHPUnit\Framework\TestCase {
 		$mockApi = $this->getMockApi();
 		$mockApi->expects( $this->at( 0 ) )
 			->method( 'postRequest' )
-			->with( $this->isInstanceOf( '\Mediawiki\Api\SimpleRequest' ) )
+			->with( $this->isInstanceOf( SimpleRequest::class ) )
 			->will( $this->returnValue( [
 				'warnings' => [
 					'query' => [
@@ -68,7 +70,7 @@ class MediawikiSessionTest extends \PHPUnit\Framework\TestCase {
 			] ) );
 		$mockApi->expects( $this->at( 1 ) )
 			->method( 'postRequest' )
-			->with( $this->isInstanceOf( '\Mediawiki\Api\SimpleRequest' ) )
+			->with( $this->isInstanceOf( SimpleRequest::class ) )
 			->will( $this->returnValue( [
 				'tokens' => [
 					$tokenType => 'TKN-' . $tokenType,

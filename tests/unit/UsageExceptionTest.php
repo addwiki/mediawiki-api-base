@@ -3,13 +3,14 @@
 namespace Mediawiki\Api\Test\Unit;
 
 use Mediawiki\Api\UsageException;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @author Addshore
  *
  * @covers Mediawiki\Api\UsageException
  */
-class UsageExceptionTest extends \PHPUnit\Framework\TestCase {
+class UsageExceptionTest extends TestCase {
 
 	public function testUsageExceptionWithNoParams() {
 		$e = new UsageException();

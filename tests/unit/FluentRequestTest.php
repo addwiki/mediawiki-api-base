@@ -3,16 +3,17 @@
 namespace Mediawiki\Api\Test\Unit;
 
 use Mediawiki\Api\FluentRequest;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @author Addshore
  *
  * @covers Mediawiki\Api\FluentRequest
  */
-class FluentRequestTest extends \PHPUnit\Framework\TestCase {
+class FluentRequestTest extends TestCase {
 
 	public function testFactory() {
-		$this->assertInstanceOf( 'Mediawiki\Api\FluentRequest', FluentRequest::factory() );
+		$this->assertInstanceOf( FluentRequest::class, FluentRequest::factory() );
 	}
 
 	public function testConstructionDefaults() {

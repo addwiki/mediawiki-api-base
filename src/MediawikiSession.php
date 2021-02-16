@@ -146,11 +146,8 @@ class MediawikiSession implements LoggerAwareInterface {
 	 * @return string
 	 */
 	private function getOldTokenType( $type ) {
-		switch ( $type ) {
-			// Guess that we want an edit token, this may not always work as we might be trying to
-			// use it for something else...
-			case 'csrf':
-				return 'edit';
+		if ( $type === 'csrf' ) {
+			return 'edit';
 		}
 		return $type;
 	}

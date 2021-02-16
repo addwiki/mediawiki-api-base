@@ -72,7 +72,7 @@ class ClientFactory implements LoggerAwareInterface {
 
 		$this->config['middleware'][] = $middlewareFactory->retry();
 
-		foreach ( $this->config['middleware'] as $name => $middleware ) {
+		foreach ( $this->config['middleware'] as $middleware ) {
 			$this->config['handler']->push( $middleware );
 		}
 		unset( $this->config['middleware'] );

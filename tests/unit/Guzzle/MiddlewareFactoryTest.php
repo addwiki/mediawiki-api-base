@@ -9,6 +9,7 @@ use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
 use Mediawiki\Api\Guzzle\MiddlewareFactory;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @author Addshore
@@ -17,7 +18,7 @@ use Mediawiki\Api\Guzzle\MiddlewareFactory;
  *
  * @covers Mediawiki\Api\Guzzle\MiddlewareFactory
  */
-class MiddlewareFactoryTest extends \PHPUnit\Framework\TestCase {
+class MiddlewareFactoryTest extends TestCase {
 
 	public function testRetriesConnectException() {
 		$queue = [
@@ -100,7 +101,7 @@ class MiddlewareFactoryTest extends \PHPUnit\Framework\TestCase {
 		$client = $this->getClient( $queue );
 
 		$this->expectException(
-			'GuzzleHttp\Exception\ConnectException',
+			ConnectException::class,
 			'Error 6'
 		);
 

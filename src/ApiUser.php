@@ -35,7 +35,7 @@ class ApiUser {
 	 * @param string $password The user's password.
 	 * @param string|null $domain The domain (for authentication systems that support domains).
 	 *
-	 * @throws \InvalidArgumentException
+	 * @throws InvalidArgumentException
 	 */
 	public function __construct( $username, $password, $domain = null ) {
 		$domainIsStringOrNull = ( is_string( $domain ) || $domain === null );
@@ -82,9 +82,9 @@ class ApiUser {
 	 */
 	public function equals( $other ) {
 		return $other instanceof self
-			&& $this->username == $other->getUsername()
-			&& $this->password == $other->getPassword()
-			&& $this->domain == $other->getDomain();
+			&& $this->username === $other->getUsername()
+			&& $this->password === $other->getPassword()
+			&& $this->domain === $other->getDomain();
 	}
 
 }

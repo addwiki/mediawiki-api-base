@@ -4,6 +4,7 @@ namespace Mediawiki\Api\Test\Unit\Guzzle;
 
 use GuzzleHttp\HandlerStack;
 use Mediawiki\Api\Guzzle\ClientFactory;
+use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\RequestInterface;
 
 /**
@@ -11,7 +12,7 @@ use Psr\Http\Message\RequestInterface;
  *
  * @covers Mediawiki\Api\Guzzle\ClientFactory
  */
-class ClientFactoryTest extends \PHPUnit\Framework\TestCase {
+class ClientFactoryTest extends TestCase {
 
 	public function testNoConfig() {
 		$clientFactory = new ClientFactory();

@@ -21,12 +21,12 @@ class SimpleRequest implements Request {
 	/**
 	 * @var array
 	 */
-	private $params;
+	private $params = [];
 
 	/**
 	 * @var array
 	 */
-	private $headers;
+	private $headers = [];
 
 	/**
 	 * @param string $action The API action.

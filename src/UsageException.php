@@ -21,7 +21,7 @@ class UsageException extends Exception {
 	/**
 	 * @var array
 	 */
-	private $result;
+	private $result = [];
 
 	/**
 	 * @var string

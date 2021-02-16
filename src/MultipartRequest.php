@@ -27,10 +27,10 @@ class MultipartRequest extends FluentRequest {
 	protected function checkMultipartParams( $params ) {
 		foreach ( $params as $key => $val ) {
 			if ( !is_array( $val ) ) {
-				throw new Exception( "Parameter '$key' must be an array." );
+				throw new Exception( sprintf( "Parameter '%s' must be an array.", $key ) );
 			}
-			if ( !in_array( $key, array_keys( $this->getParams() ) ) ) {
-				throw new Exception( "Parameter '$key' is not already set on this request." );
+			if ( !array_key_exists( $key, $this->getParams() ) ) {
+				throw new Exception( sprintf( "Parameter '%s' is not already set on this request.", $key ) );
 			}
 		}
 	}

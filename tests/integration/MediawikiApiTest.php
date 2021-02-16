@@ -3,26 +3,28 @@
 namespace Mediawiki\Api\Test\Integration;
 
 use Mediawiki\Api\MediawikiApi;
+use Mediawiki\Api\RsdException;
 use Mediawiki\Api\SimpleRequest;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @author Addshore
  */
-class MediawikiApiTest extends \PHPUnit\Framework\TestCase {
+class MediawikiApiTest extends TestCase {
 
 	/**
 	 * @covers Mediawiki\Api\MediawikiApi::newFromPage
 	 */
 	public function testNewFromPage() {
 		$api = MediawikiApi::newFromPage( TestEnvironment::newInstance()->getPageUrl() );
-		$this->assertInstanceOf( 'Mediawiki\Api\MediawikiApi', $api );
+		$this->assertInstanceOf( MediawikiApi::class, $api );
 	}
 
 	/**
 	 * @covers Mediawiki\Api\MediawikiApi::newFromPage
 	 */
 	public function testNewFromPageInvalidHtml() {
-		$this->expectException( \Mediawiki\Api\RsdException::class );
+		$this->expectException( RsdException::class );
 		$this->expectExceptionMessageMatches( "/Unable to find RSD URL in page.*/" );
 		// This could be any URL that doesn't contain the RSD link, load.php works just fine!
 		$nonWikiPage = str_replace( 'api.php', 'load.php', TestEnvironment::newInstance()->getApiUrl() );
@@ -37,7 +39,7 @@ class MediawikiApiTest extends \PHPUnit\Framework\TestCase {
 	public function testNewFromPageWithDuplicateId() {
 		$testPageName = __METHOD__;
 		$testEnv = TestEnvironment::newInstance();
-		$wikiPageUrl = str_replace( 'api.php', "index.php?title=$testPageName", $testEnv->getApiUrl() );
+		$wikiPageUrl = str_replace( 'api.php', sprintf( 'index.php?title=%s', $testPageName ), $testEnv->getApiUrl() );
 
 		// Test with no duplicate IDs.
 		$testEnv->savePage( $testPageName, '<p id="unique-id"></p>' );

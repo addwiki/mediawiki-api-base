@@ -29,7 +29,7 @@ class MediawikiApi implements MediawikiApiInterface, LoggerAwareInterface {
 	/**
 	 * @var ClientInterface|null Should be accessed through getClient
 	 */
-	private $client = null;
+	private $client;
 
 	/**
 	 * @var bool|string
@@ -100,9 +100,9 @@ class MediawikiApi implements MediawikiApiInterface, LoggerAwareInterface {
 				return $prevErr . ', ' . $err->message . ' (line ' . $err->line . ')';
 			} );
 			if ( $libXmlErrorStr ) {
-				$libXmlErrorStr = "In addition, libxml had the following errors: $libXmlErrorStr";
+				$libXmlErrorStr = sprintf( 'In addition, libxml had the following errors: %s', $libXmlErrorStr );
 			}
-			throw new RsdException( "Unable to find RSD URL in page: $url $libXmlErrorStr" );
+			throw new RsdException( sprintf( 'Unable to find RSD URL in page: %s %s', $url, $libXmlErrorStr ) );
 		}
 		$rsdUrl = $link->item( 0 )->attributes->getnamedItem( 'href' )->nodeValue;
 
@@ -187,7 +187,9 @@ class MediawikiApi implements MediawikiApiInterface, LoggerAwareInterface {
 		);
 
 		return $promise->then( function ( ResponseInterface $response ) {
-			return call_user_func( [ $this, 'decodeResponse' ], $response );
+			return call_user_func( function ( ResponseInterface $response ) {
+				return $this->decodeResponse( $response );
+			}, $response );
 		} );
 	}
 
@@ -208,7 +210,9 @@ class MediawikiApi implements MediawikiApiInterface, LoggerAwareInterface {
 		);
 
 		return $promise->then( function ( ResponseInterface $response ) {
-			return call_user_func( [ $this, 'decodeResponse' ], $response );
+			return call_user_func( function ( ResponseInterface $response ) {
+				return $this->decodeResponse( $response );
+			}, $response );
 		} );
 	}
 
@@ -524,13 +528,13 @@ class MediawikiApi implements MediawikiApiInterface, LoggerAwareInterface {
 	 * @return string
 	 */
 	public function getVersion() {
-		if ( !isset( $this->version ) ) {
+		if ( $this->version === null ) {
 			$result = $this->getRequest( new SimpleRequest( 'query', [
 				'meta' => 'siteinfo',
 				'continue' => '',
 			] ) );
 			preg_match(
-				'/\d+(?:\.\d+)+/',
+				'#\d+(?:\.\d+)+#',
 				$result['query']['general']['generator'],
 				$versionParts
 			);

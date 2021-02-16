@@ -2,14 +2,16 @@
 
 namespace Mediawiki\Api\Test\Unit;
 
+use InvalidArgumentException;
 use Mediawiki\Api\ApiUser;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @author Addshore
  *
  * @covers Mediawiki\Api\ApiUser
  */
-class ApiUserTest extends \PHPUnit\Framework\TestCase {
+class ApiUserTest extends TestCase {
 
 	/**
 	 * @dataProvider provideValidConstruction
@@ -32,7 +34,7 @@ class ApiUserTest extends \PHPUnit\Framework\TestCase {
 	 * @dataProvider provideInvalidConstruction
 	 */
 	public function testInvalidConstruction( $user, $pass, $domain = null ) {
-		$this->expectException( 'InvalidArgumentException' );
+		$this->expectException( InvalidArgumentException::class );
 		 new ApiUser( $user, $pass, $domain );
 	}
 

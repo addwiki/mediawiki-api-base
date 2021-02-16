@@ -2,14 +2,16 @@
 
 namespace Mediawiki\Api\Test\Unit;
 
+use InvalidArgumentException;
 use Mediawiki\Api\SimpleRequest;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @author Addshore
  *
  * @covers Mediawiki\Api\SimpleRequest
  */
-class SimpleRequestTest extends \PHPUnit\Framework\TestCase {
+class SimpleRequestTest extends TestCase {
 
 	/**
 	 * @dataProvider provideValidConstruction
@@ -35,7 +37,7 @@ class SimpleRequestTest extends \PHPUnit\Framework\TestCase {
 	 * @dataProvider provideInvalidConstruction
 	 */
 	public function testInvalidConstruction( $action, $params ) {
-		$this->expectException( 'InvalidArgumentException' );
+		$this->expectException( InvalidArgumentException::class );
 		new SimpleRequest( $action, $params );
 	}
 
