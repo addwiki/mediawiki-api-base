@@ -1,9 +1,9 @@
 <?php
 
-namespace Mediawiki\Api\Test\Unit;
+namespace Addwiki\Mediawiki\Api\Tests\Unit\Client;
 
+use Addwiki\Mediawiki\Api\Client\ApiUser;
 use InvalidArgumentException;
-use Mediawiki\Api\ApiUser;
 use PHPUnit\Framework\TestCase;
 
 /**

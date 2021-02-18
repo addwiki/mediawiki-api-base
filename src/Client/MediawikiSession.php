@@ -1,6 +1,6 @@
 <?php
 
-namespace Mediawiki\Api;
+namespace Addwiki\Mediawiki\Api\Client;
 
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;

@@ -1,8 +1,8 @@
 <?php
 
-namespace Mediawiki\Api\Test\Unit;
+namespace Addwiki\Mediawiki\Api\Tests\Unit\Client;
 
-use Mediawiki\Api\MultipartRequest;
+use Addwiki\Mediawiki\Api\Client\MultipartRequest;
 use PHPUnit\Framework\TestCase;
 
 class MultipartRequestTest extends TestCase {

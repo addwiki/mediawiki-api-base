@@ -38,17 +38,18 @@
     },
     "autoload": {
         "psr-4": {
-            "Mediawiki\\Api\\": "src/"
+            "Addwiki\\Mediawiki\\Api\\": "src/"
         }
     },
     "autoload-dev": {
-        "files": [
-            "tests/integration/TestEnvironment.php"
-        ]
+        "psr-4": {
+            "Addwiki\\Mediawiki\\Api\\Tests\\Unit\\": "tests/unit/",
+            "Addwiki\\Mediawiki\\Api\\Tests\\Integration\\": "tests/integration/"
+        }
     },
     "extra": {
         "branch-alias": {
-            "dev-main": "2.9-dev"
+            "dev-main": "3.0-dev"
         }
     },
     "minimum-stability": "dev",

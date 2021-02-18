@@ -1,9 +1,9 @@
 <?php
 
-namespace Mediawiki\Api\Test\Unit\Guzzle;
+namespace Addwiki\Mediawiki\Api\Tests\Unit\Guzzle;
 
+use Addwiki\Mediawiki\Api\Guzzle\ClientFactory;
 use GuzzleHttp\HandlerStack;
-use Mediawiki\Api\Guzzle\ClientFactory;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\RequestInterface;
 

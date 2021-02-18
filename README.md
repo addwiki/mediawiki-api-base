@@ -15,7 +15,7 @@ You can find the fill documentation at https://addwiki.github.io/mediawiki-api-b
 A quick example can be found below:
 
 ```php
-use \Mediawiki\Api\MediawikiApi;
+use \Addwiki\Mediawiki\Api\Client\MediawikiApi;
 
 $api = MediawikiApi::newFromPage( 'https://en.wikipedia.org/wiki/Berlin' );
 $api->login( new ApiUser( 'username', 'password' ) );

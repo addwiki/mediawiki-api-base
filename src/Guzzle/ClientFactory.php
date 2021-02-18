@@ -1,6 +1,6 @@
 <?php
 
-namespace Mediawiki\Api\Guzzle;
+namespace Addwiki\Mediawiki\Api\Guzzle;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Handler\CurlHandler;

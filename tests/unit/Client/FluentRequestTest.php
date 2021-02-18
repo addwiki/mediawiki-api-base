@@ -1,8 +1,8 @@
 <?php
 
-namespace Mediawiki\Api\Test\Unit;
+namespace Addwiki\Mediawiki\Api\Tests\Unit\Client;
 
-use Mediawiki\Api\FluentRequest;
+use Addwiki\Mediawiki\Api\Client\FluentRequest;
 use PHPUnit\Framework\TestCase;
 
 /**

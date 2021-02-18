@@ -1,6 +1,6 @@
 <?php
 
-namespace Mediawiki\Api\Guzzle;
+namespace Addwiki\Mediawiki\Api\Guzzle;
 
 use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\TransferException;

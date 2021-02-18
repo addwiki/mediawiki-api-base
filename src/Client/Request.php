@@ -1,6 +1,6 @@
 <?php
 
-namespace Mediawiki\Api;
+namespace Addwiki\Mediawiki\Api\Client;
 
 /**
  * @since 0.2

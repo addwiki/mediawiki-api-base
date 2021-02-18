@@ -1,15 +1,15 @@
 <?php
 
-namespace Mediawiki\Api\Test\Integration;
+namespace Addwiki\Mediawiki\Api\Tests\Integration;
 
+use Addwiki\Mediawiki\Api\Client\MediawikiApi;
+use Addwiki\Mediawiki\Api\Client\SimpleRequest;
 use Exception;
-use Mediawiki\Api\MediawikiApi;
-use Mediawiki\Api\SimpleRequest;
 
 /**
  * @author Addshore
  */
-class TestEnvironment {
+class BaseTestEnvironment {
 
 	/** @var MediawikiApi */
 	private $api;
@@ -21,10 +21,10 @@ class TestEnvironment {
 	private $pageUrl;
 
 	/**
-	 * Get a new TestEnvironment.
+	 * Get a new BaseTestEnvironment.
 	 * This is identical to calling self::__construct() but is useful for fluent construction.
 	 *
-	 * @return TestEnvironment
+	 * @return BaseTestEnvironment
 	 */
 	public static function newInstance() {
 		return new self();
