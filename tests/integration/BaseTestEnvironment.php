@@ -11,22 +11,18 @@ use Exception;
  */
 class BaseTestEnvironment {
 
-	/** @var MediawikiApi */
-	private $api;
+	private MediawikiApi $api;
 
 	/** @var string */
 	private $apiUrl;
 
-	/** @var string */
-	private $pageUrl;
+	private string $pageUrl;
 
 	/**
 	 * Get a new BaseTestEnvironment.
 	 * This is identical to calling self::__construct() but is useful for fluent construction.
-	 *
-	 * @return BaseTestEnvironment
 	 */
-	public static function newInstance() {
+	public static function newInstance(): BaseTestEnvironment {
 		return new self();
 	}
 
@@ -57,25 +53,22 @@ class BaseTestEnvironment {
 
 	/**
 	 * Get the url of the api to test against, based on the MEDIAWIKI_API_URL environment variable.
-	 * @return string
 	 */
-	public function getApiUrl() {
+	public function getApiUrl(): string {
 		return $this->apiUrl;
 	}
 
 	/**
 	 * Get the url of a page on the wiki to test against, based on the api url.
-	 * @return string
 	 */
-	public function getPageUrl() {
+	public function getPageUrl(): string {
 		return $this->pageUrl;
 	}
 
 	/**
 	 * Get the MediawikiApi to test against
-	 * @return MediawikiApi
 	 */
-	public function getApi() {
+	public function getApi(): MediawikiApi {
 		return $this->api;
 	}
 
@@ -84,7 +77,7 @@ class BaseTestEnvironment {
 	 * @param string $title The title of the page.
 	 * @param string $content The complete page text to save.
 	 */
-	public function savePage( $title, $content ) {
+	public function savePage( string $title, string $content ): void {
 		$params = [
 			'title' => $title,
 			'text' => $content,

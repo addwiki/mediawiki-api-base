@@ -12,18 +12,18 @@ use PHPUnit\Framework\TestCase;
  */
 class FluentRequestTest extends TestCase {
 
-	public function testFactory() {
+	public function testFactory(): void {
 		$this->assertInstanceOf( FluentRequest::class, FluentRequest::factory() );
 	}
 
-	public function testConstructionDefaults() {
+	public function testConstructionDefaults(): void {
 		$request = new FluentRequest();
 
 		$this->assertEquals( [], $request->getParams() );
 		$this->assertEquals( [], $request->getHeaders() );
 	}
 
-	public function testSetParams() {
+	public function testSetParams(): void {
 		$request = new FluentRequest();
 
 		$params = [ 'foo', 'bar' ];
@@ -32,7 +32,7 @@ class FluentRequestTest extends TestCase {
 		$this->assertEquals( $params, $request->getParams() );
 	}
 
-	public function testSetParam() {
+	public function testSetParam(): void {
 		$request = new FluentRequest();
 
 		$request->setParam( 'paramName', 'fooValue' );
@@ -40,7 +40,7 @@ class FluentRequestTest extends TestCase {
 		$this->assertEquals( [ 'paramName' => 'fooValue' ], $request->getParams() );
 	}
 
-	public function testAddParams() {
+	public function testAddParams(): void {
 		$request = new FluentRequest();
 
 		$params = [ 'a' => 'foo', 'b' => 'bar' ];
@@ -49,7 +49,7 @@ class FluentRequestTest extends TestCase {
 		$this->assertEquals( $params, $request->getParams() );
 	}
 
-	public function testSetHeaders() {
+	public function testSetHeaders(): void {
 		$request = new FluentRequest();
 
 		$params = [ 'foo', 'bar' ];
@@ -58,7 +58,7 @@ class FluentRequestTest extends TestCase {
 		$this->assertEquals( $params, $request->getHeaders() );
 	}
 
-	public function testSetAction() {
+	public function testSetAction(): void {
 		$request = new FluentRequest();
 
 		$request->setAction( 'fooAction' );

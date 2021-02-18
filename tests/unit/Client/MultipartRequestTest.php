@@ -7,7 +7,7 @@ use PHPUnit\Framework\TestCase;
 
 class MultipartRequestTest extends TestCase {
 
-	public function testBasics() {
+	public function testBasics(): void {
 		$request = new MultipartRequest();
 		$this->assertEquals( [], $request->getMultipartParams() );
 
@@ -34,7 +34,7 @@ class MultipartRequestTest extends TestCase {
 	/**
 	 * You are not allowed to set multipart parameters on a parameter that doesn't exist.
 	 */
-	public function testParamNotYetSet() {
+	public function testParamNotYetSet(): void {
 		$this->expectException(
 			"Exception",
 			"Parameter 'testparam' is not already set on this request."

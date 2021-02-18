@@ -9,22 +9,16 @@ namespace Addwiki\Mediawiki\Api\Client;
  */
 class FluentRequest implements Request {
 
-	/**
-	 * @var array
-	 */
-	private $params = [];
+	private array $params = [];
 
-	/**
-	 * @var array
-	 */
-	private $headers = [];
+	private array $headers = [];
 
 	/**
 	 * @since 1.0
 	 *
 	 * @return array
 	 */
-	public function getParams() {
+	public function getParams(): array {
 		return $this->params;
 	}
 
@@ -33,7 +27,7 @@ class FluentRequest implements Request {
 	 *
 	 * @return array
 	 */
-	public function getHeaders() {
+	public function getHeaders(): array {
 		return $this->headers;
 	}
 
@@ -53,7 +47,7 @@ class FluentRequest implements Request {
 	 *
 	 * @return $this
 	 */
-	public function setAction( $action ) {
+	public function setAction( string $action ): self {
 		$this->setParam( 'action', $action );
 		return $this;
 	}
@@ -67,7 +61,7 @@ class FluentRequest implements Request {
 	 *
 	 * @return $this
 	 */
-	public function setParams( array $params ) {
+	public function setParams( array $params ): self {
 		$this->params = $params;
 		return $this;
 	}
@@ -81,7 +75,7 @@ class FluentRequest implements Request {
 	 *
 	 * @return $this
 	 */
-	public function addParams( array $params ) {
+	public function addParams( array $params ): self {
 		$this->params = array_merge( $this->params, $params );
 		return $this;
 	}
@@ -96,7 +90,7 @@ class FluentRequest implements Request {
 	 *
 	 * @return $this
 	 */
-	public function setParam( $param, $value ) {
+	public function setParam( string $param, string $value ): self {
 		$this->params[$param] = $value;
 		return $this;
 	}
@@ -110,7 +104,7 @@ class FluentRequest implements Request {
 	 *
 	 * @return $this
 	 */
-	public function setHeaders( $headers ) {
+	public function setHeaders( array $headers ): self {
 		$this->headers = $headers;
 		return $this;
 	}

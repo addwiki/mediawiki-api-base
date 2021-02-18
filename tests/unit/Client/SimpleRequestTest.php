@@ -3,7 +3,6 @@
 namespace Addwiki\Mediawiki\Api\Tests\Unit\Client;
 
 use Addwiki\Mediawiki\Api\Client\SimpleRequest;
-use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -16,13 +15,13 @@ class SimpleRequestTest extends TestCase {
 	/**
 	 * @dataProvider provideValidConstruction
 	 */
-	public function testValidConstruction( $action, $params, $expected, $headers = [] ) {
+	public function testValidConstruction( string $action, array $params, array $expected, array $headers = [] ): void {
 		$request = new SimpleRequest( $action, $params, $headers );
 		$this->assertEquals( $expected, $request->getParams() );
 		$this->assertEquals( $headers, $request->getHeaders() );
 	}
 
-	public function provideValidConstruction() {
+	public function provideValidConstruction(): array {
 		return [
 			[ 'action', [], [ 'action' => 'action' ] ],
 			[ '1123', [], [ 'action' => '1123' ] ],
@@ -30,20 +29,6 @@ class SimpleRequestTest extends TestCase {
 			[ 'a', [ 'b' => 'c', 'd' => 'e' ], [ 'action' => 'a', 'b' => 'c', 'd' => 'e' ] ],
 			[ 'a', [ 'b' => 'c|d|e|f' ], [ 'action' => 'a', 'b' => 'c|d|e|f' ] ],
 			[ 'foo', [], [ 'action' => 'foo' ] ,[ 'foo' => 'bar' ] ],
-		];
-	}
-
-	/**
-	 * @dataProvider provideInvalidConstruction
-	 */
-	public function testInvalidConstruction( $action, $params ) {
-		$this->expectException( InvalidArgumentException::class );
-		new SimpleRequest( $action, $params );
-	}
-
-	public function provideInvalidConstruction() {
-		return [
-			[ [], [] ],
 		];
 	}
 

@@ -22,7 +22,7 @@ class MediawikiSessionTest extends TestCase {
 		return $this->createMock( MediawikiApi::class );
 	}
 
-	public function testConstruction() {
+	public function testConstruction(): void {
 		$session = new MediawikiSession( $this->getMockApi() );
 		$this->assertInstanceOf( MediawikiSession::class, $session );
 	}
@@ -30,7 +30,7 @@ class MediawikiSessionTest extends TestCase {
 	/**
 	 * @dataProvider provideTokenTypes
 	 */
-	public function testGetToken( $tokenType ) {
+	public function testGetToken( string $tokenType ): void {
 		$mockApi = $this->getMockApi();
 		$mockApi->expects( $this->exactly( 2 ) )
 			->method( 'postRequest' )
@@ -56,7 +56,7 @@ class MediawikiSessionTest extends TestCase {
 	/**
 	 * @dataProvider provideTokenTypes
 	 */
-	public function testGetTokenPre125( $tokenType ) {
+	public function testGetTokenPre125( string $tokenType ): void {
 		$mockApi = $this->getMockApi();
 		$mockApi->expects( $this->at( 0 ) )
 			->method( 'postRequest' )
@@ -84,7 +84,7 @@ class MediawikiSessionTest extends TestCase {
 		$this->assertSame( 'TKN-' . $tokenType, $session->getToken() );
 	}
 
-	public function provideTokenTypes() {
+	public function provideTokenTypes(): array {
 		return [
 			[ 'csrf' ],
 			[ 'edit' ],

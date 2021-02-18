@@ -13,20 +13,11 @@ use InvalidArgumentException;
  */
 class SimpleRequest implements Request {
 
-	/**
-	 * @var string
-	 */
-	private $action;
+	private string $action;
 
-	/**
-	 * @var array
-	 */
-	private $params = [];
+	private array $params = [];
 
-	/**
-	 * @var array
-	 */
-	private $headers = [];
+	private array $headers = [];
 
 	/**
 	 * @param string $action The API action.
@@ -35,7 +26,7 @@ class SimpleRequest implements Request {
 	 *
 	 * @throws InvalidArgumentException
 	 */
-	public function __construct( $action, array $params = [], array $headers = [] ) {
+	public function __construct( string $action, array $params = [], array $headers = [] ) {
 		if ( !is_string( $action ) ) {
 			throw new InvalidArgumentException( '$action must be string' );
 		}
@@ -47,14 +38,14 @@ class SimpleRequest implements Request {
 	/**
 	 * @return string[]
 	 */
-	public function getParams() {
+	public function getParams(): array {
 		return array_merge( [ 'action' => $this->action ], $this->params );
 	}
 
 	/**
 	 * @return string[]
 	 */
-	public function getHeaders() {
+	public function getHeaders(): array {
 		return $this->headers;
 	}
 

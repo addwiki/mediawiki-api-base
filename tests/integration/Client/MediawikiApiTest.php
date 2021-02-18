@@ -16,7 +16,7 @@ class MediawikiApiTest extends TestCase {
 	/**
 	 * @covers Mediawiki\Api\MediawikiApi::newFromPage
 	 */
-	public function testNewFromPage() {
+	public function testNewFromPage(): void {
 		$api = MediawikiApi::newFromPage( BaseTestEnvironment::newInstance()->getPageUrl() );
 		$this->assertInstanceOf( MediawikiApi::class, $api );
 	}
@@ -24,7 +24,7 @@ class MediawikiApiTest extends TestCase {
 	/**
 	 * @covers Mediawiki\Api\MediawikiApi::newFromPage
 	 */
-	public function testNewFromPageInvalidHtml() {
+	public function testNewFromPageInvalidHtml(): void {
 		$this->expectException( RsdException::class );
 		$this->expectExceptionMessageMatches( "/Unable to find RSD URL in page.*/" );
 		// This could be any URL that doesn't contain the RSD link, load.php works just fine!
@@ -37,7 +37,7 @@ class MediawikiApiTest extends TestCase {
 	 * @see https://phabricator.wikimedia.org/T163527#3219833
 	 * @covers Mediawiki\Api\MediawikiApi::newFromPage
 	 */
-	public function testNewFromPageWithDuplicateId() {
+	public function testNewFromPageWithDuplicateId(): void {
 		$testPageName = __METHOD__;
 		$testEnv = BaseTestEnvironment::newInstance();
 		$wikiPageUrl = str_replace( 'api.php', sprintf( 'index.php?title=%s', $testPageName ), $testEnv->getApiUrl() );
@@ -60,7 +60,7 @@ class MediawikiApiTest extends TestCase {
 	 * @covers Mediawiki\Api\MediawikiApi::decodeResponse
 	 * @covers Mediawiki\Api\MediawikiApi::getClient
 	 */
-	public function testQueryGetResponse() {
+	public function testQueryGetResponse(): void {
 		$api = BaseTestEnvironment::newInstance()->getApi();
 		$response = $api->getRequest( new SimpleRequest( 'query' ) );
 		$this->assertIsArray( $response );
@@ -72,7 +72,7 @@ class MediawikiApiTest extends TestCase {
 	 * @covers Mediawiki\Api\MediawikiApi::decodeResponse
 	 * @covers Mediawiki\Api\MediawikiApi::getClient
 	 */
-	public function testQueryGetResponseAsync() {
+	public function testQueryGetResponseAsync(): void {
 		$api = BaseTestEnvironment::newInstance()->getApi();
 		$response = $api->getRequestAsync( new SimpleRequest( 'query' ) );
 		$this->assertIsArray( $response->wait() );
@@ -84,7 +84,7 @@ class MediawikiApiTest extends TestCase {
 	 * @covers Mediawiki\Api\MediawikiApi::decodeResponse
 	 * @covers Mediawiki\Api\MediawikiApi::getClient
 	 */
-	public function testQueryPostResponse() {
+	public function testQueryPostResponse(): void {
 		$api = BaseTestEnvironment::newInstance()->getApi();
 		$response = $api->postRequest( new SimpleRequest( 'query' ) );
 		$this->assertIsArray( $response );
@@ -96,7 +96,7 @@ class MediawikiApiTest extends TestCase {
 	 * @covers Mediawiki\Api\MediawikiApi::decodeResponse
 	 * @covers Mediawiki\Api\MediawikiApi::getClient
 	 */
-	public function testQueryPostResponseAsync() {
+	public function testQueryPostResponseAsync(): void {
 		$api = BaseTestEnvironment::newInstance()->getApi();
 		$response = $api->postRequestAsync( new SimpleRequest( 'query' ) );
 		$this->assertIsArray( $response->wait() );

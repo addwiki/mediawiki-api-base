@@ -16,9 +16,9 @@ use Psr\Log\NullLogger;
  */
 class ClientFactory implements LoggerAwareInterface {
 
-	private $client;
-	private $logger;
-	private $config;
+	private ?Client $client = null;
+	private NullLogger $logger;
+	private array $config;
 
 	/**
 	 * @since 2.1
@@ -34,20 +34,15 @@ class ClientFactory implements LoggerAwareInterface {
 
 	/**
 	 * @since 2.1
-	 *
-	 * @return Client
 	 */
-	public function getClient() {
+	public function getClient(): ?Client {
 		if ( $this->client === null ) {
 			$this->client = $this->newClient();
 		}
 		return $this->client;
 	}
 
-	/**
-	 * @return Client
-	 */
-	private function newClient() {
+	private function newClient(): Client {
 		$this->config += [
 			'cookies' => true,
 			'headers' => [],

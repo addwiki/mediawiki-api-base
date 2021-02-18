@@ -25,23 +25,21 @@ interface MediawikiApiInterface extends ApiRequester, AsyncApiRequester {
 	 * @throws UsageException
 	 * @return bool success
 	 */
-	public function login( ApiUser $apiUser );
+	public function login( ApiUser $apiUser ): bool;
 
 	/**
 	 * @since 2.2
 	 *
 	 * @return bool success
 	 */
-	public function logout();
+	public function logout(): bool;
 
 	/**
 	 * @since 2.2
 	 *
 	 * @param string $type The type of token to get.
-	 *
-	 * @return string
 	 */
-	public function getToken( $type = 'csrf' );
+	public function getToken( $type = 'csrf' ): string;
 
 	/**
 	 * @since 2.2
@@ -52,9 +50,7 @@ interface MediawikiApiInterface extends ApiRequester, AsyncApiRequester {
 
 	/**
 	 * @since 2.2
-	 *
-	 * @return string
 	 */
-	public function getVersion();
+	public function getVersion(): string;
 
 }

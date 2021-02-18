@@ -7,12 +7,10 @@ use Addwiki\Mediawiki\Api\Client\MediawikiApi;
 use Addwiki\Mediawiki\Api\Client\SimpleRequest;
 use Addwiki\Mediawiki\Api\Client\UsageException;
 use GuzzleHttp\ClientInterface;
-use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerInterface;
 use ReflectionClass;
-use stdClass;
 
 /**
  * @author Addshore
@@ -21,7 +19,10 @@ use stdClass;
  */
 class MediawikiApiTest extends TestCase {
 
-	public function provideValidConstruction() {
+	/**
+	 * @return string[][]
+	 */
+	public function provideValidConstruction(): array {
 		return [
 			[ 'localhost' ],
 			[ 'http://en.wikipedia.org/w/api.php' ],
@@ -32,32 +33,21 @@ class MediawikiApiTest extends TestCase {
 	/**
 	 * @dataProvider provideValidConstruction
 	 */
-	public function testValidConstruction( $apiLocation ) {
+	public function testValidConstruction( string $apiLocation ): void {
 		new MediawikiApi( $apiLocation );
 		$this->assertTrue( true );
 	}
 
-	public function provideInvalidConstruction() {
-		return [
-			[ null ],
-			[ 12345678 ],
-			[ [] ],
-			[ new stdClass() ],
-		];
-	}
-
 	/**
-	 * @dataProvider provideInvalidConstruction
+	 * @return ClientInterface&MockObject
 	 */
-	public function testInvalidConstruction( $apiLocation ) {
-		$this->expectException( InvalidArgumentException::class );
-		new MediawikiApi( $apiLocation );
-	}
-
 	private function getMockClient() {
 		return $this->createMock( ClientInterface::class );
 	}
 
+	/**
+	 * @return MockObject&ResponseInterface
+	 */
 	private function getMockResponse( $responseValue ) {
 		$mock = $this->createMock( ResponseInterface::class );
 		$mock
@@ -66,14 +56,17 @@ class MediawikiApiTest extends TestCase {
 		return $mock;
 	}
 
-	private function getExpectedRequestOpts( $params, $paramsLocation ) {
+	/**
+	 * @return array <int|string mixed[]>
+	 */
+	private function getExpectedRequestOpts( $params, $paramsLocation ): array {
 		return [
 			$paramsLocation => array_merge( $params, [ 'format' => 'json' ] ),
 			'headers' => [ 'User-Agent' => 'addwiki-mediawiki-client' ],
 		];
 	}
 
-	public function testGetRequestThrowsUsageExceptionOnError() {
+	public function testGetRequestThrowsUsageExceptionOnError(): void {
 		$client = $this->getMockClient();
 		$client->expects( $this->once() )
 			->method( 'request' )
@@ -95,7 +88,7 @@ class MediawikiApiTest extends TestCase {
 		}
 	}
 
-	public function testPostRequestThrowsUsageExceptionOnError() {
+	public function testPostRequestThrowsUsageExceptionOnError(): void {
 		$client = $this->getMockClient();
 		$client->expects( $this->once() )
 			->method( 'request' )
@@ -120,7 +113,7 @@ class MediawikiApiTest extends TestCase {
 	/**
 	 * @dataProvider provideActionsParamsResults
 	 */
-	public function testGetActionReturnsResult( $expectedResult, $action, $params = [] ) {
+	public function testGetActionReturnsResult( array $expectedResult, string $action, array $params = [] ): void {
 		$client = $this->getMockClient();
 		$params = array_merge( [ 'action' => $action ], $params );
 		$client->expects( $this->once() )
@@ -137,7 +130,7 @@ class MediawikiApiTest extends TestCase {
 	/**
 	 * @dataProvider provideActionsParamsResults
 	 */
-	public function testPostActionReturnsResult( $expectedResult, $action, $params = [] ) {
+	public function testPostActionReturnsResult( array $expectedResult, string $action, array $params = [] ): void {
 		$client = $this->getMockClient();
 		$params = array_merge( [ 'action' => $action ], $params );
 		$client->expects( $this->once() )
@@ -151,6 +144,9 @@ class MediawikiApiTest extends TestCase {
 		$this->assertEquals( $expectedResult, $result );
 	}
 
+	/**
+	 * @return resource|bool
+	 */
 	private function getNullFilePointer() {
 		if ( !file_exists( '/dev/null' ) ) {
 			// windows
@@ -159,7 +155,7 @@ class MediawikiApiTest extends TestCase {
 		return fopen( '/dev/null', 'r' );
 	}
 
-	public function testPostActionWithFileReturnsResult() {
+	public function testPostActionWithFileReturnsResult(): void {
 		$dummyFile = $this->getNullFilePointer();
 		$params = [
 			'filename' => 'foo.jpg',
@@ -186,7 +182,7 @@ class MediawikiApiTest extends TestCase {
 		$this->assertEquals( [ 'success ' => 1 ], $result );
 	}
 
-	public function provideActionsParamsResults() {
+	public function provideActionsParamsResults(): array {
 		return [
 			[ [ 'key' => 'value' ], 'logout' ],
 			[ [ 'key' => 'value' ], 'logout', [ 'param1' => 'v1' ] ],
@@ -194,7 +190,7 @@ class MediawikiApiTest extends TestCase {
 		];
 	}
 
-	public function testGoodLoginSequence() {
+	public function testGoodLoginSequence(): void {
 		$client = $this->getMockClient();
 		$user = new ApiUser( 'U1', 'P1' );
 		$eq1 = [
@@ -221,7 +217,7 @@ class MediawikiApiTest extends TestCase {
 		$this->assertSame( 'U1', $api->isLoggedin() );
 	}
 
-	public function testBadLoginSequence() {
+	public function testBadLoginSequence(): void {
 		$client = $this->getMockClient();
 		$user = new ApiUser( 'U1', 'P1' );
 		$eq1 = [
@@ -248,7 +244,7 @@ class MediawikiApiTest extends TestCase {
 		$api->login( $user );
 	}
 
-	public function testLogout() {
+	public function testLogout(): void {
 		$client = $this->getMockClient();
 		$client->method( 'request' )
 			->withConsecutive(
@@ -278,7 +274,7 @@ class MediawikiApiTest extends TestCase {
 		$this->assertTrue( $api->logout() );
 	}
 
-	public function testLogoutOnFailure() {
+	public function testLogoutOnFailure(): void {
 		$client = $this->getMockClient();
 		$client->method( 'request' )
 			->withConsecutive(
@@ -311,7 +307,7 @@ class MediawikiApiTest extends TestCase {
 	/**
 	 * @dataProvider provideVersions
 	 */
-	public function testGetVersion( $apiValue, $expectedVersion ) {
+	public function testGetVersion( string $apiValue, string $expectedVersion ): void {
 		$client = $this->getMockClient();
 		$params = [ 'action' => 'query', 'meta' => 'siteinfo', 'continue' => '' ];
 		$client->expects( $this->exactly( 1 ) )
@@ -328,7 +324,7 @@ class MediawikiApiTest extends TestCase {
 		$this->assertEquals( $expectedVersion, $api->getVersion() );
 	}
 
-	public function provideVersions() {
+	public function provideVersions(): array {
 		return [
 			[ 'MediaWiki 1.25wmf13', '1.25' ],
 			[ 'MediaWiki 1.24.1', '1.24.1' ],
@@ -337,7 +333,7 @@ class MediawikiApiTest extends TestCase {
 		];
 	}
 
-	public function testLogWarningsWithWarningsDeeperInTheArray() {
+	public function testLogWarningsWithWarningsDeeperInTheArray(): void {
 		$input = [
 			'upload' => [
 				'result' => 'Warning',

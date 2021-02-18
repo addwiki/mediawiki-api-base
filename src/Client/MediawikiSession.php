@@ -14,25 +14,16 @@ use Psr\Log\NullLogger;
  */
 class MediawikiSession implements LoggerAwareInterface {
 
-	/**
-	 * @var array
-	 */
-	private $tokens = [];
+	private array $tokens = [];
 
-	/**
-	 * @var MediawikiApi
-	 */
-	private $api;
+	private MediawikiApi $api;
 
 	/**
 	 * @var bool if this session is running against mediawiki version pre 1.25
 	 */
-	private $usePre125TokensModule = false;
+	private bool $usePre125TokensModule = false;
 
-	/**
-	 * @var LoggerInterface
-	 */
-	private $logger;
+	private LoggerInterface $logger;
 
 	/**
 	 * @param MediawikiApi $api The API object to use for this session.
@@ -61,10 +52,8 @@ class MediawikiSession implements LoggerAwareInterface {
 	 * @since 0.1
 	 *
 	 * @param string $type The type of token to get.
-	 *
-	 * @return string
 	 */
-	public function getToken( $type = 'csrf' ) {
+	public function getToken( string $type = 'csrf' ): string {
 		// If we don't already have the token that we want
 		if ( !array_key_exists( $type, $this->tokens ) ) {
 			$this->logger->log( LogLevel::DEBUG, 'Getting fresh token', [ 'type' => $type ] );
@@ -117,11 +106,10 @@ class MediawikiSession implements LoggerAwareInterface {
 	/**
 	 * Tries to guess a new token type from an old token type
 	 *
-	 * @param string $type
 	 *
-	 * @return string
+	 * @return void|string
 	 */
-	private function getNewTokenType( $type ) {
+	private function getNewTokenType( string $type ) {
 		switch ( $type ) {
 			case 'edit':
 			case 'delete':
@@ -141,11 +129,9 @@ class MediawikiSession implements LoggerAwareInterface {
 	/**
 	 * Tries to guess an old token type from a new token type
 	 *
-	 * @param string $type
 	 *
-	 * @return string
 	 */
-	private function getOldTokenType( $type ) {
+	private function getOldTokenType( string $type ): string {
 		if ( $type === 'csrf' ) {
 			return 'edit';
 		}
@@ -157,7 +143,7 @@ class MediawikiSession implements LoggerAwareInterface {
 	 *
 	 * @since 0.2
 	 */
-	public function clearTokens() {
+	public function clearTokens(): void {
 		$this->logger->log( LogLevel::DEBUG, 'Clearing session tokens', [ 'tokens' => $this->tokens ] );
 		$this->tokens = [];
 	}

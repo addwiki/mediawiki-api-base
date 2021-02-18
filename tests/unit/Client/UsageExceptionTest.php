@@ -12,7 +12,7 @@ use PHPUnit\Framework\TestCase;
  */
 class UsageExceptionTest extends TestCase {
 
-	public function testUsageExceptionWithNoParams() {
+	public function testUsageExceptionWithNoParams(): void {
 		$e = new UsageException();
 		$this->assertSame(
 			'Code: ' . PHP_EOL .
@@ -24,7 +24,7 @@ class UsageExceptionTest extends TestCase {
 		$this->assertEquals( [], $e->getApiResult() );
 	}
 
-	public function testUsageExceptionWithParams() {
+	public function testUsageExceptionWithParams(): void {
 		$e = new UsageException( 'imacode', 'imamsg', [ 'foo' => 'bar' ] );
 		$this->assertSame( 'imacode', $e->getApiCode() );
 		$this->assertSame(

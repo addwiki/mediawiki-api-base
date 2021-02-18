@@ -14,7 +14,7 @@ use Psr\Http\Message\RequestInterface;
  */
 class ClientFactoryTest extends TestCase {
 
-	public function testNoConfig() {
+	public function testNoConfig(): void {
 		$clientFactory = new ClientFactory();
 
 		$client = $clientFactory->getClient();
@@ -27,7 +27,7 @@ class ClientFactoryTest extends TestCase {
 		$this->assertFalse( empty( $config['cookies'] ) );
 	}
 
-	public function testUserAgent() {
+	public function testUserAgent(): void {
 		$clientFactory = new ClientFactory( [ 'user-agent' => 'Foobar' ] );
 
 		$client = $clientFactory->getClient();
@@ -38,7 +38,7 @@ class ClientFactoryTest extends TestCase {
 		$this->assertEquals( $config['headers']['User-Agent'], 'Foobar' );
 	}
 
-	public function testHeaders() {
+	public function testHeaders(): void {
 		$clientFactory = new ClientFactory( [
 			'headers' => [
 				'User-Agent' => 'Foobar',
@@ -54,7 +54,7 @@ class ClientFactoryTest extends TestCase {
 		$this->assertEquals( $headers['X-Foo'], 'Bar' );
 	}
 
-	public function testHandler() {
+	public function testHandler(): void {
 		$handler = HandlerStack::create();
 
 		$clientFactory = new ClientFactory( [ 'handler' => $handler ] );
@@ -64,10 +64,10 @@ class ClientFactoryTest extends TestCase {
 		$this->assertSame( $handler, $client->getConfig( 'handler' ) );
 	}
 
-	public function testMiddleware() {
+	public function testMiddleware(): void {
 		$invoked = false;
-		$middleware = function () use ( &$invoked ) {
-			return function () use ( &$invoked ) {
+		$middleware = function () use ( &$invoked ): callable {
+			return function () use ( &$invoked ): void {
 				$invoked = true;
 			};
 		};

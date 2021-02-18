@@ -12,9 +12,9 @@ interface Request {
 	/**
 	 * @since 0.2
 	 *
-	 * @return array
+	 * @return mixed[]
 	 */
-	public function getParams();
+	public function getParams(): array;
 
 	/**
 	 * Associative array of headers to add to the request.
@@ -23,8 +23,8 @@ interface Request {
 	 *
 	 * @since 0.3
 	 *
-	 * @return array
+	 * @return mixed[]
 	 */
-	public function getHeaders();
+	public function getHeaders(): array;
 
 }

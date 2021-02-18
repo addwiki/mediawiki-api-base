@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Installable with 7.4+ (including PHP8)
+- Typing added throughout
 - PSR4 namespacing. Now in `Addwiki\Mediawiki\Api`
 - Client classes, such as `MediaWikiApi`, moved to `Addwiki\Mediawiki\Api`
 

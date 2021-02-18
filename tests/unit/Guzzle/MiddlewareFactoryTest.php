@@ -20,7 +20,7 @@ use PHPUnit\Framework\TestCase;
  */
 class MiddlewareFactoryTest extends TestCase {
 
-	public function testRetriesConnectException() {
+	public function testRetriesConnectException(): void {
 		$queue = [
 			new ConnectException( 'Error 1', new Request( 'GET', 'test' ) ),
 			new Response( 200, [ 'X-Foo' => 'Bar' ] ),
@@ -33,7 +33,7 @@ class MiddlewareFactoryTest extends TestCase {
 		$this->assertEquals( [ 1000 ], $delays );
 	}
 
-	public function testRetries500Errors() {
+	public function testRetries500Errors(): void {
 		$queue = [
 			new Response( 500 ),
 			new Response( 200 ),
@@ -46,7 +46,7 @@ class MiddlewareFactoryTest extends TestCase {
 		$this->assertEquals( [ 1000 ], $delays );
 	}
 
-	public function testRetriesSomeMediawikiApiErrorHeaders() {
+	public function testRetriesSomeMediawikiApiErrorHeaders(): void {
 		$queue = [
 			new Response( 200, [ 'mediawiki-api-error' => 'ratelimited' ] ),
 			new Response( 200, [ 'mediawiki-api-error' => 'maxlag' ] ),
@@ -66,7 +66,7 @@ class MiddlewareFactoryTest extends TestCase {
 		$this->assertEquals( [ 1000, 2000, 3000, 4000 ], $delays );
 	}
 
-	public function testRetryAntiAbuseMeasure() {
+	public function testRetryAntiAbuseMeasure(): void {
 		$antiAbusejson = json_encode(
 			[
 				'error' => [
@@ -87,7 +87,7 @@ class MiddlewareFactoryTest extends TestCase {
 		$this->assertEquals( 'DoNotRetryThisHeader', $response->getHeaderLine( 'mediawiki-api-error' ) );
 	}
 
-	public function testRetryLimit() {
+	public function testRetryLimit(): void {
 		$queue = [
 			new ConnectException( 'Error 1', new Request( 'GET', 'test' ) ),
 			new ConnectException( 'Error 2', new Request( 'GET', 'test' ) ),
@@ -108,7 +108,7 @@ class MiddlewareFactoryTest extends TestCase {
 		$client->request( 'GET', '/' );
 	}
 
-	public function testConnectExceptionRetryDelay() {
+	public function testConnectExceptionRetryDelay(): void {
 		$queue = [
 			new ConnectException( '+1 second delay', new Request( 'GET', 'test' ) ),
 			new ConnectException( '+2 second delay', new Request( 'GET', 'test' ) ),
@@ -122,7 +122,7 @@ class MiddlewareFactoryTest extends TestCase {
 		$this->assertEquals( [ 1000, 2000 ], $delays );
 	}
 
-	public function testServerErrorRetryDelay() {
+	public function testServerErrorRetryDelay(): void {
 		$queue = [
 			new Response( 500 ),
 			new Response( 503 ),
@@ -136,7 +136,7 @@ class MiddlewareFactoryTest extends TestCase {
 		$this->assertEquals( [ 1000, 2000 ], $delays );
 	}
 
-	public function testRelativeRetryDelayHeaderRetryDelay() {
+	public function testRelativeRetryDelayHeaderRetryDelay(): void {
 		$queue = [
 			new Response( 200, [ 'mediawiki-api-error' => 'maxlag', 'retry-after' => 10 ] ),
 			new Response( 200 ),
@@ -147,7 +147,7 @@ class MiddlewareFactoryTest extends TestCase {
 		$this->assertEquals( [ 10000 ], $delays );
 	}
 
-	public function testAbsoluteRetryDelayHeaderRetryDelay() {
+	public function testAbsoluteRetryDelayHeaderRetryDelay(): void {
 		$queue = [
 			new Response(
 				200,
@@ -168,7 +168,7 @@ class MiddlewareFactoryTest extends TestCase {
 		$this->assertGreaterThan( 600000 - 5000, $delays[0] );
 	}
 
-	public function testPastRetryDelayHeaderRetryDelay() {
+	public function testPastRetryDelayHeaderRetryDelay(): void {
 		$queue = [
 			new Response(
 				200,
@@ -187,7 +187,7 @@ class MiddlewareFactoryTest extends TestCase {
 		$this->assertEquals( [ 1000 ], $delays );
 	}
 
-	private function getClient( array $queue, &$delays = null ) {
+	private function getClient( array $queue, &$delays = null ): Client {
 		$mock = new MockHandler( $queue );
 
 		$handler = HandlerStack::create( $mock );
@@ -201,8 +201,8 @@ class MiddlewareFactoryTest extends TestCase {
 		return new Client( [ 'handler' => $handler ] );
 	}
 
-	private function getDelayMocker( &$delays ) {
-		return function ( callable $handler ) use ( &$delays ) {
+	private function getDelayMocker( &$delays ): callable {
+		return function ( callable $handler ) use ( &$delays ): callable {
 			return function ( $request, array $options ) use ( $handler, &$delays ) {
 				if ( isset( $options['delay'] ) ) {
 					$delays[] = $options['delay'];

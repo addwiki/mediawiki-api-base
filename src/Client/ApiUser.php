@@ -15,20 +15,11 @@ use InvalidArgumentException;
  */
 class ApiUser {
 
-	/**
-	 * @var string
-	 */
-	private $password;
+	private string $password;
 
-	/**
-	 * @var string
-	 */
-	private $username;
+	private string $username;
 
-	/**
-	 * @var string
-	 */
-	private $domain;
+	private ?string $domain;
 
 	/**
 	 * @param string $username The username.
@@ -37,13 +28,16 @@ class ApiUser {
 	 *
 	 * @throws InvalidArgumentException
 	 */
-	public function __construct( $username, $password, $domain = null ) {
+	public function __construct( string $username, string $password, ?string $domain = null ) {
 		$domainIsStringOrNull = ( is_string( $domain ) || $domain === null );
 		if ( !is_string( $username ) || !is_string( $password ) || !$domainIsStringOrNull ) {
 			throw new InvalidArgumentException( 'Username, Password and Domain must all be strings' );
 		}
 		if ( empty( $username ) || empty( $password ) ) {
 			throw new InvalidArgumentException( 'Username and Password are not allowed to be empty' );
+		}
+		if ( $domain !== null && empty( $domain ) ) {
+			throw new InvalidArgumentException( 'Domain is not allowed to be an empty string' );
 		}
 		$this->username = $username;
 		$this->password = $password;
@@ -52,35 +46,30 @@ class ApiUser {
 
 	/**
 	 * @since 0.1
-	 * @return string
 	 */
-	public function getUsername() {
+	public function getUsername(): string {
 		return $this->username;
 	}
 
 	/**
 	 * @since 0.1
-	 * @return string
 	 */
-	public function getPassword() {
+	public function getPassword(): string {
 		return $this->password;
 	}
 
 	/**
 	 * @since 0.1
-	 * @return string
 	 */
-	public function getDomain() {
+	public function getDomain(): ?string {
 		return $this->domain;
 	}
 
 	/**
 	 * @since 0.1
 	 * @param mixed $other Another ApiUser object to compare with.
-	 *
-	 * @return bool
 	 */
-	public function equals( $other ) {
+	public function equals( $other ): bool {
 		return $other instanceof self
 			&& $this->username === $other->getUsername()
 			&& $this->password === $other->getPassword()

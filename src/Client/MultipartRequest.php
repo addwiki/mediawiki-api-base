@@ -15,7 +15,7 @@ use Exception;
 class MultipartRequest extends FluentRequest {
 
 	/** @var mixed[] */
-	protected $multipartParams = [];
+	protected array $multipartParams = [];
 
 	/**
 	 * Check the structure of a multipart parameter array.
@@ -24,7 +24,7 @@ class MultipartRequest extends FluentRequest {
 	 *
 	 * @throws Exception
 	 */
-	protected function checkMultipartParams( $params ) {
+	protected function checkMultipartParams( array $params ): void {
 		foreach ( $params as $key => $val ) {
 			if ( !is_array( $val ) ) {
 				throw new Exception( sprintf( "Parameter '%s' must be an array.", $key ) );
@@ -44,7 +44,7 @@ class MultipartRequest extends FluentRequest {
 	 * @param mixed[] $params The multipart parameters to use.
 	 * @return $this
 	 */
-	public function setMultipartParams( $params ) {
+	public function setMultipartParams( array $params ): self {
 		$this->checkMultipartParams( $params );
 		$this->multipartParams = $params;
 		return $this;
@@ -60,7 +60,7 @@ class MultipartRequest extends FluentRequest {
 	 *
 	 * @return $this
 	 */
-	public function addMultipartParams( $params ) {
+	public function addMultipartParams( array $params ): self {
 		$this->checkMultipartParams( $params );
 		$this->multipartParams = array_merge( $this->multipartParams, $params );
 		return $this;
@@ -71,7 +71,7 @@ class MultipartRequest extends FluentRequest {
 	 *
 	 * @return mixed[]
 	 */
-	public function getMultipartParams() {
+	public function getMultipartParams(): array {
 		return $this->multipartParams;
 	}
 }

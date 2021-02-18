@@ -16,12 +16,15 @@ class TokenHandlingTest extends TestCase {
 	 * @covers Mediawiki\Api\MediawikiApi::getToken
 	 * @covers Mediawiki\Api\MediawikiSession::getToken
 	 */
-	public function testGetAnonUserToken() {
+	public function testGetAnonUserToken(): void {
 		$api = BaseTestEnvironment::newInstance()->getApi();
 		$this->assertEquals( '+\\', $api->getToken() );
 	}
 
-	public function provideTokenTypes() {
+	/**
+	 * @return string[][]
+	 */
+	public function provideTokenTypes(): array {
 		return [
 			[ 'csrf' ],
 			[ 'edit' ],
