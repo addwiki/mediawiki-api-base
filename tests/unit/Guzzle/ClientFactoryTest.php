@@ -8,8 +8,6 @@ use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\RequestInterface;
 
 /**
- * @author Christian Schmidt
- *
  * @covers Mediawiki\Api\Guzzle\ClientFactory
  */
 class ClientFactoryTest extends TestCase {

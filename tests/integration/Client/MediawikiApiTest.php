@@ -8,9 +8,6 @@ use Addwiki\Mediawiki\Api\Client\SimpleRequest;
 use Addwiki\Mediawiki\Api\Tests\Integration\BaseTestEnvironment;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @author Addshore
- */
 class MediawikiApiTest extends TestCase {
 
 	/**

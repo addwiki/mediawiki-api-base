@@ -17,13 +17,6 @@ use Psr\Log\LogLevel;
 use Psr\Log\NullLogger;
 use SimpleXMLElement;
 
-/**
- * Main class for this library
- *
- * @since 0.1
- *
- * @author Addshore
- */
 class MediawikiApi implements MediawikiApiInterface, LoggerAwareInterface {
 
 	/**
@@ -49,8 +42,6 @@ class MediawikiApi implements MediawikiApiInterface, LoggerAwareInterface {
 	private string $apiUrl;
 
 	/**
-	 * @since 2.0
-	 *
 	 * @param string $apiEndpoint e.g. https://en.wikipedia.org/w/api.php
 	 *
 	 * @return self returns a MediawikiApi instance using $apiEndpoint
@@ -62,7 +53,6 @@ class MediawikiApi implements MediawikiApiInterface, LoggerAwareInterface {
 	/**
 	 * Create a new MediawikiApi object from a URL to any page in a MediaWiki website.
 	 *
-	 * @since 2.0
 	 * @see https://en.wikipedia.org/wiki/Really_Simple_Discovery
 	 *
 	 * @param string $url e.g. https://en.wikipedia.org OR https://de.wikipedia.org/wiki/Berlin
@@ -131,8 +121,6 @@ class MediawikiApi implements MediawikiApiInterface, LoggerAwareInterface {
 	 * Get the API URL (the URL to which API requests are sent, usually ending in api.php).
 	 * This is useful if you've created this object via MediawikiApi::newFromPage().
 	 *
-	 * @since 2.3
-	 *
 	 * @return string The API URL.
 	 */
 	public function getApiUrl(): string {
@@ -151,8 +139,6 @@ class MediawikiApi implements MediawikiApiInterface, LoggerAwareInterface {
 	/**
 	 * Sets a logger instance on the object
 	 *
-	 * @since 1.1
-	 *
 	 * @param LoggerInterface $logger The new Logger object.
 	 *
 	 * @return null
@@ -163,8 +149,6 @@ class MediawikiApi implements MediawikiApiInterface, LoggerAwareInterface {
 	}
 
 	/**
-	 * @since 2.0
-	 *
 	 * @param Request $request The GET request to send.
 	 *
 	 * @return PromiseInterface
@@ -182,8 +166,6 @@ class MediawikiApi implements MediawikiApiInterface, LoggerAwareInterface {
 	}
 
 	/**
-	 * @since 2.0
-	 *
 	 * @param Request $request The POST request to send.
 	 *
 	 * @return PromiseInterface
@@ -201,8 +183,6 @@ class MediawikiApi implements MediawikiApiInterface, LoggerAwareInterface {
 	}
 
 	/**
-	 * @since 0.2
-	 *
 	 * @param Request $request The GET request to send.
 	 *
 	 * @return mixed Normally an array
@@ -218,8 +198,6 @@ class MediawikiApi implements MediawikiApiInterface, LoggerAwareInterface {
 	}
 
 	/**
-	 * @since 0.2
-	 *
 	 * @param Request $request The POST request to send.
 	 *
 	 * @return mixed Normally an array
@@ -249,9 +227,6 @@ class MediawikiApi implements MediawikiApiInterface, LoggerAwareInterface {
 		return $resultArray;
 	}
 
-	/**
-	 * @param Request $request
-	 */
 	private function getPostRequestEncoding( Request $request ): string {
 		if ( $request instanceof MultipartRequest ) {
 			return 'multipart';
@@ -314,9 +289,6 @@ class MediawikiApi implements MediawikiApiInterface, LoggerAwareInterface {
 		);
 	}
 
-	/**
-	 * @return array <string mixed>
-	 */
 	private function getDefaultHeaders(): array {
 		return [
 			'User-Agent' => $this->getUserAgent(),
@@ -392,22 +364,12 @@ class MediawikiApi implements MediawikiApiInterface, LoggerAwareInterface {
 	}
 
 	/**
-	 * @since 0.1
-	 *
 	 * @return bool|string false or the name of the current user
 	 */
 	public function isLoggedin() {
 		return $this->isLoggedIn;
 	}
 
-	/**
-	 * @since 0.1
-	 *
-	 * @param ApiUser $apiUser The ApiUser to log in as.
-	 *
-	 * @throws UsageException
-	 * @return bool success
-	 */
 	public function login( ApiUser $apiUser ): bool {
 		$this->logger->log( LogLevel::DEBUG, 'Logging in' );
 		$credentials = $this->getLoginParams( $apiUser );
@@ -427,11 +389,6 @@ class MediawikiApi implements MediawikiApiInterface, LoggerAwareInterface {
 		return false;
 	}
 
-	/**
-	 * @param ApiUser $apiUser
-	 *
-	 * @return string[]
-	 */
 	private function getLoginParams( ApiUser $apiUser ): array {
 		$params = [
 			'lgname' => $apiUser->getUsername(),
@@ -445,7 +402,6 @@ class MediawikiApi implements MediawikiApiInterface, LoggerAwareInterface {
 	}
 
 	/**
-	 *
 	 * @throws UsageException
 	 */
 	private function throwLoginUsageException( array $result ): void {
@@ -460,11 +416,6 @@ class MediawikiApi implements MediawikiApiInterface, LoggerAwareInterface {
 		);
 	}
 
-	/**
-	 * @since 0.1
-	 *
-	 * @return bool success
-	 */
 	public function logout(): bool {
 		$this->logger->log( LogLevel::DEBUG, 'Logging out' );
 		$result = $this->postRequest( new SimpleRequest( 'logout', [
@@ -478,29 +429,17 @@ class MediawikiApi implements MediawikiApiInterface, LoggerAwareInterface {
 		return false;
 	}
 
-	/**
-	 * @since 0.1
-	 *
-	 * @param string $type The token type to get.
-	 *
-	 * @return string
-	 */
 	public function getToken( $type = 'csrf' ): string {
 		return $this->session->getToken( $type );
 	}
 
 	/**
 	 * Clear all tokens stored by the API.
-	 *
-	 * @since 0.1
 	 */
 	public function clearTokens() {
 		$this->session->clearTokens();
 	}
 
-	/**
-	 * @return string
-	 */
 	public function getVersion(): string {
 		if ( $this->version === null ) {
 			$result = $this->getRequest( new SimpleRequest( 'query', [

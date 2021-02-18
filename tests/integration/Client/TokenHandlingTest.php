@@ -5,9 +5,6 @@ namespace Addwiki\Mediawiki\Api\Tests\Integration\Client;
 use Addwiki\Mediawiki\Api\Tests\Integration\BaseTestEnvironment;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @author Addshore
- */
 class TokenHandlingTest extends TestCase {
 
 	/**

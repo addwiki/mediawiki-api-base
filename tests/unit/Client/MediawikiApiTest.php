@@ -13,8 +13,6 @@ use Psr\Log\LoggerInterface;
 use ReflectionClass;
 
 /**
- * @author Addshore
- *
  * @covers Mediawiki\Api\MediawikiApi
  */
 class MediawikiApiTest extends TestCase {

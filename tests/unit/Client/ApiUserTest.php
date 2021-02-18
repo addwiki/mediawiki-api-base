@@ -7,8 +7,6 @@ use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @author Addshore
- *
  * @covers Mediawiki\Api\ApiUser
  */
 class ApiUserTest extends TestCase {

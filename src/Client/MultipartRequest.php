@@ -9,12 +9,9 @@ use Exception;
  * parameters (both normal parameters and headers) on multipart requests.
  *
  * @link http://docs.guzzlephp.org/en/stable/request-options.html#multipart
- *
- * @since 2.4.0
  */
 class MultipartRequest extends FluentRequest {
 
-	/** @var mixed[] */
 	protected array $multipartParams = [];
 
 	/**

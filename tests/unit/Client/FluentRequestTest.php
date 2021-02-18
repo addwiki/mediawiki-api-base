@@ -6,8 +6,6 @@ use Addwiki\Mediawiki\Api\Client\FluentRequest;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @author Addshore
- *
  * @covers Mediawiki\Api\FluentRequest
  */
 class FluentRequestTest extends TestCase {

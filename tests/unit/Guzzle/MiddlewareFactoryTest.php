@@ -12,8 +12,6 @@ use GuzzleHttp\Psr7\Response;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @author Addshore
- *
  * @todo test interaction with logger
  *
  * @covers Mediawiki\Api\Guzzle\MiddlewareFactory

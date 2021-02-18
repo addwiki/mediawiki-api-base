@@ -6,9 +6,6 @@ use Addwiki\Mediawiki\Api\Client\MediawikiApi;
 use Addwiki\Mediawiki\Api\Client\SimpleRequest;
 use Exception;
 
-/**
- * @author Addshore
- */
 class BaseTestEnvironment {
 
 	private MediawikiApi $api;

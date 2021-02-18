@@ -9,11 +9,6 @@ use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
-/**
- * @since 2.1
- *
- * @author Addshore
- */
 class ClientFactory implements LoggerAwareInterface {
 
 	private ?Client $client = null;
@@ -21,8 +16,6 @@ class ClientFactory implements LoggerAwareInterface {
 	private array $config;
 
 	/**
-	 * @since 2.1
-	 *
 	 * @param array $config All configuration settings supported by Guzzle, and these:
 	 *          middleware => array of extra middleware to pass to guzzle
 	 *          user-agent => string default user agent to use for requests
@@ -32,9 +25,6 @@ class ClientFactory implements LoggerAwareInterface {
 		$this->config = $config;
 	}
 
-	/**
-	 * @since 2.1
-	 */
 	public function getClient(): ?Client {
 		if ( $this->client === null ) {
 			$this->client = $this->newClient();
@@ -75,15 +65,6 @@ class ClientFactory implements LoggerAwareInterface {
 		return new Client( $this->config );
 	}
 
-	/**
-	 * Sets a logger instance on the object
-	 *
-	 * @since 2.1
-	 *
-	 * @param LoggerInterface $logger The new Logger object.
-	 *
-	 * @return null
-	 */
 	public function setLogger( LoggerInterface $logger ) {
 		$this->logger = $logger;
 	}

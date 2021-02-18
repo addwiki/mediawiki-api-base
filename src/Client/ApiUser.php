@@ -5,12 +5,6 @@ namespace Addwiki\Mediawiki\Api\Client;
 use InvalidArgumentException;
 
 /**
- * @since 0.1
- *
- * @author Addshore
- * @author RobinR1
- * @author Bene
- *
  * Represents a user that can log in to the api
  */
 class ApiUser {
@@ -44,29 +38,19 @@ class ApiUser {
 		$this->domain   = $domain;
 	}
 
-	/**
-	 * @since 0.1
-	 */
 	public function getUsername(): string {
 		return $this->username;
 	}
 
-	/**
-	 * @since 0.1
-	 */
 	public function getPassword(): string {
 		return $this->password;
 	}
 
-	/**
-	 * @since 0.1
-	 */
 	public function getDomain(): ?string {
 		return $this->domain;
 	}
 
 	/**
-	 * @since 0.1
 	 * @param mixed $other Another ApiUser object to compare with.
 	 */
 	public function equals( $other ): bool {

@@ -7,11 +7,6 @@ use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 use Psr\Log\NullLogger;
 
-/**
- * @since 0.1
- *
- * @author Addshore
- */
 class MediawikiSession implements LoggerAwareInterface {
 
 	private array $tokens = [];
@@ -36,8 +31,6 @@ class MediawikiSession implements LoggerAwareInterface {
 	/**
 	 * Sets a logger instance on the object
 	 *
-	 * @since 1.1
-	 *
 	 * @param LoggerInterface $logger The new Logger object.
 	 *
 	 * @return null
@@ -48,8 +41,6 @@ class MediawikiSession implements LoggerAwareInterface {
 
 	/**
 	 * Tries to get the specified token from the API
-	 *
-	 * @since 0.1
 	 *
 	 * @param string $type The type of token to get.
 	 */
@@ -106,7 +97,6 @@ class MediawikiSession implements LoggerAwareInterface {
 	/**
 	 * Tries to guess a new token type from an old token type
 	 *
-	 *
 	 * @return void|string
 	 */
 	private function getNewTokenType( string $type ) {
@@ -128,8 +118,6 @@ class MediawikiSession implements LoggerAwareInterface {
 
 	/**
 	 * Tries to guess an old token type from a new token type
-	 *
-	 *
 	 */
 	private function getOldTokenType( string $type ): string {
 		if ( $type === 'csrf' ) {
@@ -140,8 +128,6 @@ class MediawikiSession implements LoggerAwareInterface {
 
 	/**
 	 * Clears all tokens stored by the api
-	 *
-	 * @since 0.2
 	 */
 	public function clearTokens(): void {
 		$this->logger->log( LogLevel::DEBUG, 'Clearing session tokens', [ 'tokens' => $this->tokens ] );

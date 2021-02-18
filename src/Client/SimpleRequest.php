@@ -6,17 +6,11 @@ use InvalidArgumentException;
 
 /**
  * Please consider using a FluentRequest object
- *
- * @since 0.2
- *
- * @author Addshore
  */
 class SimpleRequest implements Request {
 
 	private string $action;
-
 	private array $params = [];
-
 	private array $headers = [];
 
 	/**
@@ -35,16 +29,10 @@ class SimpleRequest implements Request {
 		$this->headers = $headers;
 	}
 
-	/**
-	 * @return string[]
-	 */
 	public function getParams(): array {
 		return array_merge( [ 'action' => $this->action ], $this->params );
 	}
 
-	/**
-	 * @return string[]
-	 */
 	public function getHeaders(): array {
 		return $this->headers;
 	}

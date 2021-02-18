@@ -6,8 +6,6 @@ use Addwiki\Mediawiki\Api\Client\SimpleRequest;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @author Addshore
- *
  * @covers Mediawiki\Api\SimpleRequest
  */
 class SimpleRequestTest extends TestCase {

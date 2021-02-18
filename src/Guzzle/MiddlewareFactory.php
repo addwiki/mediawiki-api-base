@@ -13,8 +13,6 @@ use Psr\Log\NullLogger;
 
 /**
  * @access private
- *
- * @author Addshore
  */
 class MiddlewareFactory implements LoggerAwareInterface {
 
@@ -24,9 +22,6 @@ class MiddlewareFactory implements LoggerAwareInterface {
 		$this->logger = new NullLogger();
 	}
 
-	/**
-	 * @param LoggerInterface $logger The new Logger object.
-	 */
 	public function setLogger( LoggerInterface $logger ) {
 		$this->logger = $logger;
 	}

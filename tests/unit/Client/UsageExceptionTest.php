@@ -6,8 +6,6 @@ use Addwiki\Mediawiki\Api\Client\UsageException;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @author Addshore
- *
  * @covers Mediawiki\Api\UsageException
  */
 class UsageExceptionTest extends TestCase {

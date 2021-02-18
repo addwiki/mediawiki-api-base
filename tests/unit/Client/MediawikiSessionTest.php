@@ -9,8 +9,6 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @author Addshore
- *
  * @covers Mediawiki\Api\MediawikiSession
  */
 class MediawikiSessionTest extends TestCase {
