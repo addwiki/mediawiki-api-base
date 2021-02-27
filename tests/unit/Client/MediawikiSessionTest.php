@@ -56,24 +56,22 @@ class MediawikiSessionTest extends TestCase {
 	 */
 	public function testGetTokenPre125( string $tokenType ): void {
 		$mockApi = $this->getMockApi();
-		$mockApi->expects( $this->at( 0 ) )
-			->method( 'postRequest' )
+		$mockApi->method( 'postRequest' )
 			->with( $this->isInstanceOf( SimpleRequest::class ) )
-			->willReturn( [
-				'warnings' => [
-					'query' => [
-						'*' => "Unrecognized value for parameter 'meta': tokens",
+			->willReturnOnConsecutiveCalls(
+				[
+					'warnings' => [
+						'query' => [
+							'*' => "Unrecognized value for parameter 'meta': tokens",
+						]
+					]
+				],
+				[
+					'tokens' => [
+						$tokenType => 'TKN-' . $tokenType,
 					]
 				]
-			] );
-		$mockApi->expects( $this->at( 1 ) )
-			->method( 'postRequest' )
-			->with( $this->isInstanceOf( SimpleRequest::class ) )
-			->willReturn( [
-				'tokens' => [
-					$tokenType => 'TKN-' . $tokenType,
-				]
-			] );
+			);
 
 		$session = new MediawikiSession( $mockApi );
 

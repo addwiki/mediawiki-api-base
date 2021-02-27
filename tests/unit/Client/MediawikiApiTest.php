@@ -189,28 +189,29 @@ class MediawikiApiTest extends TestCase {
 	}
 
 	public function testGoodLoginSequence(): void {
-		$client = $this->getMockClient();
 		$user = new ApiUser( 'U1', 'P1' );
 		$eq1 = [
 			'action' => 'login',
 			'lgname' => 'U1',
 			'lgpassword' => 'P1',
 		];
-		$client->expects( $this->at( 0 ) )
-			->method( 'request' )
-			->with( 'POST', null, $this->getExpectedRequestOpts( $eq1, 'form_params' ) )
-			->will( $this->returnValue( $this->getMockResponse( [ 'login' => [
-				'result' => 'NeedToken',
-				'token' => 'IamLoginTK',
-			] ] ) ) );
 		$params = array_merge( $eq1, [ 'lgtoken' => 'IamLoginTK' ] );
-		$response = $this->getMockResponse( [ 'login' => [ 'result' => 'Success' ] ] );
-		$client->expects( $this->at( 1 ) )
-			->method( 'request' )
-			->with( 'POST', null, $this->getExpectedRequestOpts( $params, 'form_params' ) )
-			->will( $this->returnValue( $response ) );
-		$api = new MediawikiApi( '', $client );
 
+		$client = $this->getMockClient();
+		$client->method( 'request' )
+			->withConsecutive(
+				[ 'POST', null, $this->getExpectedRequestOpts( $eq1, 'form_params' ) ],
+				[ 'POST', null, $this->getExpectedRequestOpts( $params, 'form_params' ) ]
+			)
+			->willReturnOnConsecutiveCalls(
+				$this->getMockResponse( [ 'login' => [
+					'result' => 'NeedToken',
+					'token' => 'IamLoginTK',
+				] ] ),
+				$this->getMockResponse( [ 'login' => [ 'result' => 'Success' ] ] )
+			);
+
+		$api = new MediawikiApi( '', $client );
 		$this->assertTrue( $api->login( $user ) );
 		$this->assertSame( 'U1', $api->isLoggedin() );
 	}
@@ -223,21 +224,22 @@ class MediawikiApiTest extends TestCase {
 			'lgname' => 'U1',
 			'lgpassword' => 'P1',
 		];
-		$client->expects( $this->at( 0 ) )
-			->method( 'request' )
-			->with( 'POST', null, $this->getExpectedRequestOpts( $eq1, 'form_params' ) )
-			->will( $this->returnValue( $this->getMockResponse( [ 'login' => [
-				'result' => 'NeedToken',
-				'token' => 'IamLoginTK',
-			] ] ) ) );
 		$params = array_merge( $eq1, [ 'lgtoken' => 'IamLoginTK' ] );
-		$response = $this->getMockResponse( [ 'login' => [ 'result' => 'BADTOKENorsmthin' ] ] );
-		$client->expects( $this->at( 1 ) )
-			->method( 'request' )
-			->with( 'POST', null, $this->getExpectedRequestOpts( $params, 'form_params' ) )
-			->will( $this->returnValue( $response ) );
-		$api = new MediawikiApi( '', $client );
 
+		$client->method( 'request' )
+			->withConsecutive(
+				[ 'POST', null, $this->getExpectedRequestOpts( $eq1, 'form_params' ) ],
+				[ 'POST', null, $this->getExpectedRequestOpts( $params, 'form_params' ) ],
+			)
+			->willReturnOnConsecutiveCalls(
+				$this->getMockResponse( [ 'login' => [
+					'result' => 'NeedToken',
+					'token' => 'IamLoginTK',
+				] ] ),
+				$this->getMockResponse( [ 'login' => [ 'result' => 'BADTOKENorsmthin' ] ] )
+			);
+
+		$api = new MediawikiApi( '', $client );
 		$this->expectException( UsageException::class );
 		$api->login( $user );
 	}
