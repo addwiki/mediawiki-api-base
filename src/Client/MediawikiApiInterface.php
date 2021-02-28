@@ -5,9 +5,9 @@ namespace Addwiki\Mediawiki\Api\Client;
 interface MediawikiApiInterface extends ApiRequester, AsyncApiRequester {
 
 	/**
-	 * @return bool|string false or the name of the current user
+	 * @return bool
 	 */
-	public function isLoggedin();
+	public function isLoggedIn(): bool;
 
 	/**
 	 * @param ApiUser $apiUser The ApiUser to log in as.

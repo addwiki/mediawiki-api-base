@@ -2,6 +2,9 @@
 
 namespace Addwiki\Mediawiki\Api\Client;
 
+use Addwiki\Mediawiki\Api\Client\Auth\AuthMethod;
+use Addwiki\Mediawiki\Api\Client\Auth\UserAndPassword;
+use Addwiki\Mediawiki\Api\Client\Auth\UserAndPasswordWithDomain;
 use Addwiki\Mediawiki\Api\Guzzle\ClientFactory;
 use DOMDocument;
 use DOMXPath;
@@ -25,10 +28,7 @@ class MediawikiApi implements MediawikiApiInterface, LoggerAwareInterface {
 	 */
 	private ?ClientInterface $client = null;
 
-	/**
-	 * @var bool|string
-	 */
-	private $isLoggedIn;
+	private ?AuthMethod $loggedInAuthMethod = null;
 
 	private MediawikiSession $session;
 
@@ -296,9 +296,11 @@ class MediawikiApi implements MediawikiApiInterface, LoggerAwareInterface {
 	}
 
 	private function getUserAgent(): string {
-		$loggedIn = $this->isLoggedin();
-		if ( $loggedIn ) {
-			return 'addwiki-mediawiki-client/' . $loggedIn;
+		if ( $this->isLoggedIn() ) {
+			if ( $this->loggedInAuthMethod instanceof UserAndPassword || $this->loggedInAuthMethod instanceof UserAndPasswordWithDomain ) {
+				return 'addwiki-mediawiki-client/' . $this->loggedInAuthMethod->getUsername();
+			}
+			return 'addwiki-mediawiki-client/' . 'SomeUnknownUser?';
 		}
 		return 'addwiki-mediawiki-client';
 	}
@@ -363,42 +365,49 @@ class MediawikiApi implements MediawikiApiInterface, LoggerAwareInterface {
 		}
 	}
 
-	/**
-	 * @return bool|string false or the name of the current user
-	 */
-	public function isLoggedin() {
-		return $this->isLoggedIn;
+	public function isLoggedIn(): bool {
+		return $this->loggedInAuthMethod instanceof AuthMethod;
 	}
 
-	public function login( ApiUser $apiUser ): bool {
+	public function login( AuthMethod $authMethod ): bool {
 		$this->logger->log( LogLevel::DEBUG, 'Logging in' );
-		$credentials = $this->getLoginParams( $apiUser );
+		$credentials = $this->getLoginParams( $authMethod );
 		$result = $this->postRequest( new SimpleRequest( 'login', $credentials ) );
 		if ( $result['login']['result'] == "NeedToken" ) {
 			$params = array_merge( [ 'lgtoken' => $result['login']['token'] ], $credentials );
 			$result = $this->postRequest( new SimpleRequest( 'login', $params ) );
 		}
 		if ( $result['login']['result'] == "Success" ) {
-			$this->isLoggedIn = $apiUser->getUsername();
+			$this->loggedInAuthMethod = $authMethod;
 			return true;
 		}
 
-		$this->isLoggedIn = false;
+		$this->loggedInAuthMethod = null;
 		$this->logger->log( LogLevel::DEBUG, 'Login failed.', $result );
 		$this->throwLoginUsageException( $result );
 		return false;
 	}
 
-	private function getLoginParams( ApiUser $apiUser ): array {
-		$params = [
-			'lgname' => $apiUser->getUsername(),
-			'lgpassword' => $apiUser->getPassword(),
-		];
-
-		if ( $apiUser->getDomain() !== null ) {
-			$params['lgdomain'] = $apiUser->getDomain();
+	private function getLoginParams( AuthMethod $authMethod ): array {
+		if ( $authMethod instanceof UserAndPassword ) {
+			return [
+				'lgname' => $authMethod->getUsername(),
+				'lgpassword' => $authMethod->getPassword(),
+			];
 		}
-		return $params;
+
+		if ( $authMethod instanceof UserAndPasswordWithDomain ) {
+			$params = [
+				'lgname' => $authMethod->getUsername(),
+				'lgpassword' => $authMethod->getPassword(),
+			];
+			if ( $authMethod->getDomain() !== null ) {
+				$params['lgdomain'] = $authMethod->getDomain();
+			}
+			return $params;
+		}
+
+		throw new \RuntimeException( 'Unknown AuthMethod used.' );
 	}
 
 	/**
@@ -422,7 +431,7 @@ class MediawikiApi implements MediawikiApiInterface, LoggerAwareInterface {
 			'token' => $this->getToken()
 		] ) );
 		if ( $result === [] ) {
-			$this->isLoggedIn = false;
+			$this->loggedInAuthMethod = null;
 			$this->clearTokens();
 			return true;
 		}
