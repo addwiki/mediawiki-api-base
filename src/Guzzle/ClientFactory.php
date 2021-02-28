@@ -25,6 +25,10 @@ class ClientFactory implements LoggerAwareInterface {
 		$this->config = $config;
 	}
 
+	public function setLogger( LoggerInterface $logger ) {
+		$this->logger = $logger;
+	}
+
 	public function getClient(): ?Client {
 		if ( $this->client === null ) {
 			$this->client = $this->newClient();
@@ -38,20 +42,35 @@ class ClientFactory implements LoggerAwareInterface {
 			'headers' => [],
 			'middleware' => [],
 		];
+		$this->setUaHeaderFromConfigOrDefault();
+		$this->setDefaultHandlerIfNotInConfigAlready();
+		$this->setMiddlewareFromConfigWithDefaultRetry();
+		return new Client( $this->config );
+	}
 
+	private function setUaHeaderFromConfigOrDefault(): void {
+		// If a UA header is not already manually set
 		if ( !array_key_exists( 'User-Agent', $this->config['headers'] ) ) {
+			// and a UA is provided in the config
 			if ( array_key_exists( 'user-agent', $this->config ) ) {
+				// Set header to the config UA
 				$this->config['headers']['User-Agent'] = $this->config['user-agent'];
 			} else {
+				// Set to a default
 				$this->config['headers']['User-Agent'] = 'Addwiki - mediawiki-api-base';
 			}
 		}
+		// Unset the config, so that Guzzle doesn't do anything with it.
 		unset( $this->config['user-agent'] );
+	}
 
+	private function setDefaultHandlerIfNotInConfigAlready(): void {
 		if ( !array_key_exists( 'handler', $this->config ) ) {
 			$this->config['handler'] = HandlerStack::create( new CurlHandler() );
 		}
+	}
 
+	private function setMiddlewareFromConfigWithDefaultRetry(): void {
 		$middlewareFactory = new MiddlewareFactory();
 		$middlewareFactory->setLogger( $this->logger );
 
@@ -61,12 +80,6 @@ class ClientFactory implements LoggerAwareInterface {
 			$this->config['handler']->push( $middleware );
 		}
 		unset( $this->config['middleware'] );
-
-		return new Client( $this->config );
-	}
-
-	public function setLogger( LoggerInterface $logger ) {
-		$this->logger = $logger;
 	}
 
 }
