@@ -96,10 +96,8 @@ class MediawikiSession implements LoggerAwareInterface {
 
 	/**
 	 * Tries to guess a new token type from an old token type
-	 *
-	 * @return void|string
 	 */
-	private function getNewTokenType( string $type ) {
+	private function getNewTokenType( string $type ): string {
 		switch ( $type ) {
 			case 'edit':
 			case 'delete':
@@ -111,9 +109,10 @@ class MediawikiSession implements LoggerAwareInterface {
 			case 'import':
 			case 'options':
 				return 'csrf';
+			default:
+				// Return the same type, don't know what to do with this..
+				return $type;
 		}
-		// Return the same type, don't know what to do with this..
-		return $type;
 	}
 
 	/**
