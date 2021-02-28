@@ -12,7 +12,6 @@ use GuzzleHttp\Client;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Promise\PromiseInterface;
-use InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
@@ -103,9 +102,6 @@ class MediawikiApi implements MediawikiApiInterface, LoggerAwareInterface {
 	 */
 	public function __construct( string $apiUrl, ClientInterface $client = null,
 								 MediawikiSession $session = null ) {
-		if ( !is_string( $apiUrl ) ) {
-			throw new InvalidArgumentException( '$apiUrl must be a string' );
-		}
 		if ( $session === null ) {
 			$session = new MediawikiSession( $this );
 		}

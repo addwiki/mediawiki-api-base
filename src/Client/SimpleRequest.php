@@ -21,9 +21,6 @@ class SimpleRequest implements Request {
 	 * @throws InvalidArgumentException
 	 */
 	public function __construct( string $action, array $params = [], array $headers = [] ) {
-		if ( !is_string( $action ) ) {
-			throw new InvalidArgumentException( '$action must be string' );
-		}
 		$this->action = $action;
 		$this->params = $params;
 		$this->headers = $headers;
