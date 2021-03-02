@@ -2,7 +2,7 @@
 
 namespace Addwiki\Mediawiki\Api\Tests\Unit\Client;
 
-use Addwiki\Mediawiki\Api\Client\MultipartRequest;
+use Addwiki\Mediawiki\Api\Client\Request\MultipartRequest;
 use PHPUnit\Framework\TestCase;
 
 class MultipartRequestTest extends TestCase {

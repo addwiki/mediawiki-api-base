@@ -2,6 +2,7 @@
 
 namespace Addwiki\Mediawiki\Api\Client;
 
+use Addwiki\Mediawiki\Api\Client\Request\SimpleRequest;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;

@@ -3,8 +3,8 @@
 namespace Addwiki\Mediawiki\Api\Tests\Integration\Client;
 
 use Addwiki\Mediawiki\Api\Client\MediawikiApi;
+use Addwiki\Mediawiki\Api\Client\Request\SimpleRequest;
 use Addwiki\Mediawiki\Api\Client\RsdException;
-use Addwiki\Mediawiki\Api\Client\SimpleRequest;
 use Addwiki\Mediawiki\Api\Tests\Integration\BaseTestEnvironment;
 use PHPUnit\Framework\TestCase;
 

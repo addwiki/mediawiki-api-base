@@ -1,6 +1,6 @@
 <?php
 
-namespace Addwiki\Mediawiki\Api\Client;
+namespace Addwiki\Mediawiki\Api\Client\Request;
 
 interface Request {
 

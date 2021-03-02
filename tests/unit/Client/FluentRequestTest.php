@@ -2,7 +2,7 @@
 
 namespace Addwiki\Mediawiki\Api\Tests\Unit\Client;
 
-use Addwiki\Mediawiki\Api\Client\FluentRequest;
+use Addwiki\Mediawiki\Api\Client\Request\FluentRequest;
 use PHPUnit\Framework\TestCase;
 
 /**

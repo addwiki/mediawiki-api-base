@@ -3,7 +3,7 @@
 namespace Addwiki\Mediawiki\Api\Client\Auth;
 
 use Addwiki\Mediawiki\Api\Client\MediawikiApi;
-use Addwiki\Mediawiki\Api\Client\Request;
+use Addwiki\Mediawiki\Api\Client\Request\Request;
 use InvalidArgumentException;
 use MediaWiki\OAuthClient\Consumer as OAuthConsumer;
 use MediaWiki\OAuthClient\Request as OAuthRequest;
