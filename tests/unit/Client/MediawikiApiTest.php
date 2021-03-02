@@ -32,7 +32,7 @@ class MediawikiApiTest extends TestCase {
 	 * @dataProvider provideValidConstruction
 	 */
 	public function testValidConstruction( string $apiLocation ): void {
-		new MediawikiApi( $apiLocation );
+		new MediawikiApi( $apiLocation, null );
 		$this->assertTrue( true );
 	}
 
@@ -74,7 +74,7 @@ class MediawikiApiTest extends TestCase {
 					'info' => 'imamsg',
 				] ] )
 			) );
-		$api = new MediawikiApi( '', $client );
+		$api = new MediawikiApi( '', null, $client, );
 
 		try{
 			$api->getRequest( new SimpleRequest( 'foo' ) );
@@ -96,7 +96,7 @@ class MediawikiApiTest extends TestCase {
 					'info' => 'imamsg',
 				] ] )
 			) );
-		$api = new MediawikiApi( '', $client );
+		$api = new MediawikiApi( '', null, $client );
 
 		try{
 			$api->postRequest( new SimpleRequest( 'foo' ) );
@@ -118,7 +118,7 @@ class MediawikiApiTest extends TestCase {
 			->method( 'request' )
 			->with( 'GET', null, $this->getExpectedRequestOpts( $params, 'query' ) )
 			->will( $this->returnValue( $this->getMockResponse( $expectedResult ) ) );
-		$api = new MediawikiApi( '', $client );
+		$api = new MediawikiApi( '', null, $client );
 
 		$result = $api->getRequest( new SimpleRequest( $action, $params ) );
 
@@ -135,7 +135,7 @@ class MediawikiApiTest extends TestCase {
 			->method( 'request' )
 			->with( 'POST', null, $this->getExpectedRequestOpts( $params, 'form_params' ) )
 			->will( $this->returnValue( $this->getMockResponse( $expectedResult ) ) );
-		$api = new MediawikiApi( '', $client );
+		$api = new MediawikiApi( '', null, $client );
 
 		$result = $api->postRequest( new SimpleRequest( $action, $params ) );
 
@@ -173,7 +173,7 @@ class MediawikiApiTest extends TestCase {
 					'headers' => [ 'User-Agent' => 'addwiki-mediawiki-client' ],
 				]
 			)->will( $this->returnValue( $this->getMockResponse( [ 'success ' => 1 ] ) ) );
-		$api = new MediawikiApi( '', $client );
+		$api = new MediawikiApi( '', null, $client );
 
 		$result = $api->postRequest( new SimpleRequest( 'upload', $params ) );
 
@@ -211,7 +211,7 @@ class MediawikiApiTest extends TestCase {
 				$this->getMockResponse( [ 'login' => [ 'result' => 'Success' ] ] )
 			);
 
-		$api = new MediawikiApi( '', $client );
+		$api = new MediawikiApi( '', null, $client );
 		$this->assertTrue( $api->login( $user ) );
 		$this->assertSame( true, $api->isLoggedIn() );
 	}
@@ -239,7 +239,7 @@ class MediawikiApiTest extends TestCase {
 				$this->getMockResponse( [ 'login' => [ 'result' => 'BADTOKENorsmthin' ] ] )
 			);
 
-		$api = new MediawikiApi( '', $client );
+		$api = new MediawikiApi( '', null, $client );
 		$this->expectException( UsageException::class );
 		$api->login( $user );
 	}
@@ -269,7 +269,7 @@ class MediawikiApiTest extends TestCase {
 				] ) ),
 				$this->returnValue( $this->getMockResponse( [] ) )
 			);
-		$api = new MediawikiApi( '', $client );
+		$api = new MediawikiApi( '', null, $client );
 
 		$this->assertTrue( $api->logout() );
 	}
@@ -299,7 +299,7 @@ class MediawikiApiTest extends TestCase {
 				] ) ),
 				$this->returnValue( $this->getMockResponse( null ) )
 			);
-		$api = new MediawikiApi( '', $client );
+		$api = new MediawikiApi( '', null, $client );
 
 		$this->assertFalse( $api->logout() );
 	}
@@ -320,7 +320,7 @@ class MediawikiApiTest extends TestCase {
 					],
 				],
 			] ) ) );
-		$api = new MediawikiApi( '', $client );
+		$api = new MediawikiApi( '', null, $client );
 		$this->assertEquals( $expectedVersion, $api->getVersion() );
 	}
 
@@ -346,7 +346,7 @@ class MediawikiApiTest extends TestCase {
 		];
 
 		$client = $this->getMockClient();
-		$api = new MediawikiApi( '', $client );
+		$api = new MediawikiApi( '', null, $client );
 
 		$logger = $this->createMock( LoggerInterface::class );
 		$logger

@@ -2,17 +2,15 @@
 
 namespace Addwiki\Mediawiki\Api\Tests\Integration;
 
+use Addwiki\Mediawiki\Api\Client\Auth\AuthMethod;
+use Addwiki\Mediawiki\Api\Client\Auth\OAuthOwnerConsumer;
+use Addwiki\Mediawiki\Api\Client\Auth\UserAndPassword;
 use Addwiki\Mediawiki\Api\Client\MediawikiApi;
-use Addwiki\Mediawiki\Api\Client\SimpleRequest;
 use Exception;
 
 class BaseTestEnvironment {
 
-	private MediawikiApi $api;
-
-	/** @var string */
-	private $apiUrl;
-
+	private string $apiUrl;
 	private string $pageUrl;
 
 	/**
@@ -45,7 +43,6 @@ class BaseTestEnvironment {
 
 		$this->apiUrl = $apiUrl;
 		$this->pageUrl = str_replace( 'api.php', 'index.php?title=Special:SpecialPages', $apiUrl );
-		$this->api = MediawikiApi::newFromApiEndpoint( $this->apiUrl );
 	}
 
 	/**
@@ -65,22 +62,19 @@ class BaseTestEnvironment {
 	/**
 	 * Get the MediawikiApi to test against
 	 */
-	public function getApi(): MediawikiApi {
-		return $this->api;
+	public function getApi( ?AuthMethod $auth = null ): MediawikiApi {
+		return new MediaWikiApi( $this->getApiUrl(), $auth );
 	}
 
-	/**
-	 * Save a wiki page.
-	 * @param string $title The title of the page.
-	 * @param string $content The complete page text to save.
-	 */
-	public function savePage( string $title, string $content ): void {
-		$params = [
-			'title' => $title,
-			'text' => $content,
-			'md5' => md5( $content ),
-			'token' => $this->api->getToken(),
-		];
-		$this->api->postRequest( new SimpleRequest( 'edit', $params ) );
+	public function getUserAndPasswordAuth(): UserAndPassword {
+		return new UserAndPassword( 'CIUser', 'LongCIPass123' );
 	}
+
+	public function getOAuthOwnerConsumerAuth(): OAuthOwnerConsumer {
+		// This file was created and is hosted by the docker-ci setup
+		$creationJsonString = file_get_contents( str_replace( 'api.php', 'createOAuthConsumer.json', $this->getApiUrl() ) );
+		$data = json_decode( $creationJsonString, true );
+		return new OAuthOwnerConsumer( $data['key'], $data['secret'], $data['accessToken'], $data['accessSecret'] );
+	}
+
 }

@@ -4,14 +4,7 @@ namespace Addwiki\Mediawiki\Api\Client;
 
 use InvalidArgumentException;
 
-/**
- * Please consider using a FluentRequest object
- */
-class SimpleRequest implements Request {
-
-	private string $action;
-	private array $params = [];
-	private array $headers = [];
+class SimpleRequest extends FluentRequest implements Request {
 
 	/**
 	 * @param string $action The API action.
@@ -21,17 +14,9 @@ class SimpleRequest implements Request {
 	 * @throws InvalidArgumentException
 	 */
 	public function __construct( string $action, array $params = [], array $headers = [] ) {
-		$this->action = $action;
-		$this->params = $params;
-		$this->headers = $headers;
-	}
-
-	public function getParams(): array {
-		return array_merge( [ 'action' => $this->action ], $this->params );
-	}
-
-	public function getHeaders(): array {
-		return $this->headers;
+		$this->setAction( $action );
+		$this->addParams( $params );
+		$this->setHeaders( $headers );
 	}
 
 }

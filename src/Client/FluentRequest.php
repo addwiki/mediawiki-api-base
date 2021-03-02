@@ -15,6 +15,18 @@ class FluentRequest implements Request {
 		return $this->headers;
 	}
 
+	public function getPostRequestEncoding(): string {
+		if ( $this instanceof MultipartRequest ) {
+			return self::ENCODING_MULTIPART;
+		}
+		foreach ( $this->getParams() as $value ) {
+			if ( is_resource( $value ) ) {
+				return self::ENCODING_MULTIPART;
+			}
+		}
+		return self::ENCODING_FORMPARAMS;
+	}
+
 	public static function factory() {
 		return new static();
 	}

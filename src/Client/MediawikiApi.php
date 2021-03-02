@@ -3,6 +3,7 @@
 namespace Addwiki\Mediawiki\Api\Client;
 
 use Addwiki\Mediawiki\Api\Client\Auth\AuthMethod;
+use Addwiki\Mediawiki\Api\Client\Auth\NoAuth;
 use Addwiki\Mediawiki\Api\Client\Auth\UserAndPassword;
 use Addwiki\Mediawiki\Api\Client\Auth\UserAndPasswordWithDomain;
 use Addwiki\Mediawiki\Api\Guzzle\ClientFactory;
@@ -12,6 +13,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Promise\PromiseInterface;
+use LogicException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
@@ -21,24 +23,18 @@ use SimpleXMLElement;
 
 class MediawikiApi implements MediawikiApiInterface, LoggerAwareInterface {
 
+	private string $apiUrl;
+	private AuthMethod $auth;
 	/**
 	 * Should be accessed through getClient
 	 * @var ClientInterface|null
 	 */
 	private ?ClientInterface $client = null;
-
-	private ?AuthMethod $loggedInAuthMethod = null;
-
 	private MediawikiSession $session;
 
-	/**
-	 * @var string
-	 */
-	private $version;
-
+	private ?AuthMethod $loggedInAuthMethod = null;
+	private ?string $version = null;
 	private LoggerInterface $logger;
-
-	private string $apiUrl;
 
 	/**
 	 * @param string $apiEndpoint e.g. https://en.wikipedia.org/w/api.php
@@ -97,16 +93,25 @@ class MediawikiApi implements MediawikiApiInterface, LoggerAwareInterface {
 
 	/**
 	 * @param string $apiUrl The API Url
+	 * @param AuthMethod|null $auth Auth method to use. null for NoAuth
 	 * @param ClientInterface|null $client Guzzle Client
 	 * @param MediawikiSession|null $session Inject a custom session here
 	 */
-	public function __construct( string $apiUrl, ClientInterface $client = null,
-								 MediawikiSession $session = null ) {
+	public function __construct(
+		string $apiUrl,
+		AuthMethod $auth = null,
+		ClientInterface $client = null,
+		MediawikiSession $session = null
+		) {
+		if ( $auth === null ) {
+			$auth = new NoAuth();
+		}
 		if ( $session === null ) {
 			$session = new MediawikiSession( $this );
 		}
 
 		$this->apiUrl = $apiUrl;
+		$this->auth = $auth;
 		$this->client = $client;
 		$this->session = $session;
 
@@ -152,6 +157,8 @@ class MediawikiApi implements MediawikiApiInterface, LoggerAwareInterface {
 	 *         Can throw UsageExceptions or RejectionExceptions
 	 */
 	public function getRequestAsync( Request $request ): PromiseInterface {
+		$request->setParam( 'format', 'json' );
+		$request = $this->auth->preRequestAuth( 'GET', $request, $this );
 		$promise = $this->getClient()->requestAsync(
 			'GET',
 			$this->apiUrl,
@@ -169,10 +176,12 @@ class MediawikiApi implements MediawikiApiInterface, LoggerAwareInterface {
 	 *         Can throw UsageExceptions or RejectionExceptions
 	 */
 	public function postRequestAsync( Request $request ): PromiseInterface {
+		$request->setParam( 'format', 'json' );
+		$request = $this->auth->preRequestAuth( 'POST', $request, $this );
 		$promise = $this->getClient()->requestAsync(
 			'POST',
 			$this->apiUrl,
-			$this->getClientRequestOptions( $request, $this->getPostRequestEncoding( $request ) )
+			$this->getClientRequestOptions( $request, $request->getPostRequestEncoding() )
 		);
 
 		return $promise->then( fn( ResponseInterface $response ) => call_user_func( fn( ResponseInterface $response ) => $this->decodeResponse( $response ), $response ) );
@@ -184,6 +193,8 @@ class MediawikiApi implements MediawikiApiInterface, LoggerAwareInterface {
 	 * @return mixed Normally an array
 	 */
 	public function getRequest( Request $request ) {
+		$request->setParam( 'format', 'json' );
+		$request = $this->auth->preRequestAuth( 'GET', $request, $this );
 		$response = $this->getClient()->request(
 			'GET',
 			$this->apiUrl,
@@ -199,10 +210,12 @@ class MediawikiApi implements MediawikiApiInterface, LoggerAwareInterface {
 	 * @return mixed Normally an array
 	 */
 	public function postRequest( Request $request ) {
+		$request->setParam( 'format', 'json' );
+		$request = $this->auth->preRequestAuth( 'POST', $request, $this );
 		$response = $this->getClient()->request(
 			'POST',
 			$this->apiUrl,
-			$this->getClientRequestOptions( $request, $this->getPostRequestEncoding( $request ) )
+			$this->getClientRequestOptions( $request, $request->getPostRequestEncoding() )
 		);
 
 		return $this->decodeResponse( $response );
@@ -223,18 +236,6 @@ class MediawikiApi implements MediawikiApiInterface, LoggerAwareInterface {
 		return $resultArray;
 	}
 
-	private function getPostRequestEncoding( Request $request ): string {
-		if ( $request instanceof MultipartRequest ) {
-			return 'multipart';
-		}
-		foreach ( $request->getParams() as $value ) {
-			if ( is_resource( $value ) ) {
-				return 'multipart';
-			}
-		}
-		return 'form_params';
-	}
-
 	/**
 	 * @param string $paramsKey either 'query' or 'multipart'
 	 *
@@ -242,7 +243,7 @@ class MediawikiApi implements MediawikiApiInterface, LoggerAwareInterface {
 	 * @return array as needed by ClientInterface::get and ClientInterface::post
 	 */
 	private function getClientRequestOptions( Request $request, string $paramsKey ): array {
-		$params = array_merge( $request->getParams(), [ 'format' => 'json' ] );
+		$params = $request->getParams();
 		if ( $paramsKey === 'multipart' ) {
 			$params = $this->encodeMultipartParams( $request, $params );
 		}
@@ -365,60 +366,21 @@ class MediawikiApi implements MediawikiApiInterface, LoggerAwareInterface {
 		return $this->loggedInAuthMethod instanceof AuthMethod;
 	}
 
-	public function login( AuthMethod $authMethod ): bool {
-		$this->logger->log( LogLevel::DEBUG, 'Logging in' );
-		$credentials = $this->getLoginParams( $authMethod );
-		$result = $this->postRequest( new SimpleRequest( 'login', $credentials ) );
-		if ( $result['login']['result'] == "NeedToken" ) {
-			$params = array_merge( [ 'lgtoken' => $result['login']['token'] ], $credentials );
-			$result = $this->postRequest( new SimpleRequest( 'login', $params ) );
-		}
-		if ( $result['login']['result'] == "Success" ) {
-			$this->loggedInAuthMethod = $authMethod;
-			return true;
-		}
-
-		$this->loggedInAuthMethod = null;
-		$this->logger->log( LogLevel::DEBUG, 'Login failed.', $result );
-		$this->throwLoginUsageException( $result );
-		return false;
-	}
-
-	private function getLoginParams( AuthMethod $authMethod ): array {
-		if ( $authMethod instanceof UserAndPassword ) {
-			return [
-				'lgname' => $authMethod->getUsername(),
-				'lgpassword' => $authMethod->getPassword(),
-			];
-		}
-
-		if ( $authMethod instanceof UserAndPasswordWithDomain ) {
-			$params = [
-				'lgname' => $authMethod->getUsername(),
-				'lgpassword' => $authMethod->getPassword(),
-			];
-			if ( $authMethod->getDomain() !== null ) {
-				$params['lgdomain'] = $authMethod->getDomain();
-			}
-			return $params;
-		}
-
-		throw new \RuntimeException( 'Unknown AuthMethod used.' );
-	}
-
 	/**
-	 * @throws UsageException
+	 * @deprecated in 3.0, create a MediaWikiApi with an AuthMethod instead.
 	 */
-	private function throwLoginUsageException( array $result ): void {
-		$loginResult = $result['login']['result'];
-
-		throw new UsageException(
-			'login-' . $loginResult,
-			array_key_exists( 'reason', $result['login'] )
-				? $result['login']['reason']
-				: 'No Reason given',
-			$result
-		);
+	public function login( ApiUser $oldApiUser ): bool {
+		// If login is called, replace
+		if ( $this->auth instanceof NoAuth ) {
+			$this->auth = $oldApiUser;
+		} elseif ( !$this->auth->equals( $oldApiUser ) ) {
+			throw new LogicException(
+				'You are calling the login method back compat layer, but are already providing an AuthMethod to the API class...'
+			);
+		}
+		$this->auth->preRequestAuth( 'NULL', new SimpleRequest( 'dummyrequest' ), $this );
+		$this->loggedInAuthMethod = $this->auth;
+		return true;
 	}
 
 	public function logout(): bool {

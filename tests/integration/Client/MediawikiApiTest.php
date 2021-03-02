@@ -38,17 +38,28 @@ class MediawikiApiTest extends TestCase {
 		$testPageName = __METHOD__;
 		$testEnv = BaseTestEnvironment::newInstance();
 		$wikiPageUrl = str_replace( 'api.php', sprintf( 'index.php?title=%s', $testPageName ), $testEnv->getApiUrl() );
+		$api = $testEnv->getApi();
 
 		// Test with no duplicate IDs.
-		$testEnv->savePage( $testPageName, '<p id="unique-id"></p>' );
+		$this->savePage( $api, $testPageName, '<p id="unique-id"></p>' );
 		$api1 = MediawikiApi::newFromPage( $wikiPageUrl );
 		$this->assertInstanceOf( MediawikiApi::class, $api1 );
 
 		// Test with duplicate ID.
 		$wikiText = '<p id="duplicated-id"></p><div id="duplicated-id"></div>';
-		$testEnv->savePage( $testPageName, $wikiText );
+		$this->savePage( $api, $testPageName, $wikiText );
 		$api2 = MediawikiApi::newFromPage( $wikiPageUrl );
 		$this->assertInstanceOf( MediawikiApi::class, $api2 );
+	}
+
+	private function savePage( MediaWikiApi $api, string $title, string $content ): void {
+		$params = [
+			'title' => $title,
+			'text' => $content,
+			'md5' => md5( $content ),
+			'token' => $api->getToken(),
+		];
+		$api->postRequest( new SimpleRequest( 'edit', $params ) );
 	}
 
 	/**
