@@ -5,21 +5,6 @@ namespace Addwiki\Mediawiki\Api\Client;
 interface MediawikiApiInterface extends ApiRequester, AsyncApiRequester {
 
 	/**
-	 * @return bool
-	 */
-	public function isLoggedIn(): bool;
-
-	/**
-	 * @param ApiUser $apiUser The ApiUser to log in as.
-	 *
-	 * @throws UsageException
-	 * @return bool success
-	 */
-	public function login( ApiUser $apiUser ): bool;
-
-	public function logout(): bool;
-
-	/**
 	 * @param string $type The type of token to get.
 	 */
 	public function getToken( $type = 'csrf' ): string;

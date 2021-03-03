@@ -15,10 +15,11 @@ You can find the fill documentation at https://addwiki.github.io/mediawiki-api-b
 A quick example can be found below:
 
 ```php
+use \Addwiki\Mediawiki\Api\Client\Auth\UserAndPassword;
 use \Addwiki\Mediawiki\Api\Client\MediawikiApi;
 
-$api = MediawikiApi::newFromPage( 'https://en.wikipedia.org/wiki/Berlin' );
-$api->login( new ApiUser( 'username', 'password' ) );
+$auth = new UserAndPassword( 'username', 'password' )
+$api = MediawikiApi::newFromPage( 'https://en.wikipedia.org/wiki/Berlin', $auth );
 $purgeRequest = FluentRequest::factory()->setAction( 'purge' )->setParam( 'titles', 'Berlin' );
 $api->postRequest( $purgeRequest );
 ```

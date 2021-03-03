@@ -16,11 +16,9 @@ use GuzzleHttp\Client;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Promise\PromiseInterface;
-use LogicException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
-use Psr\Log\LogLevel;
 use Psr\Log\NullLogger;
 use SimpleXMLElement;
 
@@ -35,17 +33,17 @@ class MediawikiApi implements MediawikiApiInterface, LoggerAwareInterface {
 	private ?ClientInterface $client = null;
 	private MediawikiSession $session;
 
-	private ?AuthMethod $loggedInAuthMethod = null;
 	private ?string $version = null;
 	private LoggerInterface $logger;
 
 	/**
 	 * @param string $apiEndpoint e.g. https://en.wikipedia.org/w/api.php
+	 * @param AuthMethod|null $auth
 	 *
 	 * @return self returns a MediawikiApi instance using $apiEndpoint
 	 */
-	public static function newFromApiEndpoint( string $apiEndpoint ): MediawikiApi {
-		return new self( $apiEndpoint );
+	public static function newFromApiEndpoint( string $apiEndpoint, AuthMethod $auth = null ): MediawikiApi {
+		return new self( $apiEndpoint, $auth );
 	}
 
 	/**
@@ -54,11 +52,13 @@ class MediawikiApi implements MediawikiApiInterface, LoggerAwareInterface {
 	 * @see https://en.wikipedia.org/wiki/Really_Simple_Discovery
 	 *
 	 * @param string $url e.g. https://en.wikipedia.org OR https://de.wikipedia.org/wiki/Berlin
+	 * @param AuthMethod|null $auth
+	 *
 	 * @return self returns a MediawikiApi instance using the apiEndpoint provided by the RSD
 	 *              file accessible on all Mediawiki pages
 	 * @throws RsdException If the RSD URL could not be found in the page's HTML.
 	 */
-	public static function newFromPage( string $url ): MediawikiApi {
+	public static function newFromPage( string $url, AuthMethod $auth = null ): MediawikiApi {
 		// Set up HTTP client and HTML document.
 		$tempClient = new Client( [ 'headers' => [ 'User-Agent' => 'addwiki-mediawiki-client' ] ] );
 		$pageHtml = $tempClient->get( $url )->getBody();
@@ -91,7 +91,7 @@ class MediawikiApi implements MediawikiApiInterface, LoggerAwareInterface {
 
 		// Then get the RSD XML, and return the API link.
 		$rsdXml = new SimpleXMLElement( $tempClient->get( $rsdUrl )->getBody() );
-		return self::newFromApiEndpoint( (string)$rsdXml->service->apis->api->attributes()->apiLink );
+		return self::newFromApiEndpoint( (string)$rsdXml->service->apis->api->attributes()->apiLink, $auth );
 	}
 
 	/**
@@ -296,9 +296,9 @@ class MediawikiApi implements MediawikiApiInterface, LoggerAwareInterface {
 	}
 
 	private function getUserAgent(): string {
-		if ( $this->isLoggedIn() ) {
-			if ( $this->loggedInAuthMethod instanceof UserAndPassword || $this->loggedInAuthMethod instanceof UserAndPasswordWithDomain ) {
-				return 'addwiki-mediawiki-client/' . $this->loggedInAuthMethod->getUsername();
+		if ( !$this->auth instanceof NoAuth ) {
+			if ( $this->auth instanceof UserAndPassword || $this->auth instanceof UserAndPasswordWithDomain ) {
+				return 'addwiki-mediawiki-client/' . $this->auth->getUsername();
 			}
 			return 'addwiki-mediawiki-client/' . 'SomeUnknownUser?';
 		}
@@ -363,40 +363,6 @@ class MediawikiApi implements MediawikiApiInterface, LoggerAwareInterface {
 				$result
 			);
 		}
-	}
-
-	public function isLoggedIn(): bool {
-		return $this->loggedInAuthMethod instanceof AuthMethod;
-	}
-
-	/**
-	 * @deprecated in 3.0, create a MediaWikiApi with an AuthMethod instead.
-	 */
-	public function login( ApiUser $oldApiUser ): bool {
-		// If login is called, replace
-		if ( $this->auth instanceof NoAuth ) {
-			$this->auth = $oldApiUser;
-		} elseif ( !$this->auth->equals( $oldApiUser ) ) {
-			throw new LogicException(
-				'You are calling the login method back compat layer, but are already providing an AuthMethod to the API class...'
-			);
-		}
-		$this->auth->preRequestAuth( 'NULL', new SimpleRequest( 'dummyrequest' ), $this );
-		$this->loggedInAuthMethod = $this->auth;
-		return true;
-	}
-
-	public function logout(): bool {
-		$this->logger->log( LogLevel::DEBUG, 'Logging out' );
-		$result = $this->postRequest( new SimpleRequest( 'logout', [
-			'token' => $this->getToken()
-		] ) );
-		if ( $result === [] ) {
-			$this->loggedInAuthMethod = null;
-			$this->clearTokens();
-			return true;
-		}
-		return false;
 	}
 
 	public function getToken( $type = 'csrf' ): string {

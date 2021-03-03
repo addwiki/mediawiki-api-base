@@ -6,11 +6,12 @@
 - Typing added throughout
 - PSR4 namespacing. Now in `Addwiki\Mediawiki\Api`
 - Client classes, such as `MediaWikiApi`, moved to `Addwiki\Mediawiki\Api`
-- `ApiUser` deprecated in favour of `UserAndPassword` and `UserAndPasswordWithDomain`
+- `ApiUser` replaced by `UserAndPassword` and `UserAndPasswordWithDomain`
 - `MediawikiApiInterface` `isLoggedin` renamed to `isLoggedIn`
 - `MediawikiApiInterface` and implementations will now only return a boolean from `isLoggedIn`
 - `MediawikiApi` constructor signature changed
 - `SimpleRequest` now extends `FluentRequest`
+- `assert` API parameter is automatically added to requests based on the auth method selected
 
 ## Version 2.8 (16 February 2021)
 

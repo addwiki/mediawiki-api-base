@@ -39,11 +39,15 @@ class UserAndPassword implements AuthMethod {
 	}
 
 	public function preRequestAuth( string $method, Request $request, MediawikiApi $api ): Request {
-		// Do nothing if we are already logged in OR if this is a login request (self call)
-		if (
-			$this->isLoggedIn ||
-			( array_key_exists( 'action', $request->getParams() ) && $request->getParams()['action'] === 'login' )
-		) {
+		// Do nothing if we are already logged in
+		if ( $this->isLoggedIn ) {
+			// Verify that the user is logged in if set to user, not logged in if set to anon, or has the bot user right if bot.
+			$request->setParam( 'assert', 'user' );
+			return $request;
+		}
+
+		// Do not try to login if thi is a self call (we are logging in)
+		if ( array_key_exists( 'action', $request->getParams() ) && $request->getParams()['action'] === 'login' ) {
 			return $request;
 		}
 
