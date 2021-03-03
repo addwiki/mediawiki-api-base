@@ -111,7 +111,7 @@ class MiddlewareFactory implements LoggerAwareInterface {
 						)
 						||
 						// Or if we have been stopped from saving as an 'anti-abuse measure'
-						// Note: this tries to match "actionthrottledtext" i18n messagae for mediawiki
+						// Note: this tries to match "actionthrottledtext" i18n message for mediawiki
 						(
 							$mediawikiApiErrorHeader == 'failed-save' &&
 							strstr( $data['error']['info'], 'anti-abuse measure' )
