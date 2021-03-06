@@ -30,7 +30,8 @@ class UserAndPasswordWithDomain extends UserAndPassword implements AuthMethod {
 	}
 
 	public function equals( UserAndPassword $other ): bool {
-		return $this->getUsername() === $other->getUsername()
+		return $other instanceof UserAndPasswordWithDomain
+			&& $this->getUsername() === $other->getUsername()
 			&& $this->getPassword() === $other->getPassword()
 			&& $this->getDomain() === $other->getDomain();
 	}

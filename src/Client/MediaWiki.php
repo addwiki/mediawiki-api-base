@@ -20,6 +20,7 @@ class MediaWiki {
 	private AuthMethod $auth;
 
 	private ActionApi $action;
+	private RestApi $rest;
 
 	public function __construct( string $baseUrl, AuthMethod $auth = null ) {
 		if ( $auth === null ) {
