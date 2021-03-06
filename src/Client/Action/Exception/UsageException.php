@@ -1,6 +1,6 @@
 <?php
 
-namespace Addwiki\Mediawiki\Api\Client;
+namespace Addwiki\Mediawiki\Api\Client\Action\Exception;
 
 use Exception;
 

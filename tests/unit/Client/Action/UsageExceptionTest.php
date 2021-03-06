@@ -1,8 +1,8 @@
 <?php
 
-namespace Addwiki\Mediawiki\Api\Tests\Unit\Client;
+namespace Addwiki\Mediawiki\Api\Tests\Unit\Client\Action;
 
-use Addwiki\Mediawiki\Api\Client\UsageException;
+use Addwiki\Mediawiki\Api\Client\Action\Exception\UsageException;
 use PHPUnit\Framework\TestCase;
 
 /**

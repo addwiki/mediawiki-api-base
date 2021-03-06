@@ -1,18 +1,18 @@
 <?php
 
-namespace Addwiki\Mediawiki\Api\Client;
+namespace Addwiki\Mediawiki\Api\Client\Action;
 
-use Addwiki\Mediawiki\Api\Client\Request\SimpleRequest;
+use Addwiki\Mediawiki\Api\Client\Action\Request\ActionRequest;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 use Psr\Log\NullLogger;
 
-class MediawikiSession implements LoggerAwareInterface {
+class Tokens implements LoggerAwareInterface {
 
 	private array $tokens = [];
 
-	private MediawikiApi $api;
+	private ActionApi $api;
 
 	/**
 	 * @var bool if this session is running against mediawiki version pre 1.25
@@ -22,9 +22,9 @@ class MediawikiSession implements LoggerAwareInterface {
 	private LoggerInterface $logger;
 
 	/**
-	 * @param MediawikiApi $api The API object to use for this session.
+	 * @param ActionApi $api The API object to use for this session.
 	 */
-	public function __construct( MediawikiApi $api ) {
+	public function __construct( ActionApi $api ) {
 		$this->api = $api;
 		$this->logger = new NullLogger();
 	}
@@ -45,7 +45,7 @@ class MediawikiSession implements LoggerAwareInterface {
 	 *
 	 * @param string $type The type of token to get.
 	 */
-	public function getToken( string $type = 'csrf' ): string {
+	public function get( string $type = 'csrf' ): string {
 		// If we don't already have the token that we want
 		if ( !array_key_exists( $type, $this->tokens ) ) {
 			$this->logger->log( LogLevel::DEBUG, 'Getting fresh token', [ 'type' => $type ] );
@@ -64,8 +64,8 @@ class MediawikiSession implements LoggerAwareInterface {
 
 	private function reallyGetPre125Token( $type ) {
 		// Suppress deprecation warning
-		$result = @$this->api->postRequest( // @codingStandardsIgnoreLine
-			new SimpleRequest( 'tokens', [ 'type' => $this->getOldTokenType( $type ) ] )
+		$result = @$this->api->request( // @codingStandardsIgnoreLine
+			ActionRequest::simplePost( 'tokens', [ 'type' => $this->getOldTokenType( $type ) ] )
 		);
 		$this->tokens[$type] = array_pop( $result['tokens'] );
 
@@ -74,8 +74,8 @@ class MediawikiSession implements LoggerAwareInterface {
 
 	private function reallyGetToken( $type ) {
 		// We suppress errors on this call so the user doesn't get get a warning that isn't their fault.
-		$result = @$this->api->postRequest( // @codingStandardsIgnoreLine
-			new SimpleRequest( 'query', [
+		$result = @$this->api->request( // @codingStandardsIgnoreLine
+			ActionRequest::simplePost( 'query', [
 				'meta' => 'tokens',
 				'type' => $this->getNewTokenType( $type ),
 				'continue' => '',
@@ -126,11 +126,8 @@ class MediawikiSession implements LoggerAwareInterface {
 		return $type;
 	}
 
-	/**
-	 * Clears all tokens stored by the api
-	 */
-	public function clearTokens(): void {
-		$this->logger->log( LogLevel::DEBUG, 'Clearing session tokens', [ 'tokens' => $this->tokens ] );
+	public function clear(): void {
+		$this->logger->log( LogLevel::DEBUG, 'Clearing current tokens', [ 'tokens' => $this->tokens ] );
 		$this->tokens = [];
 	}
 

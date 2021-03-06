@@ -2,10 +2,12 @@
 
 namespace Addwiki\Mediawiki\Api\Tests\Integration;
 
+use Addwiki\Mediawiki\Api\Client\Action\ActionApi;
+use Addwiki\Mediawiki\Api\Client\Action\Tokens;
 use Addwiki\Mediawiki\Api\Client\Auth\AuthMethod;
 use Addwiki\Mediawiki\Api\Client\Auth\OAuthOwnerConsumer;
 use Addwiki\Mediawiki\Api\Client\Auth\UserAndPassword;
-use Addwiki\Mediawiki\Api\Client\MediawikiApi;
+use Addwiki\Mediawiki\Api\Client\Rest\RestApi;
 use Exception;
 
 class BaseTestEnvironment {
@@ -29,6 +31,7 @@ class BaseTestEnvironment {
 	 * @throws Exception If the ADDWIKI_MW_API environment variable does not end in 'api.php'
 	 */
 	public function __construct() {
+		// TODO change to be a base URL?
 		$apiUrl = getenv( 'ADDWIKI_MW_API' );
 
 		if ( !$apiUrl ) {
@@ -47,6 +50,7 @@ class BaseTestEnvironment {
 
 	/**
 	 * Get the url of the api to test against, based on the MEDIAWIKI_API_URL environment variable.
+	 * TODO rename to getActionApiUrl? Or use base URL?
 	 */
 	public function getApiUrl(): string {
 		return $this->apiUrl;
@@ -59,11 +63,17 @@ class BaseTestEnvironment {
 		return $this->pageUrl;
 	}
 
-	/**
-	 * Get the MediawikiApi to test against
-	 */
-	public function getApi( ?AuthMethod $auth = null ): MediawikiApi {
-		return new MediaWikiApi( $this->getApiUrl(), $auth );
+	public function getActionApi( ?AuthMethod $auth = null ): ActionApi {
+		return new ActionApi( $this->getApiUrl(), $auth );
+	}
+
+	public function getRestApi( ?AuthMethod $auth = null ): RestApi {
+		return new RestApi(
+			str_replace( 'api.', 'rest.', $this->getApiUrl() ),
+			$auth,
+			null,
+			new Tokens( $this->getActionApi( $auth ) )
+		);
 	}
 
 	public function getUserAndPasswordAuth(): UserAndPassword {

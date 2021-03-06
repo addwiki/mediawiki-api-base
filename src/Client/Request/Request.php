@@ -2,39 +2,10 @@
 
 namespace Addwiki\Mediawiki\Api\Client\Request;
 
-interface Request {
-
-	public const ENCODING_MULTIPART = 'multipart';
-	public const ENCODING_FORMPARAMS = 'form_params';
-
-	/**
-	 * @return mixed[]
-	 */
-	public function getParams(): array;
-
-	/**
-	 * Associative array of headers to add to the request.
-	 * Each key is the name of a header, and each value is a string or array of strings representing
-	 * the header field values.
-	 *
-	 * @return mixed[]
-	 */
-	public function getHeaders(): array;
-
-	/**
-	 * Infers the request encoding for POST requests from params and class used
-	 * @return string one of the ENCODING_* constants
-	 */
-	public function getPostRequestEncoding() : string;
-
-	public function setAction( string $action ): self;
-
-	public function setParams( array $params ): self;
-
-	public function addParams( array $params ): self;
-
-	public function setParam( string $param, string $value ): self;
-
-	public function setHeaders( array $headers ): self;
+/**
+ * A generic request.
+ * All API implementations should expect to take one of these.
+ */
+interface Request extends HasHeaders, HasMethod, HasPath, HasParameters, HasMultipartAbility {
 
 }

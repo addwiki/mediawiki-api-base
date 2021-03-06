@@ -1,28 +1,26 @@
 <?php
 
-namespace Addwiki\Mediawiki\Api\Tests\Unit\Client;
+namespace Addwiki\Mediawiki\Api\Tests\Unit\Client\Action\Request;
 
-use Addwiki\Mediawiki\Api\Client\Request\FluentRequest;
+use Addwiki\Mediawiki\Api\Client\Action\Request\ActionRequest;
+
 use PHPUnit\Framework\TestCase;
 
-/**
- * @covers Mediawiki\Api\FluentRequest
- */
 class FluentRequestTest extends TestCase {
 
 	public function testFactory(): void {
-		$this->assertInstanceOf( FluentRequest::class, FluentRequest::factory() );
+		$this->assertInstanceOf( ActionRequest::class, ActionRequest::factory() );
 	}
 
 	public function testConstructionDefaults(): void {
-		$request = new FluentRequest();
+		$request = new ActionRequest();
 
 		$this->assertEquals( [], $request->getParams() );
 		$this->assertEquals( [], $request->getHeaders() );
 	}
 
 	public function testSetParams(): void {
-		$request = new FluentRequest();
+		$request = new ActionRequest();
 
 		$params = [ 'foo', 'bar' ];
 		$request->setParams( $params );
@@ -31,7 +29,7 @@ class FluentRequestTest extends TestCase {
 	}
 
 	public function testSetParam(): void {
-		$request = new FluentRequest();
+		$request = new ActionRequest();
 
 		$request->setParam( 'paramName', 'fooValue' );
 
@@ -39,7 +37,7 @@ class FluentRequestTest extends TestCase {
 	}
 
 	public function testAddParams(): void {
-		$request = new FluentRequest();
+		$request = new ActionRequest();
 
 		$params = [ 'a' => 'foo', 'b' => 'bar' ];
 		$request->addParams( $params );
@@ -48,7 +46,7 @@ class FluentRequestTest extends TestCase {
 	}
 
 	public function testSetHeaders(): void {
-		$request = new FluentRequest();
+		$request = new ActionRequest();
 
 		$params = [ 'foo', 'bar' ];
 		$request->setHeaders( $params );
@@ -57,7 +55,7 @@ class FluentRequestTest extends TestCase {
 	}
 
 	public function testSetAction(): void {
-		$request = new FluentRequest();
+		$request = new ActionRequest();
 
 		$request->setAction( 'fooAction' );
 

@@ -34,6 +34,10 @@
         "php-parallel-lint/php-parallel-lint": "^1.2",
         "mediawiki/mediawiki-codesniffer": "~35.0"
     },
+    "suggest": {
+        "ext-dom": "Needed if you want to discover APIs using only page URLs",
+        "ext-simplexml": "Needed if you want to discover APIs using only page URLs"
+    },
     "autoload": {
         "psr-4": {
             "Addwiki\\Mediawiki\\Api\\": "src/"

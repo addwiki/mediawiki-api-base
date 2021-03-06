@@ -5,31 +5,25 @@ namespace Addwiki\Mediawiki\Api\Client\Request;
 use Exception;
 
 /**
- * A MultipartRequest is the same as a FluentRequest with additional support for setting request
+ * A MultipartTrait adds additional support for setting request
  * parameters (both normal parameters and headers) on multipart requests.
  *
  * @link http://docs.guzzlephp.org/en/stable/request-options.html#multipart
+ *
+ * Must be used in conjunction with HasParameters
  */
-class MultipartRequest extends FluentRequest {
+trait MultipartTrait {
 
-	protected array $multipartParams = [];
+	private bool $isMultipart = false;
+	private array $multipartParams = [];
 
-	/**
-	 * Check the structure of a multipart parameter array.
-	 *
-	 * @param mixed[] $params The multipart parameters to check.
-	 *
-	 * @throws Exception
-	 */
-	protected function checkMultipartParams( array $params ): void {
-		foreach ( $params as $key => $val ) {
-			if ( !is_array( $val ) ) {
-				throw new Exception( sprintf( "Parameter '%s' must be an array.", $key ) );
-			}
-			if ( !array_key_exists( $key, $this->getParams() ) ) {
-				throw new Exception( sprintf( "Parameter '%s' is not already set on this request.", $key ) );
-			}
-		}
+	public function isMultipart(): bool {
+		return $this->isMultipart || $this->paramsIncludesResource();
+	}
+
+	public function setMultipart( bool $multipart ): self {
+		$this->isMultipart = $multipart;
+		return $this;
 	}
 
 	/**
@@ -42,6 +36,7 @@ class MultipartRequest extends FluentRequest {
 	 * @return $this
 	 */
 	public function setMultipartParams( array $params ): self {
+		$this->isMultipart = true;
 		$this->checkMultipartParams( $params );
 		$this->multipartParams = $params;
 		return $this;
@@ -58,6 +53,7 @@ class MultipartRequest extends FluentRequest {
 	 * @return $this
 	 */
 	public function addMultipartParams( array $params ): self {
+		$this->isMultipart = true;
 		$this->checkMultipartParams( $params );
 		$this->multipartParams = array_merge( $this->multipartParams, $params );
 		return $this;
@@ -71,4 +67,36 @@ class MultipartRequest extends FluentRequest {
 	public function getMultipartParams(): array {
 		return $this->multipartParams;
 	}
+
+	/**
+	 * Check the structure of a multipart parameter array.
+	 *
+	 * @param mixed[] $params The multipart parameters to check.
+	 *
+	 * @throws Exception
+	 */
+	private function checkMultipartParams( array $params ): void {
+		foreach ( $params as $key => $val ) {
+			if ( !is_array( $val ) ) {
+				throw new Exception( sprintf( "Parameter '%s' must be an array.", $key ) );
+			}
+			if ( !array_key_exists( $key, $this->getParams() ) ) {
+				throw new Exception( sprintf( "Parameter '%s' is not already set on this request.", $key ) );
+			}
+		}
+	}
+
+	private function paramsIncludesResource(): bool {
+		if ( !$this instanceof HasParameters ) {
+			return false;
+		}
+
+		foreach ( $this->getParams() as $value ) {
+			if ( is_resource( $value ) ) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 }

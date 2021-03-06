@@ -1,28 +1,25 @@
 <?php
 
-namespace Addwiki\Mediawiki\Api\Tests\Unit\Client;
+namespace Addwiki\Mediawiki\Api\Tests\Unit\Client\Action;
 
-use Addwiki\Mediawiki\Api\Client\MediawikiApi;
-use Addwiki\Mediawiki\Api\Client\MediawikiSession;
-use Addwiki\Mediawiki\Api\Client\Request\SimpleRequest;
+use Addwiki\Mediawiki\Api\Client\Action\ActionApi;
+use Addwiki\Mediawiki\Api\Client\Action\Tokens;
+use Addwiki\Mediawiki\Api\Client\Request\Request;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @covers Mediawiki\Api\MediawikiSession
- */
-class MediawikiSessionTest extends TestCase {
+class TokensTest extends TestCase {
 
 	/**
-	 * @return MockObject|MediawikiApi
+	 * @return MockObject|ActionApi
 	 */
 	private function getMockApi() {
-		return $this->createMock( MediawikiApi::class );
+		return $this->createMock( ActionApi::class );
 	}
 
 	public function testConstruction(): void {
-		$session = new MediawikiSession( $this->getMockApi() );
-		$this->assertInstanceOf( MediawikiSession::class, $session );
+		$session = new Tokens( $this->getMockApi() );
+		$this->assertInstanceOf( Tokens::class, $session );
 	}
 
 	/**
@@ -31,8 +28,8 @@ class MediawikiSessionTest extends TestCase {
 	public function testGetToken( string $tokenType ): void {
 		$mockApi = $this->getMockApi();
 		$mockApi->expects( $this->exactly( 2 ) )
-			->method( 'postRequest' )
-			->with( $this->isInstanceOf( SimpleRequest::class ) )
+			->method( 'request' )
+			->with( $this->isInstanceOf( Request::class ) )
 			->willReturn( [
 				'query' => [
 					'tokens' => [
@@ -41,14 +38,14 @@ class MediawikiSessionTest extends TestCase {
 				]
 			] );
 
-		$session = new MediawikiSession( $mockApi );
+		$session = new Tokens( $mockApi );
 
 		// Although we make 2 calls to the method we assert the tokens method about is only called once
-		$this->assertEquals( 'TKN-' . $tokenType, $session->getToken() );
-		$this->assertEquals( 'TKN-' . $tokenType, $session->getToken() );
+		$this->assertEquals( 'TKN-' . $tokenType, $session->get() );
+		$this->assertEquals( 'TKN-' . $tokenType, $session->get() );
 		// Then clearing the tokens and calling again should make a second call!
-		$session->clearTokens();
-		$this->assertEquals( 'TKN-' . $tokenType, $session->getToken() );
+		$session->clear();
+		$this->assertEquals( 'TKN-' . $tokenType, $session->get() );
 	}
 
 	/**
@@ -56,8 +53,8 @@ class MediawikiSessionTest extends TestCase {
 	 */
 	public function testGetTokenPre125( string $tokenType ): void {
 		$mockApi = $this->getMockApi();
-		$mockApi->method( 'postRequest' )
-			->with( $this->isInstanceOf( SimpleRequest::class ) )
+		$mockApi->method( 'request' )
+			->with( $this->isInstanceOf( Request::class ) )
 			->willReturnOnConsecutiveCalls(
 				[
 					'warnings' => [
@@ -73,11 +70,11 @@ class MediawikiSessionTest extends TestCase {
 				]
 			);
 
-		$session = new MediawikiSession( $mockApi );
+		$session = new Tokens( $mockApi );
 
 		// Although we make 2 calls to the method we assert the tokens method about is only called once
-		$this->assertSame( 'TKN-' . $tokenType, $session->getToken() );
-		$this->assertSame( 'TKN-' . $tokenType, $session->getToken() );
+		$this->assertSame( 'TKN-' . $tokenType, $session->get() );
+		$this->assertSame( 'TKN-' . $tokenType, $session->get() );
 	}
 
 	public function provideTokenTypes(): array {
