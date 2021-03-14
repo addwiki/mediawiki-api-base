@@ -10,19 +10,19 @@ class RestApiTest extends TestCase {
 
 	public function testRequestGetResponse(): void {
 		$api = BaseTestEnvironment::newInstance()->getRestApi();
-		$request = RestRequest::f()->setMethod( 'GET' )->setPath( '/v1/search/page' )->setParams( [ 'q' => 'Main Page' ] );
+		$request = RestRequest::f()->setMethod( 'GET' )->setPath( '/v1/page/Main Page/bare' );
 		$response = $api->request( $request );
 		$this->assertIsArray( $response );
-		$this->assertSame( 'Main_Page', $response['pages'][0]['key'] );
+		$this->assertSame( 'Main_Page', $response['key'] );
 	}
 
 	public function testRequestGetResponseAsync(): void {
 		$api = BaseTestEnvironment::newInstance()->getRestApi();
-		$request = RestRequest::f()->setMethod( 'GET' )->setPath( '/v1/search/page' )->setParams( [ 'q' => 'Main Page' ] );
+		$request = RestRequest::f()->setMethod( 'GET' )->setPath( '/v1/page/Main Page/bare' );
 		$response = $api->requestAsync( $request );
 		$response = $response->wait();
 		$this->assertIsArray( $response );
-		$this->assertSame( 'Main_Page', $response['pages'][0]['key'] );
+		$this->assertSame( 'Main_Page', $response['key'] );
 	}
 
 	public function testRequestPostResponse(): void {
