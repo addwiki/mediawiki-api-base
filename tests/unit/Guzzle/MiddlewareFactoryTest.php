@@ -98,10 +98,8 @@ class MiddlewareFactoryTest extends TestCase {
 
 		$client = $this->getClient( $queue );
 
-		$this->expectException(
-			ConnectException::class,
-			'Error 6'
-		);
+		$this->expectException( ConnectException::class );
+		$this->expectExceptionMessage( 'Error 6' );
 
 		$client->request( 'GET', '/' );
 	}

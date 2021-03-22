@@ -14,6 +14,7 @@ use Addwiki\Mediawiki\Api\Guzzle\ClientFactory;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Promise\PromiseInterface;
+use InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
@@ -48,7 +49,7 @@ class RestApi implements Requester, LoggerAwareInterface {
 		}
 
 		if ( $tokens === null ) {
-			throw new \InvalidArgumentException( 'tokens must be set?' );
+			throw new InvalidArgumentException( 'tokens must be set?' );
 		}
 
 		$this->apiUrl = $apiUrl;
@@ -93,7 +94,6 @@ class RestApi implements Requester, LoggerAwareInterface {
 	/**
 	 * @param Request $request The request to send.
 	 *
-	 * @return PromiseInterface
 	 *         Normally promising an array, though can be mixed (json_decode result)
 	 *         Can throw RejectionExceptions
 	 */
@@ -125,13 +125,11 @@ class RestApi implements Requester, LoggerAwareInterface {
 	}
 
 	/**
-	 * @param ResponseInterface $response
 	 *
 	 * @return mixed
 	 */
 	private function decodeResponse( ResponseInterface $response ) {
-		$resultArray = json_decode( $response->getBody(), true );
-		return $resultArray;
+		return json_decode( $response->getBody(), true );
 	}
 
 	/**
@@ -201,7 +199,7 @@ class RestApi implements Requester, LoggerAwareInterface {
 			if ( $this->auth instanceof UserAndPassword || $this->auth instanceof UserAndPasswordWithDomain ) {
 				return 'addwiki-mediawiki-client/' . $this->auth->getUsername();
 			}
-			return 'addwiki-mediawiki-client/' . 'SomeUnknownUser?';
+			return 'addwiki-mediawiki-client/SomeUnknownUser?';
 		}
 		return 'addwiki-mediawiki-client';
 	}

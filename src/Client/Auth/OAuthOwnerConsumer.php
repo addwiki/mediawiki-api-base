@@ -5,10 +5,10 @@ namespace Addwiki\Mediawiki\Api\Client\Auth;
 use Addwiki\Mediawiki\Api\Client\Request\Request;
 use Addwiki\Mediawiki\Api\Client\Request\Requester;
 use InvalidArgumentException;
-use MediaWiki\OAuthClient\Consumer as OAuthConsumer;
+use MediaWiki\OAuthClient\Consumer;
 use MediaWiki\OAuthClient\Request as OAuthRequest;
 use MediaWiki\OAuthClient\SignatureMethod\HmacSha1;
-use MediaWiki\OAuthClient\Token as OAuthToken;
+use MediaWiki\OAuthClient\Token;
 
 /**
  * For use with https://www.mediawiki.org/wiki/Extension:Oauth
@@ -63,8 +63,8 @@ class OAuthOwnerConsumer implements AuthMethod {
 
 	private function getAuthenticationHeaderValue( Request $request, Requester $requester ): string {
 		// Taken directly from https://www.mediawiki.org/wiki/OAuth/Owner-only_consumers
-		$oauthConsumer = new OAuthConsumer( $this->getConsumerKey(), $this->getConsumerSecret() );
-		$oauthToken = new OAuthToken( $this->getAccessToken(), $this->getAccessSecret() );
+		$oauthConsumer = new Consumer( $this->getConsumerKey(), $this->getConsumerSecret() );
+		$oauthToken = new Token( $this->getAccessToken(), $this->getAccessSecret() );
 		$params = $request->getParameterEncoding() === Request::ENCODING_MULTIPART ? [] : $request->getParams();
 
 		// TODO for REST this URL will also need to include extra bits of path!?

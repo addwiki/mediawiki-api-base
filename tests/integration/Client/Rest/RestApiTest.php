@@ -1,6 +1,6 @@
 <?php
 
-namespace Addwiki\Mediawiki\Api\Tests\Integration\Client\Action;
+namespace Addwiki\Mediawiki\Api\Tests\Integration\Client\Rest;
 
 use Addwiki\Mediawiki\Api\Client\Rest\Request\RestRequest;
 use Addwiki\Mediawiki\Api\Tests\Integration\BaseTestEnvironment;

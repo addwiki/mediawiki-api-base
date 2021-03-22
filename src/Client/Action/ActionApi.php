@@ -94,13 +94,13 @@ class ActionApi implements Requester, LoggerAwareInterface {
 	/**
 	 * @param Request $request The request to send.
 	 *
-	 * @return PromiseInterface
 	 *         Normally promising an array, though can be mixed (json_decode result)
 	 *         Can throw UsageExceptions or RejectionExceptions
 	 */
 	public function requestAsync( Request $request ): PromiseInterface {
 		$request->setParam( 'format', 'json' );
 		$request = $this->auth->preRequestAuth( $request, $this );
+
 		$promise = $this->getClient()->requestAsync(
 			$request->getMethod(),
 			$this->apiUrl,
@@ -118,6 +118,7 @@ class ActionApi implements Requester, LoggerAwareInterface {
 	public function request( Request $request ) {
 		$request->setParam( 'format', 'json' );
 		$request = $this->auth->preRequestAuth( $request, $this );
+
 		$response = $this->getClient()->request(
 			$request->getMethod(),
 			$this->apiUrl,
@@ -128,10 +129,9 @@ class ActionApi implements Requester, LoggerAwareInterface {
 	}
 
 	/**
-	 * @param ResponseInterface $response
 	 *
 	 * @return mixed
-	 * @throws \Addwiki\Mediawiki\Api\Client\Action\Exception\UsageException
+	 * @throws UsageException
 	 */
 	private function decodeResponse( ResponseInterface $response ) {
 		$resultArray = json_decode( $response->getBody(), true );
@@ -203,7 +203,7 @@ class ActionApi implements Requester, LoggerAwareInterface {
 			if ( $this->auth instanceof UserAndPassword || $this->auth instanceof UserAndPasswordWithDomain ) {
 				return 'addwiki-mediawiki-client/' . $this->auth->getUsername();
 			}
-			return 'addwiki-mediawiki-client/' . 'SomeUnknownUser?';
+			return 'addwiki-mediawiki-client/SomeUnknownUser?';
 		}
 		return 'addwiki-mediawiki-client';
 	}

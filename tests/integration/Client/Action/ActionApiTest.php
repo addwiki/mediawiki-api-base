@@ -2,22 +2,11 @@
 
 namespace Addwiki\Mediawiki\Api\Tests\Integration\Client\Action;
 
-use Addwiki\Mediawiki\Api\Client\Action\ActionApi;
 use Addwiki\Mediawiki\Api\Client\Action\Request\ActionRequest;
 use Addwiki\Mediawiki\Api\Tests\Integration\BaseTestEnvironment;
 use PHPUnit\Framework\TestCase;
 
 class ActionApiTest extends TestCase {
-
-	private function savePage( ActionApi $api, string $title, string $content ): void {
-		$params = [
-			'title' => $title,
-			'text' => $content,
-			'md5' => md5( $content ),
-			'token' => $api->getToken(),
-		];
-		$api->request( ActionRequest::simplePost( 'edit', $params ) );
-	}
 
 	public function testQueryGetResponse(): void {
 		$api = BaseTestEnvironment::newInstance()->getActionApi();

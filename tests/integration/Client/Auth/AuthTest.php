@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase;
 
 class AuthTest extends TestCase {
 
-	private function getUserInfo( \Addwiki\Mediawiki\Api\Client\Action\ActionApi $api ) : array {
+	private function getUserInfo( ActionApi $api ) : array {
 		return $api->request( ActionRequest::simpleGet( 'query', [ 'meta' => 'userinfo' ] ) );
 	}
 
@@ -18,15 +18,15 @@ class AuthTest extends TestCase {
 		$this->assertSame( $expectedUser, $this->getUserInfo( $api )['query']['userinfo']['name'] );
 	}
 
-	private function assertAnon( \Addwiki\Mediawiki\Api\Client\Action\ActionApi $api ) {
+	private function assertAnon( ActionApi $api ) {
 		$this->assertArrayHasKey( 'anon', $this->getUserInfo( $api )['query']['userinfo'] );
 	}
 
-	private function getUserInfoUsingPost( \Addwiki\Mediawiki\Api\Client\Action\ActionApi $api ) : array {
+	private function getUserInfoUsingPost( ActionApi $api ) : array {
 		return $api->request( ActionRequest::simplePost( 'query', [ 'meta' => 'userinfo' ] ) );
 	}
 
-	private function assertUserLoggedInUsingPost( string $expectedUser, \Addwiki\Mediawiki\Api\Client\Action\ActionApi $api ) {
+	private function assertUserLoggedInUsingPost( string $expectedUser, ActionApi $api ) {
 		$this->assertSame( $expectedUser, $this->getUserInfoUsingPost( $api )['query']['userinfo']['name'] );
 	}
 

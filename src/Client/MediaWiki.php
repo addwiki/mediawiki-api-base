@@ -13,7 +13,13 @@ use Addwiki\Mediawiki\Api\Client\Rest\RestApi;
  */
 class MediaWiki {
 
+	/**
+	 * @var string
+	 */
 	private const ACTION_PHP = 'api.php';
+	/**
+	 * @var string
+	 */
 	private const REST_PHP = 'rest.php';
 
 	private string $baseUrl;
@@ -33,7 +39,6 @@ class MediaWiki {
 	/**
 	 * @param string $anApiEndpoint Either the REST or Action API endpoint e.g. https://en.wikipedia.org/w/api.php
 	 * @param AuthMethod|null $auth
-	 * @return self
 	 */
 	public static function newFromEndpoint( string $anApiEndpoint, AuthMethod $auth = null ): self {
 		return new self( self::pruneActionOrRestPhp( $anApiEndpoint ), $auth );
@@ -46,7 +51,6 @@ class MediaWiki {
 	/**
 	 * @param string $anApiEndpoint A page on a MediaWiki site e.g. https://en.wikipedia.org/wiki/Main_Page
 	 * @param AuthMethod|null $auth
-	 * @return self
 	 */
 	public static function newFromPage( string $pageUrl, AuthMethod $auth = null ): self {
 		return new self( ReallySimpleDiscovery::baseFromPage( $pageUrl ), $auth );

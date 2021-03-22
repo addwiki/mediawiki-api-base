@@ -33,7 +33,6 @@ trait MultipartTrait {
 	 * request object.
 	 *
 	 * @param mixed[] $params The multipart parameters to use.
-	 * @return $this
 	 */
 	public function setMultipartParams( array $params ): self {
 		$this->isMultipart = true;
@@ -49,8 +48,6 @@ trait MultipartTrait {
 	 * request object.
 	 *
 	 * @param mixed[] $params The multipart parameters to add to any already present.
-	 *
-	 * @return $this
 	 */
 	public function addMultipartParams( array $params ): self {
 		$this->isMultipart = true;
@@ -87,6 +84,7 @@ trait MultipartTrait {
 	}
 
 	private function paramsIncludesResource(): bool {
+		/** @noRector \Rector\DeadCode\Rector\If_\RemoveDeadInstanceOfRector */
 		if ( !$this instanceof HasParameters ) {
 			return false;
 		}

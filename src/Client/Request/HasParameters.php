@@ -4,8 +4,17 @@ namespace Addwiki\Mediawiki\Api\Client\Request;
 
 interface HasParameters {
 
+	/**
+	 * @var string
+	 */
 	public const ENCODING_QUERY = 'query';
+	/**
+	 * @var string
+	 */
 	public const ENCODING_MULTIPART = 'multipart';
+	/**
+	 * @var string
+	 */
 	public const ENCODING_FORMPARAMS = 'form_params';
 
 	/**

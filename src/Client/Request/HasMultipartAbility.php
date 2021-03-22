@@ -17,7 +17,6 @@ interface HasMultipartAbility {
 
 	/**
 	 * @param bool $multipart Force the request to be a multipart request
-	 * @return $this
 	 */
 	public function setMultipart( bool $multipart ): self;
 
@@ -28,7 +27,6 @@ interface HasMultipartAbility {
 	 * request object.
 	 *
 	 * @param mixed[] $params The multipart parameters to use.
-	 * @return $this
 	 */
 	public function setMultipartParams( array $params ): self;
 
@@ -39,8 +37,6 @@ interface HasMultipartAbility {
 	 * request object.
 	 *
 	 * @param mixed[] $params The multipart parameters to add to any already present.
-	 *
-	 * @return $this
 	 */
 	public function addMultipartParams( array $params ): self;
 

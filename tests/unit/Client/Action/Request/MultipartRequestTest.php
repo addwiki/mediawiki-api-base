@@ -37,10 +37,8 @@ class MultipartRequestTest extends TestCase {
 	 * You are not allowed to set multipart parameters on a parameter that doesn't exist.
 	 */
 	public function testParamNotYetSet(): void {
-		$this->expectException(
-			Exception::class,
-			"Parameter 'testparam' is not already set on this request."
-		);
+		$this->expectException( Exception::class );
+		$this->expectExceptionMessage( "Parameter 'testparam' is not already set on this request." );
 		$request = new ActionRequest();
 		$request->addMultipartParams( [ 'testparam' => [] ] );
 	}
