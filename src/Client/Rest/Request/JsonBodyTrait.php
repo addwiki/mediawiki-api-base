@@ -12,7 +12,7 @@ trait JsonBodyTrait {
 	}
 
 	public function getJsonBody(): ?array {
-		return isset( $this->body ) ? $this->body : null;
+		return $this->body ?? null;
 	}
 
 }
