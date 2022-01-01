@@ -64,8 +64,8 @@ class ClientFactoryTest extends TestCase {
 
 	public function testMiddleware(): void {
 		$invoked = false;
-		$middleware = function () use ( &$invoked ): callable {
-			return function () use ( &$invoked ): void {
+		$middleware = static function () use ( &$invoked ): callable {
+			return static function () use ( &$invoked ): void {
 				$invoked = true;
 			};
 		};

@@ -198,8 +198,8 @@ class MiddlewareFactoryTest extends TestCase {
 	}
 
 	private function getDelayMocker( &$delays ): callable {
-		return function ( callable $handler ) use ( &$delays ): callable {
-			return function ( $request, array $options ) use ( $handler, &$delays ) {
+		return static function ( callable $handler ) use ( &$delays ): callable {
+			return static function ( $request, array $options ) use ( $handler, &$delays ) {
 				if ( isset( $options['delay'] ) ) {
 					$delays[] = $options['delay'];
 					unset( $options['delay'] );

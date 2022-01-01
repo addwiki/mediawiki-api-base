@@ -182,7 +182,7 @@ class ActionApi implements Requester, LoggerAwareInterface {
 			? $request->getMultipartParams()
 			: [];
 		return array_map(
-			function ( $name, $value ) use ( $multipartParams ): array {
+			static function ( $name, $value ) use ( $multipartParams ): array {
 				$partParams = [
 					'name' => $name,
 					'contents' => $value,
