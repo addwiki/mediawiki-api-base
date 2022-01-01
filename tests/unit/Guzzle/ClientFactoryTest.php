@@ -20,7 +20,7 @@ class ClientFactoryTest extends TestCase {
 		$this->assertSame( $client, $clientFactory->getClient() );
 
 		$config = $client->getConfig();
-		$this->assertEquals( $config['headers']['User-Agent'], 'Addwiki - mediawiki-api-base' );
+		$this->assertEquals( 'Addwiki - mediawiki-api-base', $config['headers']['User-Agent'] );
 
 		$this->assertFalse( empty( $config['cookies'] ) );
 	}
@@ -33,7 +33,7 @@ class ClientFactoryTest extends TestCase {
 		$this->assertNull( $client->getConfig( 'user-agent' ) );
 
 		$config = $client->getConfig();
-		$this->assertEquals( $config['headers']['User-Agent'], 'Foobar' );
+		$this->assertEquals( 'Foobar', $config['headers']['User-Agent'] );
 	}
 
 	public function testHeaders(): void {
@@ -48,8 +48,8 @@ class ClientFactoryTest extends TestCase {
 
 		$headers = $client->getConfig( 'headers' );
 		$this->assertCount( 2, $headers );
-		$this->assertEquals( $headers['User-Agent'], 'Foobar' );
-		$this->assertEquals( $headers['X-Foo'], 'Bar' );
+		$this->assertEquals( 'Foobar', $headers['User-Agent'] );
+		$this->assertEquals( 'Bar', $headers['X-Foo'] );
 	}
 
 	public function testHandler(): void {

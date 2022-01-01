@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase;
 
 class AuthTest extends TestCase {
 
-	private function getUserInfo( ActionApi $api ) : array {
+	private function getUserInfo( ActionApi $api ): array {
 		return $api->request( ActionRequest::simpleGet( 'query', [ 'meta' => 'userinfo' ] ) );
 	}
 
@@ -22,7 +22,7 @@ class AuthTest extends TestCase {
 		$this->assertArrayHasKey( 'anon', $this->getUserInfo( $api )['query']['userinfo'] );
 	}
 
-	private function getUserInfoUsingPost( ActionApi $api ) : array {
+	private function getUserInfoUsingPost( ActionApi $api ): array {
 		return $api->request( ActionRequest::simplePost( 'query', [ 'meta' => 'userinfo' ] ) );
 	}
 

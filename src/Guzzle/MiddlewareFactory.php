@@ -31,7 +31,7 @@ class MiddlewareFactory implements LoggerAwareInterface {
 	 *
 	 * @param bool $delay default to true, can be false to speed up tests
 	 */
-	public function retry( bool $delay = true ) : callable {
+	public function retry( bool $delay = true ): callable {
 		if ( $delay ) {
 			return Middleware::retry( $this->newRetryDecider(), $this->getRetryDelay() );
 		} else {

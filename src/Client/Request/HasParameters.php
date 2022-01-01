@@ -34,6 +34,6 @@ interface HasParameters {
 	 * Infers the request encoding for POST requests from params and class used
 	 * @return string one of the ENCODING_* constants
 	 */
-	public function getParameterEncoding() : string;
+	public function getParameterEncoding(): string;
 
 }
