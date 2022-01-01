@@ -7,7 +7,9 @@ use Exception;
 class UsageException extends Exception {
 
 	private string $apiCode;
+
 	private array $result = [];
+
 	private string $rawMessage;
 
 	/**

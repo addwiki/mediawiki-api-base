@@ -204,6 +204,7 @@ class MiddlewareFactoryTest extends TestCase {
 					$delays[] = $options['delay'];
 					unset( $options['delay'] );
 				}
+
 				return $handler( $request, $options );
 			};
 		};

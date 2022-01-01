@@ -22,15 +22,19 @@ use Psr\Log\NullLogger;
 class ActionApi implements Requester, LoggerAwareInterface {
 
 	private string $apiUrl;
+
 	private AuthMethod $auth;
+
 	/**
 	 * Should be accessed through getClient
 	 * @var ClientInterface|null
 	 */
 	private ?ClientInterface $client = null;
+
 	private Tokens $tokens;
 
 	private ?string $version = null;
+
 	private LoggerInterface $logger;
 
 	/**
@@ -48,6 +52,7 @@ class ActionApi implements Requester, LoggerAwareInterface {
 		if ( $auth === null ) {
 			$auth = new NoAuth();
 		}
+
 		if ( $tokens === null ) {
 			$tokens = new Tokens( $this );
 		}
@@ -76,6 +81,7 @@ class ActionApi implements Requester, LoggerAwareInterface {
 			$clientFactory->setLogger( $this->logger );
 			$this->client = $clientFactory->getClient();
 		}
+
 		return $this->client;
 	}
 
@@ -185,6 +191,7 @@ class ActionApi implements Requester, LoggerAwareInterface {
 					// If extra parameters have been set for this part, use them.
 					$partParams = array_merge( $multipartParams[ $name ], $partParams );
 				}
+
 				return $partParams;
 			},
 			array_keys( $params ),
@@ -203,8 +210,10 @@ class ActionApi implements Requester, LoggerAwareInterface {
 			if ( $this->auth instanceof UserAndPassword || $this->auth instanceof UserAndPasswordWithDomain ) {
 				return 'addwiki-mediawiki-client/' . $this->auth->getUsername();
 			}
+
 			return 'addwiki-mediawiki-client/SomeUnknownUser?';
 		}
+
 		return 'addwiki-mediawiki-client';
 	}
 
@@ -292,6 +301,7 @@ class ActionApi implements Requester, LoggerAwareInterface {
 			);
 			$this->version = $versionParts[0];
 		}
+
 		return $this->version;
 	}
 

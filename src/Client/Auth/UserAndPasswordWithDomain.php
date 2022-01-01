@@ -22,6 +22,7 @@ class UserAndPasswordWithDomain extends UserAndPassword implements AuthMethod {
 		if ( $domain !== null && empty( $domain ) ) {
 			throw new InvalidArgumentException( 'Domain is not allowed to be an empty string' );
 		}
+
 		$this->domain = $domain;
 	}
 

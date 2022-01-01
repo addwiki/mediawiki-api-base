@@ -23,13 +23,17 @@ use Psr\Log\NullLogger;
 class RestApi implements Requester, LoggerAwareInterface {
 
 	private string $apiUrl;
+
 	private AuthMethod $auth;
+
 	/**
 	 * Should be accessed through getClient
 	 * @var ClientInterface|null
 	 */
 	private ?ClientInterface $client = null;
+
 	private Tokens $tokens;
+
 	private LoggerInterface $logger;
 
 	/**
@@ -76,6 +80,7 @@ class RestApi implements Requester, LoggerAwareInterface {
 			$clientFactory->setLogger( $this->logger );
 			$this->client = $clientFactory->getClient();
 		}
+
 		return $this->client;
 	}
 
@@ -181,6 +186,7 @@ class RestApi implements Requester, LoggerAwareInterface {
 					// If extra parameters have been set for this part, use them.
 					$partParams = array_merge( $multipartParams[ $name ], $partParams );
 				}
+
 				return $partParams;
 			},
 			array_keys( $params ),
@@ -199,8 +205,10 @@ class RestApi implements Requester, LoggerAwareInterface {
 			if ( $this->auth instanceof UserAndPassword || $this->auth instanceof UserAndPasswordWithDomain ) {
 				return 'addwiki-mediawiki-client/' . $this->auth->getUsername();
 			}
+
 			return 'addwiki-mediawiki-client/SomeUnknownUser?';
 		}
+
 		return 'addwiki-mediawiki-client';
 	}
 

@@ -123,6 +123,7 @@ class Tokens implements LoggerAwareInterface {
 		if ( $type === 'csrf' ) {
 			return 'edit';
 		}
+
 		return $type;
 	}
 

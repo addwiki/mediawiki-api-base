@@ -18,21 +18,25 @@ class MediaWiki {
 	 * @var string
 	 */
 	private const ACTION_PHP = 'api.php';
+
 	/**
 	 * @var string
 	 */
 	private const REST_PHP = 'rest.php';
 
 	private string $baseUrl;
+
 	private AuthMethod $auth;
 
 	private ActionApi $action;
+
 	private RestApi $rest;
 
 	public function __construct( string $baseUrl, AuthMethod $auth = null ) {
 		if ( $auth === null ) {
 			$auth = new NoAuth();
 		}
+
 		$this->baseUrl = $baseUrl;
 		$this->auth = $auth;
 	}
@@ -61,6 +65,7 @@ class MediaWiki {
 		if ( !isset( $this->action ) ) {
 			$this->action = new ActionApi( $this->baseUrl . self::ACTION_PHP, $this->auth );
 		}
+
 		return $this->action;
 	}
 
@@ -69,6 +74,7 @@ class MediaWiki {
 			// TODO perhaps use the same Tokens object between the 2 APIs
 			$this->rest = new RestApi( $this->baseUrl . self::REST_PHP, $this->auth, null, new Tokens( $this->action() ) );
 		}
+
 		return $this->rest;
 	}
 

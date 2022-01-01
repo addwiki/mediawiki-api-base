@@ -12,7 +12,9 @@ use Psr\Log\NullLogger;
 class ClientFactory implements LoggerAwareInterface {
 
 	private ?Client $client = null;
+
 	private NullLogger $logger;
+
 	private array $config;
 
 	/**
@@ -33,6 +35,7 @@ class ClientFactory implements LoggerAwareInterface {
 		if ( $this->client === null ) {
 			$this->client = $this->newClient();
 		}
+
 		return $this->client;
 	}
 
@@ -60,6 +63,7 @@ class ClientFactory implements LoggerAwareInterface {
 				$this->config['headers']['User-Agent'] = 'Addwiki - mediawiki-api-base';
 			}
 		}
+
 		// Unset the config, so that Guzzle doesn't do anything with it.
 		unset( $this->config['user-agent'] );
 	}
@@ -79,6 +83,7 @@ class ClientFactory implements LoggerAwareInterface {
 		foreach ( $this->config['middleware'] as $middleware ) {
 			$this->config['handler']->push( $middleware );
 		}
+
 		unset( $this->config['middleware'] );
 	}
 

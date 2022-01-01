@@ -32,9 +32,11 @@ trait ParametersTrait {
 		if ( $this->getMethod() === 'GET' ) {
 			return self::ENCODING_QUERY;
 		}
+
 		if ( $this instanceof HasMultipartAbility && $this->isMultipart() ) {
 			return self::ENCODING_MULTIPART;
 		}
+
 		return self::ENCODING_FORMPARAMS;
 	}
 

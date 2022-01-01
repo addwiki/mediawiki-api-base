@@ -16,14 +16,18 @@ use MediaWiki\OAuthClient\Token;
 class OAuthOwnerConsumer implements AuthMethod {
 
 	private string $consumerKey;
+
 	private string $consumerSecret;
+
 	private string $accessToken;
+
 	private string $accessSecret;
 
 	public function __construct( string $consumerKey, string $consumerSecret, string $accessToken, string $accessSecret ) {
 		if ( empty( $consumerKey ) || empty( $consumerSecret ) || empty( $accessToken ) || empty( $accessSecret ) ) {
 			throw new InvalidArgumentException( 'No empty fields allowed' );
 		}
+
 		$this->consumerKey = $consumerKey;
 		$this->consumerSecret = $consumerSecret;
 		$this->accessToken = $accessToken;

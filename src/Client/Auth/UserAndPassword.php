@@ -15,13 +15,16 @@ use InvalidArgumentException;
 class UserAndPassword implements AuthMethod {
 
 	private string $password;
+
 	private string $username;
+
 	private bool $isLoggedIn = false;
 
 	public function __construct( string $username, string $password ) {
 		if ( empty( $username ) || empty( $password ) ) {
 			throw new InvalidArgumentException( 'Username and Password are not allowed to be empty' );
 		}
+
 		$this->username = $username;
 		$this->password = $password;
 	}

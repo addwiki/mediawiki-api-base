@@ -13,6 +13,7 @@ use Exception;
 class BaseTestEnvironment {
 
 	private string $apiUrl;
+
 	private string $pageUrl;
 
 	/**

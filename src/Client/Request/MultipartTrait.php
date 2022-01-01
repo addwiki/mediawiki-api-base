@@ -15,6 +15,7 @@ use Exception;
 trait MultipartTrait {
 
 	private bool $isMultipart = false;
+
 	private array $multipartParams = [];
 
 	public function isMultipart(): bool {
@@ -77,6 +78,7 @@ trait MultipartTrait {
 			if ( !is_array( $val ) ) {
 				throw new Exception( sprintf( "Parameter '%s' must be an array.", $key ) );
 			}
+
 			if ( !array_key_exists( $key, $this->getParams() ) ) {
 				throw new Exception( sprintf( "Parameter '%s' is not already set on this request.", $key ) );
 			}
@@ -94,6 +96,7 @@ trait MultipartTrait {
 				return true;
 			}
 		}
+
 		return false;
 	}
 

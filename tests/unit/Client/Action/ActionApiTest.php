@@ -146,6 +146,7 @@ class ActionApiTest extends TestCase {
 			// windows
 			return fopen( 'NUL', 'r' );
 		}
+
 		return fopen( '/dev/null', 'r' );
 	}
 

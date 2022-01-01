@@ -42,15 +42,18 @@ class ReallySimpleDiscovery {
 		if ( $link->length === 0 ) {
 			// Format libxml errors for display.
 			$libXmlErrorStr = array_reduce( $libXmlErrors, fn( $prevErr, $err ) => $prevErr . ', ' . $err->message . ' (line ' . $err->line . ')' );
-			if ( $libXmlErrorStr ) {
+			if ( $libXmlErrorStr !== null ) {
 				$libXmlErrorStr = sprintf( 'In addition, libxml had the following errors: %s', $libXmlErrorStr );
 			}
+
 			throw new RsdException( sprintf( 'Unable to find RSD URL in page: %s %s', $pageUrl, $libXmlErrorStr ) );
 		}
+
 		$linkItem = $link->item( 0 );
 		if ( ( $linkItem->attributes ) === null ) {
 			throw new RsdException( 'Unexpected RSD fetch error' );
 		}
+
 		/** @psalm-suppress NullReference */
 		$rsdUrl = $linkItem->attributes->getNamedItem( 'href' )->nodeValue;
 
