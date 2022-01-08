@@ -49,10 +49,6 @@ class BaseTestEnvironment {
 		$this->pageUrl = str_replace( 'api.php', 'index.php?title=Special:SpecialPages', $apiUrl );
 	}
 
-	/**
-	 * Get the url of the api to test against, based on the MEDIAWIKI_API_URL environment variable.
-	 * TODO rename to getActionApiUrl? Or use base URL?
-	 */
 	public function getApiUrl(): string {
 		return $this->apiUrl;
 	}

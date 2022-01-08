@@ -64,12 +64,6 @@ class RestApi implements Requester, LoggerAwareInterface {
 		$this->logger = new NullLogger();
 	}
 
-	/**
-	 * Get the API URL (the URL to which API requests are sent, usually ending in api.php).
-	 * This is useful if you have this object without knowing the actual api URL
-	 *
-	 * @return string The API URL.
-	 */
 	public function getApiUrl(): string {
 		return $this->apiUrl;
 	}

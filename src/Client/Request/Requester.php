@@ -10,6 +10,14 @@ use GuzzleHttp\Promise\PromiseInterface;
 interface Requester {
 
 	/**
+	 * Get the API URL (the URL to which API requests are sent, usually ending in api.php or rest.php).
+	 * This is useful if you have something that implements this interface without knowing the actual api URL
+	 *
+	 * @return string The API URL.
+	 */
+	public function getApiUrl(): string;
+
+	/**
 	 * @param Request $request The request to send.
 	 *
 	 * @return mixed Normally an array
