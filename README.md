@@ -8,7 +8,7 @@ This library provides basic access to the MediaWiki Action API.
 This library features simple methods allowing you to login, logout and do both GET and POST requests.
 This library should work with most if not all MediaWiki versions due to its simplicity.
 
-You can find the fill documentation at https://addwiki.github.io/mediawiki-api-base/
+You can find the full documentation at https://addwiki.github.io/mediawiki-api-base/
 
 ## Example
 
