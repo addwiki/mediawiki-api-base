@@ -18,7 +18,7 @@ A quick example can be found below:
 use \Addwiki\Mediawiki\Api\Client\Auth\UserAndPassword;
 use \Addwiki\Mediawiki\Api\Client\Action\MediawikiApi;
 
-$auth = new UserAndPassword( 'username', 'password' )
+$auth = new UserAndPassword( 'username', 'password' );
 $api = MediawikiApi::newFromPage( 'https://en.wikipedia.org/wiki/Berlin', $auth );
 $purgeRequest = FluentRequest::factory()->setAction( 'purge' )->setParam( 'titles', 'Berlin' );
 $api->postRequest( $purgeRequest );
