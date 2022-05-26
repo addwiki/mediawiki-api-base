@@ -13,7 +13,7 @@ class ClientFactory implements LoggerAwareInterface {
 
 	private ?Client $client = null;
 
-	private NullLogger $logger;
+	private LoggerInterface $logger;
 
 	private array $config;
 
