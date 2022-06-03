@@ -8,7 +8,7 @@ This library provides basic access to the MediaWiki Action API.
 This library features simple methods allowing you to login, logout and do both GET and POST requests.
 This library should work with most if not all MediaWiki versions due to its simplicity.
 
-You can find the full documentation at https://addwiki.github.io/mediawiki-api-base/
+You can find the fill documentation at https://addwiki.github.io/mediawiki-api-base/
 
 ## Example
 
@@ -18,7 +18,7 @@ A quick example can be found below:
 use \Addwiki\Mediawiki\Api\Client\Auth\UserAndPassword;
 use \Addwiki\Mediawiki\Api\Client\Action\MediawikiApi;
 
-$auth = new UserAndPassword( 'username', 'password' );
+$auth = new UserAndPassword( 'username', 'password' )
 $api = MediawikiApi::newFromPage( 'https://en.wikipedia.org/wiki/Berlin', $auth );
 $purgeRequest = FluentRequest::factory()->setAction( 'purge' )->setParam( 'titles', 'Berlin' );
 $api->postRequest( $purgeRequest );

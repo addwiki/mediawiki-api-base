@@ -16,7 +16,7 @@ use Psr\Log\NullLogger;
  */
 class MiddlewareFactory implements LoggerAwareInterface {
 
-	private NullLogger $logger;
+	private LoggerInterface $logger;
 
 	public function __construct() {
 		$this->logger = new NullLogger();
