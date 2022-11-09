@@ -32,16 +32,16 @@ class MediaWiki {
 
 	private RestApi $rest;
 
-    private array $config;
+	private array $config;
 
-    public function __construct( string $baseUrl, AuthMethod $auth = null, array $config = [] ) {
+	public function __construct( string $baseUrl, AuthMethod $auth = null, array $config = [] ) {
 		if ( $auth === null ) {
 			$auth = new NoAuth();
 		}
 
 		$this->baseUrl = $baseUrl;
 		$this->auth = $auth;
-        $this->config = $config;
+		$this->config = $config;
 	}
 
 	/**

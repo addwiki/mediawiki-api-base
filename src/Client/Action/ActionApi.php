@@ -51,7 +51,7 @@ class ActionApi implements Requester, LoggerAwareInterface {
 		AuthMethod $auth = null,
 		?ClientInterface $client = null,
 		Tokens $tokens = null,
-        array $config = []
+		array $config = []
 		) {
 		if ( $auth === null ) {
 			$auth = new NoAuth();
@@ -65,7 +65,7 @@ class ActionApi implements Requester, LoggerAwareInterface {
 		$this->auth = $auth;
 		$this->client = $client;
 		$this->tokens = $tokens;
-        $this->config = $config;
+		$this->config = $config;
 
 		$this->logger = new NullLogger();
 	}
@@ -76,7 +76,7 @@ class ActionApi implements Requester, LoggerAwareInterface {
 
 	private function getClient(): ClientInterface {
 		if ( !$this->client instanceof ClientInterface ) {
-            $clientFactory = new ClientFactory( $this->config );
+			$clientFactory = new ClientFactory( $this->config );
 			$clientFactory->setLogger( $this->logger );
 			$this->client = $clientFactory->getClient();
 		}
