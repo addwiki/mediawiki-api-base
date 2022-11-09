@@ -68,7 +68,7 @@ class MediaWiki {
 
 	public function action(): ActionApi {
 		if ( !isset( $this->action ) ) {
-			$this->action = new ActionApi( $this->baseUrl . self::ACTION_PHP, $this->auth, $this->config );
+			$this->action = new ActionApi( $this->baseUrl . self::ACTION_PHP, $this->auth, null, null, $this->config );
 		}
 
 		return $this->action;
@@ -77,7 +77,7 @@ class MediaWiki {
 	public function rest(): RestApi {
 		if ( !isset( $this->rest ) ) {
 			// TODO perhaps use the same Tokens object between the 2 APIs
-			$this->rest = new RestApi( $this->baseUrl . self::REST_PHP, $this->auth, null, new Tokens( $this->action() ) );
+			$this->rest = new RestApi( $this->baseUrl . self::REST_PHP, $this->auth, null, new Tokens( $this->action() ), $this->config );
 		}
 
 		return $this->rest;
