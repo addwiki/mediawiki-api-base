@@ -32,38 +32,43 @@ class MediaWiki {
 
 	private RestApi $rest;
 
-	public function __construct( string $baseUrl, AuthMethod $auth = null ) {
+    private array $config;
+
+    public function __construct( string $baseUrl, AuthMethod $auth = null, array $config = [] ) {
 		if ( $auth === null ) {
 			$auth = new NoAuth();
 		}
 
 		$this->baseUrl = $baseUrl;
 		$this->auth = $auth;
+        $this->config = $config;
 	}
 
 	/**
 	 * @param string $anApiEndpoint Either the REST or Action API endpoint e.g. https://en.wikipedia.org/w/api.php
 	 * @param AuthMethod|null $auth
+	 * @param array $config ClientInterface compatible configuration array
 	 */
-	public static function newFromEndpoint( string $anApiEndpoint, AuthMethod $auth = null ): self {
-		return new self( self::pruneActionOrRestPhp( $anApiEndpoint ), $auth );
+    public static function newFromEndpoint( string $anApiEndpoint, AuthMethod $auth = null, array $config = [] ): self {
+        return new self( self::pruneActionOrRestPhp( $anApiEndpoint ), $auth, $config );
 	}
 
 	private static function pruneActionOrRestPhp( string $url ): string {
-		return str_replace( 'rest.php', '', str_replace( self::ACTION_PHP, '', $url ) );
+        return str_replace( 'rest.php', '', str_replace( self::ACTION_PHP, '', $url ) );
 	}
 
 	/**
 	 * @param string $anApiEndpoint A page on a MediaWiki site e.g. https://en.wikipedia.org/wiki/Main_Page
 	 * @param AuthMethod|null $auth
+	 * @param array $config ClientInterface compatible configuration array
 	 */
-	public static function newFromPage( string $pageUrl, AuthMethod $auth = null ): self {
-		return new self( ReallySimpleDiscovery::baseFromPage( $pageUrl ), $auth );
+    public static function newFromPage( string $pageUrl, AuthMethod $auth = null, array $config = [] ): self {
+        return new self( ReallySimpleDiscovery::baseFromPage( $pageUrl ), $auth, $config );
 	}
 
 	public function action(): ActionApi {
 		if ( !isset( $this->action ) ) {
-			$this->action = new ActionApi( $this->baseUrl . self::ACTION_PHP, $this->auth );
+			$this->action = new ActionApi( $this->baseUrl . self::ACTION_PHP, $this->auth, $this->config );
 		}
 
 		return $this->action;
