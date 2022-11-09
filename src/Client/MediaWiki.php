@@ -49,12 +49,12 @@ class MediaWiki {
 	 * @param AuthMethod|null $auth
 	 * @param array $config ClientInterface compatible configuration array
 	 */
-    public static function newFromEndpoint( string $anApiEndpoint, AuthMethod $auth = null, array $config = [] ): self {
-        return new self( self::pruneActionOrRestPhp( $anApiEndpoint ), $auth, $config );
+	public static function newFromEndpoint( string $anApiEndpoint, AuthMethod $auth = null, array $config = [] ): self {
+		return new self( self::pruneActionOrRestPhp( $anApiEndpoint ), $auth, $config );
 	}
 
 	private static function pruneActionOrRestPhp( string $url ): string {
-        return str_replace( 'rest.php', '', str_replace( self::ACTION_PHP, '', $url ) );
+		return str_replace( 'rest.php', '', str_replace( self::ACTION_PHP, '', $url ) );
 	}
 
 	/**
@@ -62,8 +62,8 @@ class MediaWiki {
 	 * @param AuthMethod|null $auth
 	 * @param array $config ClientInterface compatible configuration array
 	 */
-    public static function newFromPage( string $pageUrl, AuthMethod $auth = null, array $config = [] ): self {
-        return new self( ReallySimpleDiscovery::baseFromPage( $pageUrl ), $auth, $config );
+	public static function newFromPage( string $pageUrl, AuthMethod $auth = null, array $config = [] ): self {
+		return new self( ReallySimpleDiscovery::baseFromPage( $pageUrl ), $auth, $config );
 	}
 
 	public function action(): ActionApi {

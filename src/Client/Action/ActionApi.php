@@ -44,7 +44,7 @@ class ActionApi implements Requester, LoggerAwareInterface {
 	 * @param AuthMethod|null $auth Auth method to use. null for NoAuth
 	 * @param ClientInterface|null $client Guzzle Client
 	 * @param Tokens|null $tokens Inject a custom tokens object here
-    * @param array $config ClientInterface compatible configuration array
+	 * @param array $config ClientInterface compatible configuration array
 	 */
 	public function __construct(
 		string $apiUrl,
