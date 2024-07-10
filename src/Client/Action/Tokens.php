@@ -34,9 +34,9 @@ class Tokens implements LoggerAwareInterface {
 	 *
 	 * @param LoggerInterface $logger The new Logger object.
 	 *
-	 * @return null
+	 * @return void
 	 */
-	public function setLogger( LoggerInterface $logger ) {
+	public function setLogger( LoggerInterface $logger ): void {
 		$this->logger = $logger;
 	}
 
