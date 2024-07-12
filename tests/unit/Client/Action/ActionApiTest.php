@@ -46,7 +46,7 @@ class ActionApiTest extends TestCase {
 		$mock = $this->createMock( ResponseInterface::class );
 		$mock
 			->method( 'getBody' )
-			->willReturn( json_encode( $responseValue ) );
+			->willReturn( \GuzzleHttp\Psr7\Utils::streamFor( json_encode( $responseValue ) ) );
 		return $mock;
 	}
 

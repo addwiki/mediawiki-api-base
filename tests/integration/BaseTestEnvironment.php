@@ -81,6 +81,9 @@ class BaseTestEnvironment {
 		// This file was created and is hosted by the docker-ci setup
 		$creationJsonString = file_get_contents( str_replace( 'api.php', 'createOAuthConsumer.json', $this->getApiUrl() ) );
 		$data = json_decode( $creationJsonString, true );
+		if ( !$data ) {
+			throw new Exception( 'Failed to get OAuth consumer data from createOAuthConsumer.json' );
+		}
 		return new OAuthOwnerConsumer( $data['key'], $data['secret'], $data['accessToken'], $data['accessSecret'] );
 	}
 

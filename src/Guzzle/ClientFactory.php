@@ -27,7 +27,7 @@ class ClientFactory implements LoggerAwareInterface {
 		$this->config = $config;
 	}
 
-	public function setLogger( LoggerInterface $logger ) {
+	public function setLogger( LoggerInterface $logger ): void {
 		$this->logger = $logger;
 	}
 

@@ -86,7 +86,7 @@ class ActionApi implements Requester, LoggerAwareInterface {
 	 *
 	 * @return null
 	 */
-	public function setLogger( LoggerInterface $logger ) {
+	public function setLogger( LoggerInterface $logger ): void {
 		$this->logger = $logger;
 		$this->tokens->setLogger( $logger );
 	}

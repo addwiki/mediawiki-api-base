@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Installatble with PHP 8.1+
 - Fix being unable to set a logger other than Nulllogger in the Guzzle Client [#156](https://github.com/addwiki/addwiki/pull/156)
 
 ## Version 3.0 (23 October 2021)
