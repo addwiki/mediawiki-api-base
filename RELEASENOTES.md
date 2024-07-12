@@ -4,6 +4,7 @@
 
 - Installatble with PHP 8.1+
 - Fix being unable to set a logger other than Nulllogger in the Guzzle Client [#156](https://github.com/addwiki/addwiki/pull/156)
+- `\Addwiki\Mediawiki\Api\Client\Request\MethodTrait::setMethod()` now normalizes the method to uppercase [#166](https://github.com/addwiki/addwiki/pull/166)
 
 ## Version 3.0 (23 October 2021)
 

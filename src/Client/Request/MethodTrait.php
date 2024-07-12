@@ -11,7 +11,7 @@ trait MethodTrait {
 	}
 
 	public function setMethod( string $method ): self {
-		$this->method = $method;
+		$this->method = strtoupper( $method );
 		return $this;
 	}
 

@@ -62,4 +62,17 @@ class FluentRequestTest extends TestCase {
 		$this->assertEquals( [ 'action' => 'fooAction' ], $request->getParams() );
 	}
 
+	public function testGetParameterEncoding(): void {
+		$request = ActionRequest::factory();
+
+		$request->setMethod( 'get' );
+		$this->assertSame( 'query', $request->getParameterEncoding() );
+
+		$request->setMethod( 'GET' );
+		$this->assertSame( 'query', $request->getParameterEncoding() );
+
+		$request->setMethod( 'post' );
+		$this->assertSame( 'form_params', $request->getParameterEncoding() );
+	}
+
 }
