@@ -47,7 +47,9 @@ class ClientFactory implements LoggerAwareInterface {
 		];
 		$this->setUaHeaderFromConfigOrDefault();
 		$this->setDefaultHandlerIfNotInConfigAlready();
-		$this->setMiddlewareFromConfigWithDefaultRetry();
+        if( !array_key_exists( 'noretry', $this->config ) ) {
+            $this->setMiddlewareFromConfigWithDefaultRetry();
+        }
 		return new Client( $this->config );
 	}
 
