@@ -20,6 +20,8 @@ class UserAndPassword implements AuthMethod {
 
 	private bool $isLoggedIn = false;
 
+	private $assertType = 'user';
+
 	public function __construct( string $username, string $password ) {
 		if ( empty( $username ) || empty( $password ) ) {
 			throw new InvalidArgumentException( 'Username and Password are not allowed to be empty' );
@@ -27,6 +29,11 @@ class UserAndPassword implements AuthMethod {
 
 		$this->username = $username;
 		$this->password = $password;
+	}
+
+	public function setAssertType( string $assertType ): self {
+		$this->assertType = $assertType;
+		return $this;
 	}
 
 	public function getUsername(): string {
@@ -50,8 +57,8 @@ class UserAndPassword implements AuthMethod {
 
 		// Do nothing if we are already logged in
 		if ( $this->isLoggedIn ) {
-			// Verify that the user is logged in if set to user, not logged in if set to anon, or has the bot user right if bot.
-			$request->setParam( 'assert', 'user' );
+			// Verify that the user is in the state required by this auth method.
+			$request->setParam( 'assert', $this->assertType );
 			return $request;
 		}
 

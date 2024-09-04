@@ -3,6 +3,7 @@
 ## Unreleased
 
 - Installatble with PHP 8.1+
+- Added `\Addwiki\Mediawiki\Api\Client\Auth\UserAndPassword::setAssertType()` to alter which assert= parameter is used in requests [#175](https://github.com/addwiki/addwiki/pull/175)
 - Fix being unable to set a logger other than Nulllogger in the Guzzle Client [#156](https://github.com/addwiki/addwiki/pull/156)
 - `\Addwiki\Mediawiki\Api\Client\Request\MethodTrait::setMethod()` now normalizes the method to uppercase [#166](https://github.com/addwiki/addwiki/pull/166)
 
