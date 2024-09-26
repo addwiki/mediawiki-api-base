@@ -37,17 +37,21 @@ class ActionApi implements Requester, LoggerAwareInterface {
 
 	private LoggerInterface $logger;
 
+    private array $config;
+
 	/**
 	 * @param string $apiUrl The API Url
 	 * @param AuthMethod|null $auth Auth method to use. null for NoAuth
 	 * @param ClientInterface|null $client Guzzle Client
 	 * @param Tokens|null $tokens Inject a custom tokens object here
+	 * @param array $config ClientInterface compatible configuration array
 	 */
 	public function __construct(
 		string $apiUrl,
 		AuthMethod $auth = null,
 		?ClientInterface $client = null,
-		Tokens $tokens = null
+		Tokens $tokens = null,
+		array $config = []
 		) {
 		if ( $auth === null ) {
 			$auth = new NoAuth();
@@ -61,6 +65,7 @@ class ActionApi implements Requester, LoggerAwareInterface {
 		$this->auth = $auth;
 		$this->client = $client;
 		$this->tokens = $tokens;
+		$this->config = $config;
 
 		$this->logger = new NullLogger();
 	}
@@ -71,7 +76,7 @@ class ActionApi implements Requester, LoggerAwareInterface {
 
 	private function getClient(): ClientInterface {
 		if ( !$this->client instanceof ClientInterface ) {
-			$clientFactory = new ClientFactory();
+			$clientFactory = new ClientFactory( $this->config );
 			$clientFactory->setLogger( $this->logger );
 			$this->client = $clientFactory->getClient();
 		}
