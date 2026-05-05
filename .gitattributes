@@ -4,3 +4,5 @@ composer.json export-ignore
 .github export-ignore
 phpcs.xml export-ignore
 tests export-ignore
+
+* text eol=lf

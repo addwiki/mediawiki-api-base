@@ -7,6 +7,7 @@ use Addwiki\Mediawiki\Api\Client\Action\Exception\UsageException;
 use Addwiki\Mediawiki\Api\Client\Action\Request\ActionRequest;
 use Addwiki\Mediawiki\Api\Client\Auth\UserAndPassword;
 use GuzzleHttp\ClientInterface;
+use GuzzleHttp\Psr7\Utils;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
@@ -72,7 +73,7 @@ class UserAndPasswordTest extends TestCase {
 		$mock = $this->createMock( ResponseInterface::class );
 		$mock
 			->method( 'getBody' )
-			->willReturn( json_encode( $responseValue ) );
+			->willReturn( Utils::streamFor( json_encode( $responseValue ) ) );
 		return $mock;
 	}
 

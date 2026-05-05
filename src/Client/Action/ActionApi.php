@@ -37,7 +37,7 @@ class ActionApi implements Requester, LoggerAwareInterface {
 
 	private LoggerInterface $logger;
 
-    private array $config;
+	private array $config;
 
 	/**
 	 * @param string $apiUrl The API Url

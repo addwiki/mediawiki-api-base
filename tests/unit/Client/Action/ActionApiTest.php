@@ -6,6 +6,7 @@ use Addwiki\Mediawiki\Api\Client\Action\ActionApi;
 use Addwiki\Mediawiki\Api\Client\Action\Exception\UsageException;
 use Addwiki\Mediawiki\Api\Client\Action\Request\ActionRequest;
 use GuzzleHttp\ClientInterface;
+use GuzzleHttp\Psr7\Utils;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerInterface;
@@ -46,7 +47,7 @@ class ActionApiTest extends TestCase {
 		$mock = $this->createMock( ResponseInterface::class );
 		$mock
 			->method( 'getBody' )
-			->willReturn( json_encode( $responseValue ) );
+			->willReturn( Utils::streamFor( json_encode( $responseValue ) ) );
 		return $mock;
 	}
 
